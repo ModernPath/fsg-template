@@ -194,17 +194,6 @@ export async function middleware(request: NextRequest) {
   const isAdminRoute = pathSegments.includes("admin") ||
     pathSegments.includes("hallinta");
 
-  // Debug: Log dashboard access attempts
-  if (pathSegments.includes("dashboard")) {
-    console.log("🎯 [Middleware] Dashboard access attempt:", {
-      pathname: request.nextUrl.pathname,
-      pathSegments,
-      isAdminRoute,
-      hasSession: !!session,
-      userId: session?.user?.id,
-    });
-  }
-
   // Handle booking routes
   if (pathSegments[1] === "book") {
     const slug = pathSegments[2];
