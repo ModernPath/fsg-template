@@ -125,12 +125,13 @@ async function searchByBusinessId(businessId: string) {
 
 /**
  * Search companies by name
+ * Based on Trusty Finance working implementation
  */
 async function searchByName(name: string) {
   console.log(`🔍 [YTJ] Searching by name: ${name}`);
 
   const encodedName = encodeURIComponent(name);
-  const endpoint = `${YTJ_API_BASE}/companies?name=${encodedName}`;
+  const endpoint = `${YTJ_API_BASE}/companies?name=${encodedName}&maxResults=10`;
 
   console.log(`  📡 Request: ${endpoint}`);
 
@@ -139,18 +140,32 @@ async function searchByName(name: string) {
       'Accept': 'application/json',
       'User-Agent': 'BizExit/1.0',
     },
+    signal: AbortSignal.timeout(30000), // 30 second timeout
   });
 
   if (!response.ok) {
     const errorText = await response.text();
     console.error(`  ❌ YTJ API error: ${response.status} ${errorText}`);
-    throw new Error(`YTJ API virhe: ${response.status}`);
+    
+    let userMessage = 'YTJ-haku epäonnistui';
+    if (response.status === 429) {
+      userMessage = 'Liikaa hakupyyntöjä - yritä hetken kuluttua';
+    } else if (response.status >= 500) {
+      userMessage = 'YTJ-palvelu ei ole käytettävissä';
+    } else if (response.status === 404) {
+      userMessage = 'Yritystä ei löytynyt';
+    }
+    
+    throw new Error(userMessage);
   }
 
   const data = await response.json();
   
-  // YTJ API returns direct array, not wrapped object
-  const companyArray = Array.isArray(data) ? data : [];
+  // CRITICAL: YTJ API returns { companies: [...] }, not direct array!
+  // This is why we got 0 results before
+  const companyArray = data.companies && Array.isArray(data.companies) 
+    ? data.companies 
+    : [];
 
   console.log(`  ✅ Found ${companyArray.length} companies`);
 

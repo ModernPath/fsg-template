@@ -117,9 +117,10 @@ export function OrganizationOnboarding({
           description: "Valitse oikea yritys listasta",
         });
       } else {
+        // No results found
         toast({
-          title: "Ei tuloksia",
-          description: "Kokeile toista hakusanaa",
+          title: "❌ Ei tuloksia",
+          description: `Yritystä "${searchQuery}" ei löytynyt. Kokeile lyhyempää hakusanaa (esim. pelkkä yrityksen nimi ilman Oy/Ab).`,
           variant: "destructive",
         });
       }
@@ -366,7 +367,7 @@ export function OrganizationOnboarding({
                 </Label>
                 <div className="flex gap-2">
                   <Input
-                    placeholder="Kirjoita yrityksen nimi..."
+                    placeholder="Esim: Nokia, Supercell, Rovio..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => {
@@ -391,7 +392,7 @@ export function OrganizationOnboarding({
                   </Button>
                 </div>
                 <p className="text-xs text-slate-400">
-                  Haemme yrityksen perustiedot virallisesta YTJ-rekisteristä
+                  💡 Vinkki: Käytä lyhyttä hakusanaa (esim. "Supercell" toimii paremmin kuin "Supercell Oy")
                 </p>
               </div>
 
