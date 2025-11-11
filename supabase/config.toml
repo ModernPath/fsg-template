@@ -153,7 +153,8 @@ enable_signup = true
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true
 # If enabled, users need to confirm their email address before signing in.
-enable_confirmations = true
+# NOTE: Disabled for local development to allow immediate testing
+enable_confirmations = false
 # If enabled, users will need to reauthenticate or have logged in recently to change their password.
 secure_password_change = false
 # Controls the minimum amount of time that must pass before sending another signup confirmation or password reset email.
@@ -164,14 +165,16 @@ otp_length = 6
 otp_expiry = 3600
 
 # Use a production-ready SMTP server
+# NOTE: For local development, you can use Inbucket (check http://localhost:54324)
+# or disable email confirmations above. Enable this for production.
 [auth.email.smtp]
-enabled = true
+enabled = false
 host = "smtp.sendgrid.net"
 port = 587
 user = "apikey"
 pass = "env(SENDGRID_API_KEY)"
 admin_email = "pasi@lastbot.com"
-sender_name = "LastBot"
+sender_name = "BizExit"
 
 # Uncomment to customize email template
 # [auth.email.template.invite]
