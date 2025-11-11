@@ -1,0 +1,55 @@
+{
+  "title": "Kojelauta",
+  "welcome": "Tervetuloa takaisin! Tässä mitä kaupoillesi kuuluu.",
+  "noOrganization": {
+    "title": "Ei Organisaatiota",
+    "description": "Ota yhteyttä tukeen organisaation perustamiseksi."
+  },
+  "stats": {
+    "companies": "Yritykset",
+    "totalDeals": "Kauppoja Yhteensä",
+    "pipelineValue": "Putken Arvo",
+    "activeDeals": "Aktiiviset Kaupat",
+    "vsLastMonth": "vs edellinen kuukausi"
+  },
+  "recentDeals": {
+    "title": "Viimeisimmät Kaupat",
+    "viewAll": "Näytä Kaikki Kaupat",
+    "empty": "Ei vielä kauppoja",
+    "columns": {
+      "company": "Yritys",
+      "stage": "Vaihe",
+      "value": "Arvo",
+      "buyer": "Ostaja",
+      "updated": "Viimeksi Päivitetty"
+    }
+  },
+  "activityFeed": {
+    "title": "Viimeaikainen Toiminta",
+    "empty": "Ei viimeaikaista toimintaa",
+    "viewAll": "Näytä Kaikki Toiminnot"
+  },
+  "nav": {
+    "dashboard": "Kojelauta",
+    "companies": "Yritykset",
+    "deals": "Kaupat",
+    "listings": "Listaukset",
+    "buyers": "Ostajat",
+    "ndas": "Salassapitosopimukset",
+    "materials": "Materiaalit",
+    "payments": "Maksut",
+    "settings": "Asetukset"
+  },
+  "stages": {
+    "lead": "Liidi",
+    "qualification": "Kvalifiointi",
+    "nda_signed": "NDA Allekirjoitettu",
+    "evaluation": "Arviointi",
+    "loi_submitted": "LOI Lähetetty",
+    "due_diligence": "Due Diligence",
+    "negotiation": "Neuvottelu",
+    "closed_won": "Kauppa Tehty",
+    "closed_lost": "Kauppa Menetetty"
+  }
+}
+

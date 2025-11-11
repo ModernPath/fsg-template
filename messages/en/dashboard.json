@@ -1,0 +1,55 @@
+{
+  "title": "Dashboard",
+  "welcome": "Welcome back! Here's what's happening with your deals.",
+  "noOrganization": {
+    "title": "No Organization",
+    "description": "Please contact support to set up your organization."
+  },
+  "stats": {
+    "companies": "Companies",
+    "totalDeals": "Total Deals",
+    "pipelineValue": "Pipeline Value",
+    "activeDeals": "Active Deals",
+    "vsLastMonth": "vs last month"
+  },
+  "recentDeals": {
+    "title": "Recent Deals",
+    "viewAll": "View All Deals",
+    "empty": "No deals yet",
+    "columns": {
+      "company": "Company",
+      "stage": "Stage",
+      "value": "Value",
+      "buyer": "Buyer",
+      "updated": "Last Updated"
+    }
+  },
+  "activityFeed": {
+    "title": "Recent Activity",
+    "empty": "No recent activity",
+    "viewAll": "View All Activities"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "companies": "Companies",
+    "deals": "Deals",
+    "listings": "Listings",
+    "buyers": "Buyers",
+    "ndas": "NDAs",
+    "materials": "Materials",
+    "payments": "Payments",
+    "settings": "Settings"
+  },
+  "stages": {
+    "lead": "Lead",
+    "qualification": "Qualification",
+    "nda_signed": "NDA Signed",
+    "evaluation": "Evaluation",
+    "loi_submitted": "LOI Submitted",
+    "due_diligence": "Due Diligence",
+    "negotiation": "Negotiation",
+    "closed_won": "Closed Won",
+    "closed_lost": "Closed Lost"
+  }
+}
+

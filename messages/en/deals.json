@@ -1,0 +1,47 @@
+{
+  "title": "Deals Pipeline",
+  "subtitle": "Manage your M&A deal pipeline",
+  "newDeal": "New Deal",
+  "kanban": {
+    "noDeals": "No deals in this stage",
+    "moveHere": "Move here"
+  },
+  "card": {
+    "estimatedValue": "Estimated Value",
+    "buyer": "Buyer",
+    "updated": "Updated",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "daysAgo": "d ago",
+    "weeksAgo": "w ago"
+  },
+  "detail": {
+    "dealInformation": "Deal Information",
+    "estimatedValue": "Estimated Value",
+    "actualValue": "Actual Value",
+    "created": "Created",
+    "closed": "Closed",
+    "company": "Company",
+    "editDeal": "Edit Deal",
+    "progress": "Deal Progress",
+    "activities": "Activity Feed",
+    "documents": "Documents",
+    "noActivities": "No activities yet",
+    "noDocuments": "No documents yet",
+    "nda": "NDA",
+    "signed": "Signed",
+    "pending": "Pending"
+  },
+  "stages": {
+    "lead": "Lead",
+    "qualification": "Qualification",
+    "nda_signed": "NDA Signed",
+    "evaluation": "Evaluation",
+    "loi_submitted": "LOI Submitted",
+    "due_diligence": "Due Diligence",
+    "negotiation": "Negotiation",
+    "closed_won": "Closed Won",
+    "closed_lost": "Closed Lost"
+  }
+}
+

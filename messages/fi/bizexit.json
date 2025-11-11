@@ -1,0 +1,104 @@
+{
+  "hero": {
+    "badge": "Tekoäly-pohjainen yrityskauppa-alusta",
+    "title": "Myy Yrityksesi",
+    "titleHighlight": "Älykkäämmin & Nopeammin",
+    "description": "Automatisoi yrityskauppaprosessisi tekoälyn tuottamilla materiaaleilla, moniportaalijakelulla ja älykkaällä kauppaputken hallinnalla.",
+    "ctaPrimary": "Aloita Ilmaiseksi",
+    "ctaSecondary": "Varaa Demo",
+    "stats": {
+      "deals": "Tehtyä Kauppaa",
+      "value": "Kauppojen Kokonaisarvo",
+      "satisfaction": "Asiakastyytyväisyys"
+    },
+    "floatingCard1": "AI-materiaalit tunneissa",
+    "floatingCard2": "70% nopeampi prosessi"
+  },
+  "forWho": {
+    "title": "Rakennettu Kaikille Yrityskauppa-alalla",
+    "subtitle": "Myit, välitit tai ostit, BizExit tehostaa koko prosessin",
+    "sellers": {
+      "title": "Myyjille",
+      "description": "Hallitse yrityksesi myyntiä ammattimaisten materiaalien ja pätevien ostajien avulla",
+      "benefit1": "Tekoälyn tuottamat myyntimateriaalit (Teaser, IM, Pitch Deck)",
+      "benefit2": "Hallittu ostajien kvalifiointi ja NDA-prosessi",
+      "benefit3": "Läpinäkyvä kauppaputken seuranta",
+      "benefit4": "Menestyspalkkiomalli - menestymme kun sinä menestyt"
+    },
+    "brokers": {
+      "title": "Välittäjille",
+      "description": "Skaalaa yrityskauppatoimintaasi automaation ja tekoälyn avulla",
+      "benefit1": "Luo ammattimaiset materiaalit tunneissa, ei viikoissa",
+      "benefit2": "Julkaise useille portaaleille yhdestä paikasta",
+      "benefit3": "Automaattinen ostajahallinta ja NDA-työnkulku",
+      "benefit4": "Provisioiden seuranta ja maksujen automatisointi"
+    },
+    "buyers": {
+      "title": "Ostajille",
+      "description": "Löydä ja arvioi mahdollisuuksia nopeammin",
+      "benefit1": "Pääsy kuratoituihin yrityskohteisiin",
+      "benefit2": "Yhtenäinen tietoformaatti kaikissa kaupoissa",
+      "benefit3": "Turvallinen NDA-allekirjoitus välittömällä pääsyllä",
+      "benefit4": "Järjestetty due diligence -dokumenttivarasto"
+    }
+  },
+  "features": {
+    "title": "Kaikki Mitä Tarvitset Kauppojen Tekemiseen",
+    "subtitle": "Kattavat työkalut jokaiseen yrityskauppaprosessin vaiheeseen",
+    "ai": {
+      "title": "Tekoälymateriaali",
+      "description": "Luo ammattimaiset Teaserit, Information Memoranduumit ja Pitch Deckit tunneissa tekoälyn avulla"
+    },
+    "pipeline": {
+      "title": "Visuaalinen Kauppaputki",
+      "description": "Seuraa jokaista kauppaa leadista päätökseen intuitiivisella kanban-taululla"
+    },
+    "documents": {
+      "title": "Dokumenttihallinta",
+      "description": "Tallenna ja jaa dokumentteja turvallisesti roolipohjaisen pääsynhallinnan avulla"
+    },
+    "nda": {
+      "title": "NDA-hallinta",
+      "description": "Automaattinen NDA-työnkulku sähköisen allekirjoituksen integraatiolla ja porrastetulla tietojen pääsyllä"
+    },
+    "portals": {
+      "title": "Moniportaalijulkaisu",
+      "description": "Julkaise BizBuySelliin, Transfindoon ja muille portaaleille yhdestä alustasta"
+    },
+    "analytics": {
+      "title": "Analytiikka & Oivallukset",
+      "description": "Seuraa suorituskykyä, ostajien sitoutumista ja konversioprosentteja kaikissa kanavissa"
+    }
+  },
+  "howItWorks": {
+    "title": "Näin Se Toimii",
+    "subtitle": "Yritysprofiilista tehtyyn kauppaan 5 yksinkertaisessa vaiheessa",
+    "step1": {
+      "title": "Luo Yritysprofiili",
+      "description": "Syötä perustiedot ja lataa taloudelliset dokumentit. Tekoälymme poimii ja analysoi tiedot automaattisesti."
+    },
+    "step2": {
+      "title": "Tekoäly Tuottaa Materiaalit",
+      "description": "Tarkista ja muokkaa tekoälyn tuottamat Teaser, Information Memorandum ja Pitch Deck. Tee tarvittaessa muutoksia."
+    },
+    "step3": {
+      "title": "Julkaise Listaus",
+      "description": "Julkaise useille yritysmyyntiportaaleille yhdellä klikkauksella. Liidit kerätään ja kvalifioidaan automaattisesti."
+    },
+    "step4": {
+      "title": "Hallitse Ostajia",
+      "description": "Pätevät ostajat allekirjoittavat NDA:n ja saavat porrastetun pääsyn tietoihin. Seuraa kaikkia vuorovaikutuksia yhdessä paikassa."
+    },
+    "step5": {
+      "title": "Tee Kauppa",
+      "description": "Siirrä kauppoja putken läpi, hallitse due diligenceä ja tee kaupat luottavaisin mielin."
+    }
+  },
+  "cta": {
+    "title": "Valmis Muuttamaan Yrityskauppaprosessisi?",
+    "description": "Liity satojen välittäjien ja myyjien joukkoon, jotka ovat tehneet yli 2,5 miljardin euron kaupat BizExitin avulla",
+    "primaryButton": "Aloita Ilmainen Kokeilu",
+    "secondaryButton": "Varaa Demo"
+  }
+}
+

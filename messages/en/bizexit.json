@@ -1,0 +1,104 @@
+{
+  "hero": {
+    "badge": "AI-Powered M&A Platform",
+    "title": "Sell Your Business",
+    "titleHighlight": "Smarter & Faster",
+    "description": "Automate your M&A process with AI-generated materials, multi-portal syndication, and intelligent deal pipeline management.",
+    "ctaPrimary": "Get Started Free",
+    "ctaSecondary": "Book a Demo",
+    "stats": {
+      "deals": "Deals Completed",
+      "value": "Total Deal Value",
+      "satisfaction": "Client Satisfaction"
+    },
+    "floatingCard1": "AI Materials in Hours",
+    "floatingCard2": "70% Faster Process"
+  },
+  "forWho": {
+    "title": "Built for Everyone in M&A",
+    "subtitle": "Whether you're selling, brokering, or buying, BizExit streamlines the entire process",
+    "sellers": {
+      "title": "For Sellers",
+      "description": "Take control of your business exit with professional materials and qualified buyers",
+      "benefit1": "AI-generated sale materials (Teaser, IM, Pitch Deck)",
+      "benefit2": "Managed buyer qualification and NDA process",
+      "benefit3": "Transparent deal pipeline tracking",
+      "benefit4": "Success fee model - we succeed when you do"
+    },
+    "brokers": {
+      "title": "For Brokers",
+      "description": "Scale your M&A practice with automation and AI",
+      "benefit1": "Generate professional materials in hours, not weeks",
+      "benefit2": "Syndicate to multiple portals from one platform",
+      "benefit3": "Automated buyer management and NDA workflow",
+      "benefit4": "Commission tracking and payment automation"
+    },
+    "buyers": {
+      "title": "For Buyers",
+      "description": "Find and evaluate opportunities faster",
+      "benefit1": "Access curated business opportunities",
+      "benefit2": "Consistent information format across all deals",
+      "benefit3": "Secure NDA signing with immediate access",
+      "benefit4": "Organized due diligence document repository"
+    }
+  },
+  "features": {
+    "title": "Everything You Need to Close Deals",
+    "subtitle": "Comprehensive tools for every stage of the M&A process",
+    "ai": {
+      "title": "AI-Powered Materials",
+      "description": "Generate professional Teasers, Information Memorandums, and Pitch Decks in hours using AI"
+    },
+    "pipeline": {
+      "title": "Visual Deal Pipeline",
+      "description": "Track every deal from lead to close with our intuitive kanban board"
+    },
+    "documents": {
+      "title": "Document Management",
+      "description": "Securely store and share documents with role-based access control"
+    },
+    "nda": {
+      "title": "NDA Management",
+      "description": "Automated NDA workflow with e-signature integration and tiered information access"
+    },
+    "portals": {
+      "title": "Multi-Portal Syndication",
+      "description": "Publish to BizBuySell, Transfindo, and other portals from a single platform"
+    },
+    "analytics": {
+      "title": "Analytics & Insights",
+      "description": "Track performance, buyer engagement, and conversion rates across all channels"
+    }
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "subtitle": "From company profile to closed deal in 5 simple steps",
+    "step1": {
+      "title": "Create Company Profile",
+      "description": "Enter basic information and upload financial documents. Our AI extracts and analyzes the data automatically."
+    },
+    "step2": {
+      "title": "AI Generates Materials",
+      "description": "Review and customize AI-generated Teaser, Information Memorandum, and Pitch Deck. Make edits as needed."
+    },
+    "step3": {
+      "title": "Publish Listing",
+      "description": "Syndicate to multiple business sale portals with one click. Leads are automatically captured and qualified."
+    },
+    "step4": {
+      "title": "Manage Buyers",
+      "description": "Qualified buyers sign NDAs and get tiered access to information. Track all interactions in one place."
+    },
+    "step5": {
+      "title": "Close the Deal",
+      "description": "Move deals through your pipeline, manage due diligence, and close with confidence."
+    }
+  },
+  "cta": {
+    "title": "Ready to Transform Your M&A Process?",
+    "description": "Join hundreds of brokers and sellers who have closed over €2.5B in deals using BizExit",
+    "primaryButton": "Start Free Trial",
+    "secondaryButton": "Schedule Demo"
+  }
+}
+

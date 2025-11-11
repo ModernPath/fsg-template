@@ -1,0 +1,55 @@
+{
+  "title": "Instrumentpanel",
+  "welcome": "Välkommen tillbaka! Här är vad som händer med dina affärer.",
+  "noOrganization": {
+    "title": "Ingen Organisation",
+    "description": "Kontakta supporten för att ställa in din organisation."
+  },
+  "stats": {
+    "companies": "Företag",
+    "totalDeals": "Totalt Affärer",
+    "pipelineValue": "Pipeline-värde",
+    "activeDeals": "Aktiva Affärer",
+    "vsLastMonth": "vs förra månaden"
+  },
+  "recentDeals": {
+    "title": "Senaste Affärerna",
+    "viewAll": "Visa Alla Affärer",
+    "empty": "Inga affärer ännu",
+    "columns": {
+      "company": "Företag",
+      "stage": "Stadium",
+      "value": "Värde",
+      "buyer": "Köpare",
+      "updated": "Senast Uppdaterad"
+    }
+  },
+  "activityFeed": {
+    "title": "Senaste Aktivitet",
+    "empty": "Ingen senaste aktivitet",
+    "viewAll": "Visa Alla Aktiviteter"
+  },
+  "nav": {
+    "dashboard": "Instrumentpanel",
+    "companies": "Företag",
+    "deals": "Affärer",
+    "listings": "Annonser",
+    "buyers": "Köpare",
+    "ndas": "NDAs",
+    "materials": "Material",
+    "payments": "Betalningar",
+    "settings": "Inställningar"
+  },
+  "stages": {
+    "lead": "Lead",
+    "qualification": "Kvalificering",
+    "nda_signed": "NDA Signerad",
+    "evaluation": "Utvärdering",
+    "loi_submitted": "LOI Inlämnad",
+    "due_diligence": "Due Diligence",
+    "negotiation": "Förhandling",
+    "closed_won": "Affär Stängd",
+    "closed_lost": "Affär Förlorad"
+  }
+}
+

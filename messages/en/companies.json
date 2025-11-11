@@ -1,0 +1,34 @@
+{
+  "title": "Companies",
+  "subtitle": "Manage your company listings and deals",
+  "addCompany": "Add Company",
+  "table": {
+    "company": "Company",
+    "industry": "Industry",
+    "revenue": "Revenue",
+    "status": "Status",
+    "listings": "Listings",
+    "deals": "Deals",
+    "created": "Created",
+    "actions": "Actions"
+  },
+  "status": {
+    "draft": "Draft",
+    "review": "Review",
+    "active": "Active",
+    "under_offer": "Under Offer",
+    "sold": "Sold",
+    "archived": "Archived"
+  },
+  "filters": {
+    "all": "All",
+    "draft": "Draft",
+    "active": "Active",
+    "sold": "Sold"
+  },
+  "empty": "No companies yet",
+  "view": "View Details",
+  "edit": "Edit",
+  "delete": "Delete"
+}
+

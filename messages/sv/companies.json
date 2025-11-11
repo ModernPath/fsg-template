@@ -1,0 +1,34 @@
+{
+  "title": "Företag",
+  "subtitle": "Hantera dina företagsannonser och affärer",
+  "addCompany": "Lägg Till Företag",
+  "table": {
+    "company": "Företag",
+    "industry": "Bransch",
+    "revenue": "Omsättning",
+    "status": "Status",
+    "listings": "Annonser",
+    "deals": "Affärer",
+    "created": "Skapad",
+    "actions": "Åtgärder"
+  },
+  "status": {
+    "draft": "Utkast",
+    "review": "Granskning",
+    "active": "Aktiv",
+    "under_offer": "Under Erbjudande",
+    "sold": "Såld",
+    "archived": "Arkiverad"
+  },
+  "filters": {
+    "all": "Alla",
+    "draft": "Utkast",
+    "active": "Aktiv",
+    "sold": "Såld"
+  },
+  "empty": "Inga företag ännu",
+  "view": "Visa Detaljer",
+  "edit": "Redigera",
+  "delete": "Ta Bort"
+}
+

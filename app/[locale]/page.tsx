@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import { generateLocalizedMetadata } from '@/utils/metadata'
-import HomePage from '@/components/pages/home/index'
+import BizExitLanding from '@/components/pages/home/BizExitLanding'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,18 +13,18 @@ interface Props {
 
 export async function generateMetadata({ params }: Props) {
   const { locale } = await params
-  const t = await getTranslations('Index')
-  const metadata = await generateLocalizedMetadata(locale, 'Index', {
-    title: t('meta.title'),
-    description: t('meta.description'),
+  const t = await getTranslations('BizExit')
+  const metadata = await generateLocalizedMetadata(locale, 'BizExit', {
+    title: 'BizExit - AI-Powered M&A Platform',
+    description: t('hero.description'),
     type: 'website',
     canonicalUrl: '/',
-    image: '/images/og/home.webp'
+    image: '/images/og/bizexit-home.webp'
   })
   return metadata
 }
 
 export default async function Page({ params }: Props) {
   const { locale } = await params
-  return <HomePage params={{ locale }} />
+  return <BizExitLanding params={{ locale }} />
 }

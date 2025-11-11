@@ -17,5 +17,7 @@ export const availableNamespaces: string[] = [
   "Navigation",
   "Presentations",
   "Privacy",
-  "Profile"
+  "Profile",
+  "bizexit",
+  "dashboard"
 ];

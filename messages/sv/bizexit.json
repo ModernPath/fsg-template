@@ -1,0 +1,104 @@
+{
+  "hero": {
+    "badge": "AI-driven M&A-plattform",
+    "title": "Sälj Ditt Företag",
+    "titleHighlight": "Smartare & Snabbare",
+    "description": "Automatisera din M&A-process med AI-genererat material, flerportalsyndikering och intelligent affärspipelinehantering.",
+    "ctaPrimary": "Kom Igång Gratis",
+    "ctaSecondary": "Boka Demo",
+    "stats": {
+      "deals": "Genomförda Affärer",
+      "value": "Totalt Affärsvärde",
+      "satisfaction": "Kundnöjdhet"
+    },
+    "floatingCard1": "AI-material på timmar",
+    "floatingCard2": "70% snabbare process"
+  },
+  "forWho": {
+    "title": "Byggd för Alla i M&A",
+    "subtitle": "Oavsett om du säljer, förmedlar eller köper, effektiviserar BizExit hela processen",
+    "sellers": {
+      "title": "För Säljare",
+      "description": "Ta kontroll över din företagsförsäljning med professionellt material och kvalificerade köpare",
+      "benefit1": "AI-genererat försäljningsmaterial (Teaser, IM, Pitch Deck)",
+      "benefit2": "Hanterad köparkvalificering och NDA-process",
+      "benefit3": "Transparent affärspipelinespårning",
+      "benefit4": "Framgångsarvode - vi lyckas när du lyckas"
+    },
+    "brokers": {
+      "title": "För Mäklare",
+      "description": "Skala din M&A-verksamhet med automatisering och AI",
+      "benefit1": "Generera professionellt material på timmar, inte veckor",
+      "benefit2": "Syndikera till flera portaler från en plattform",
+      "benefit3": "Automatiserad köparhantering och NDA-arbetsflöde",
+      "benefit4": "Provisionsspårning och betalningsautomatisering"
+    },
+    "buyers": {
+      "title": "För Köpare",
+      "description": "Hitta och utvärdera möjligheter snabbare",
+      "benefit1": "Tillgång till kurerade affärsmöjligheter",
+      "benefit2": "Konsekvent informationsformat över alla affärer",
+      "benefit3": "Säker NDA-signering med omedelbar åtkomst",
+      "benefit4": "Organiserad due diligence-dokumentarkiv"
+    }
+  },
+  "features": {
+    "title": "Allt Du Behöver för att Stänga Affärer",
+    "subtitle": "Omfattande verktyg för varje steg i M&A-processen",
+    "ai": {
+      "title": "AI-drivet Material",
+      "description": "Generera professionella Teasers, Information Memorandums och Pitch Decks på timmar med AI"
+    },
+    "pipeline": {
+      "title": "Visuell Affärspipeline",
+      "description": "Spåra varje affär från lead till avslut med vår intuitiva kanban-tavla"
+    },
+    "documents": {
+      "title": "Dokumenthantering",
+      "description": "Lagra och dela dokument säkert med rollbaserad åtkomstkontroll"
+    },
+    "nda": {
+      "title": "NDA-hantering",
+      "description": "Automatiserat NDA-arbetsflöde med e-signaturintegration och stegvis informationsåtkomst"
+    },
+    "portals": {
+      "title": "Flerportalssyndikering",
+      "description": "Publicera till BizBuySell, Transfindo och andra portaler från en enda plattform"
+    },
+    "analytics": {
+      "title": "Analys & Insikter",
+      "description": "Spåra prestanda, köparengagemang och konverteringsfrekvenser över alla kanaler"
+    }
+  },
+  "howItWorks": {
+    "title": "Så Fungerar Det",
+    "subtitle": "Från företagsprofil till avslutad affär i 5 enkla steg",
+    "step1": {
+      "title": "Skapa Företagsprofil",
+      "description": "Ange grundläggande information och ladda upp finansiella dokument. Vår AI extraherar och analyserar data automatiskt."
+    },
+    "step2": {
+      "title": "AI Genererar Material",
+      "description": "Granska och anpassa AI-genererad Teaser, Information Memorandum och Pitch Deck. Gör ändringar vid behov."
+    },
+    "step3": {
+      "title": "Publicera Annons",
+      "description": "Syndikera till flera företagsförsäljningsportaler med ett klick. Leads fångas och kvalificeras automatiskt."
+    },
+    "step4": {
+      "title": "Hantera Köpare",
+      "description": "Kvalificerade köpare signerar NDA och får stegvis tillgång till information. Spåra alla interaktioner på ett ställe."
+    },
+    "step5": {
+      "title": "Stäng Affären",
+      "description": "Flytta affärer genom din pipeline, hantera due diligence och stäng med förtroende."
+    }
+  },
+  "cta": {
+    "title": "Redo att Transformera Din M&A-process?",
+    "description": "Gå med hundratals mäklare och säljare som har stängt över 2,5 miljarder euro i affärer med BizExit",
+    "primaryButton": "Starta Gratis Provperiod",
+    "secondaryButton": "Boka Demo"
+  }
+}
+

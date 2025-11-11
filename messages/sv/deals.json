@@ -1,0 +1,47 @@
+{
+  "title": "Affärspipeline",
+  "subtitle": "Hantera din M&A-affärspipeline",
+  "newDeal": "Ny Affär",
+  "kanban": {
+    "noDeals": "Inga affärer i detta stadium",
+    "moveHere": "Flytta hit"
+  },
+  "card": {
+    "estimatedValue": "Uppskattat Värde",
+    "buyer": "Köpare",
+    "updated": "Uppdaterad",
+    "today": "Idag",
+    "yesterday": "Igår",
+    "daysAgo": "d sedan",
+    "weeksAgo": "v sedan"
+  },
+  "detail": {
+    "dealInformation": "Affärsinformation",
+    "estimatedValue": "Uppskattat Värde",
+    "actualValue": "Faktiskt Värde",
+    "created": "Skapad",
+    "closed": "Stängd",
+    "company": "Företag",
+    "editDeal": "Redigera Affär",
+    "progress": "Affärsframsteg",
+    "activities": "Aktivitetsflöde",
+    "documents": "Dokument",
+    "noActivities": "Inga aktiviteter ännu",
+    "noDocuments": "Inga dokument ännu",
+    "nda": "NDA",
+    "signed": "Signerad",
+    "pending": "Väntande"
+  },
+  "stages": {
+    "lead": "Lead",
+    "qualification": "Kvalificering",
+    "nda_signed": "NDA Signerad",
+    "evaluation": "Utvärdering",
+    "loi_submitted": "LOI Inlämnad",
+    "due_diligence": "Due Diligence",
+    "negotiation": "Förhandling",
+    "closed_won": "Affär Stängd",
+    "closed_lost": "Affär Förlorad"
+  }
+}
+

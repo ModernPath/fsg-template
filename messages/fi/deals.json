@@ -1,0 +1,47 @@
+{
+  "title": "Kauppaputki",
+  "subtitle": "Hallitse yrityskauppaputkeasi",
+  "newDeal": "Uusi Kauppa",
+  "kanban": {
+    "noDeals": "Ei kauppoja tässä vaiheessa",
+    "moveHere": "Siirrä tänne"
+  },
+  "card": {
+    "estimatedValue": "Arvioitu Arvo",
+    "buyer": "Ostaja",
+    "updated": "Päivitetty",
+    "today": "Tänään",
+    "yesterday": "Eilen",
+    "daysAgo": "pv sitten",
+    "weeksAgo": "vko sitten"
+  },
+  "detail": {
+    "dealInformation": "Kaupan Tiedot",
+    "estimatedValue": "Arvioitu Arvo",
+    "actualValue": "Todellinen Arvo",
+    "created": "Luotu",
+    "closed": "Suljettu",
+    "company": "Yritys",
+    "editDeal": "Muokkaa Kauppaa",
+    "progress": "Kaupan Eteneminen",
+    "activities": "Toimintasyöte",
+    "documents": "Dokumentit",
+    "noActivities": "Ei vielä toimintoja",
+    "noDocuments": "Ei vielä dokumentteja",
+    "nda": "Salassapitosopimus",
+    "signed": "Allekirjoitettu",
+    "pending": "Odottaa"
+  },
+  "stages": {
+    "lead": "Liidi",
+    "qualification": "Kvalifiointi",
+    "nda_signed": "NDA Allekirjoitettu",
+    "evaluation": "Arviointi",
+    "loi_submitted": "LOI Lähetetty",
+    "due_diligence": "Due Diligence",
+    "negotiation": "Neuvottelu",
+    "closed_won": "Kauppa Tehty",
+    "closed_lost": "Kauppa Menetetty"
+  }
+}
+

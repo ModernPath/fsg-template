@@ -1,0 +1,34 @@
+{
+  "title": "Yritykset",
+  "subtitle": "Hallitse yrityslistauksiasi ja kauppojasi",
+  "addCompany": "Lisää Yritys",
+  "table": {
+    "company": "Yritys",
+    "industry": "Toimiala",
+    "revenue": "Liikevaihto",
+    "status": "Tila",
+    "listings": "Listaukset",
+    "deals": "Kaupat",
+    "created": "Luotu",
+    "actions": "Toiminnot"
+  },
+  "status": {
+    "draft": "Luonnos",
+    "review": "Tarkistuksessa",
+    "active": "Aktiivinen",
+    "under_offer": "Tarjouksen Alla",
+    "sold": "Myyty",
+    "archived": "Arkistoitu"
+  },
+  "filters": {
+    "all": "Kaikki",
+    "draft": "Luonnos",
+    "active": "Aktiivinen",
+    "sold": "Myyty"
+  },
+  "empty": "Ei vielä yrityksiä",
+  "view": "Näytä Tiedot",
+  "edit": "Muokkaa",
+  "delete": "Poista"
+}
+
