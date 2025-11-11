@@ -30,6 +30,14 @@
   "empty": "Inga företag ännu",
   "view": "Visa Detaljer",
   "edit": "Redigera",
-  "delete": "Ta Bort"
+  "delete": "Ta Bort",
+  "deleteSuccess": "Företag raderat",
+  "deleteSuccessDescription": "Företaget {name} har raderats framgångsrikt.",
+  "deleteError": "Raderingsfel",
+  "deleteErrorDescription": "Misslyckades att radera företaget. Försök igen.",
+  "deleteConfirmTitle": "Bekräfta radering",
+  "deleteConfirmDescription": "Är du säker på att du vill radera företaget {name}? Denna åtgärd kan inte ångras.",
+  "deleteConfirm": "Radera företag",
+  "cancel": "Avbryt"
 }
 

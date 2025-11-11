@@ -30,6 +30,14 @@
   "empty": "Ei vielä yrityksiä",
   "view": "Näytä Tiedot",
   "edit": "Muokkaa",
-  "delete": "Poista"
+  "delete": "Poista",
+  "deleteSuccess": "Yritys poistettu",
+  "deleteSuccessDescription": "Yritys {name} on poistettu onnistuneesti.",
+  "deleteError": "Virhe poistossa",
+  "deleteErrorDescription": "Yrityksen poisto epäonnistui. Yritä uudelleen.",
+  "deleteConfirmTitle": "Vahvista poisto",
+  "deleteConfirmDescription": "Haluatko varmasti poistaa yrityksen {name}? Tätä toimintoa ei voi perua.",
+  "deleteConfirm": "Poista yritys",
+  "cancel": "Peruuta"
 }
 

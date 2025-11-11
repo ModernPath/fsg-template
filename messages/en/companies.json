@@ -30,6 +30,14 @@
   "empty": "No companies yet",
   "view": "View Details",
   "edit": "Edit",
-  "delete": "Delete"
+  "delete": "Delete",
+  "deleteSuccess": "Company deleted",
+  "deleteSuccessDescription": "Company {name} has been deleted successfully.",
+  "deleteError": "Delete error",
+  "deleteErrorDescription": "Failed to delete company. Please try again.",
+  "deleteConfirmTitle": "Confirm deletion",
+  "deleteConfirmDescription": "Are you sure you want to delete company {name}? This action cannot be undone.",
+  "deleteConfirm": "Delete company",
+  "cancel": "Cancel"
 }
 

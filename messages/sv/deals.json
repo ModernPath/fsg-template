@@ -43,6 +43,16 @@
     "negotiation": "Förhandling",
     "closed_won": "Affär Stängd",
     "closed_lost": "Affär Förlorad"
-  }
+  },
+  "edit": "Redigera",
+  "cancelDeal": "Avbryt affär",
+  "cancel": "Avbryt",
+  "cancelSuccess": "Affär avbruten",
+  "cancelSuccessDescription": "Affären ({name}) har avbrutits framgångsrikt.",
+  "cancelError": "Avbrottsfel",
+  "cancelErrorDescription": "Misslyckades att avbryta affären. Försök igen.",
+  "cancelConfirmTitle": "Bekräfta avbrott",
+  "cancelConfirmDescription": "Är du säker på att du vill avbryta affären ({name})? Denna åtgärd kan inte ångras.",
+  "cancelConfirm": "Avbryt affär"
 }
 

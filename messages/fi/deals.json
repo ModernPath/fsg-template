@@ -43,6 +43,16 @@
     "negotiation": "Neuvottelu",
     "closed_won": "Kauppa Tehty",
     "closed_lost": "Kauppa Menetetty"
-  }
+  },
+  "edit": "Muokkaa",
+  "cancelDeal": "Peruuta kauppa",
+  "cancel": "Peruuta",
+  "cancelSuccess": "Kauppa peruutettu",
+  "cancelSuccessDescription": "Kauppa ({name}) on peruutettu onnistuneesti.",
+  "cancelError": "Virhe peruutuksessa",
+  "cancelErrorDescription": "Kaupan peruutus epäonnistui. Yritä uudelleen.",
+  "cancelConfirmTitle": "Vahvista peruutus",
+  "cancelConfirmDescription": "Haluatko varmasti peruuttaa kaupan ({name})? Tätä toimintoa ei voi perua.",
+  "cancelConfirm": "Peruuta kauppa"
 }
 

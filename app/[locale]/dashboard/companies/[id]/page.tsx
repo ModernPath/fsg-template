@@ -7,6 +7,7 @@ import { createClient } from "@/utils/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { DeleteCompanyButton } from "@/components/companies/DeleteCompanyButton";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -16,7 +17,6 @@ import {
   Calendar,
   Users,
   Globe,
-  Trash2,
 } from "lucide-react";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
@@ -113,15 +113,16 @@ export default async function CompanyDetailPage({ params }: Props) {
             <Link href={`/${locale}/dashboard/companies/${id}/edit`}>
               <Button variant="outline">
                 <Edit className="w-4 h-4 mr-2" />
-                Edit
+                {t("edit")}
               </Button>
             </Link>
           )}
           {canDelete && (
-            <Button variant="destructive">
-              <Trash2 className="w-4 h-4 mr-2" />
-              Delete
-            </Button>
+            <DeleteCompanyButton
+              companyId={id}
+              companyName={company.name}
+              locale={locale}
+            />
           )}
         </div>
       </div>

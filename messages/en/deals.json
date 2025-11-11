@@ -43,6 +43,16 @@
     "negotiation": "Negotiation",
     "closed_won": "Closed Won",
     "closed_lost": "Closed Lost"
-  }
+  },
+  "edit": "Edit",
+  "cancelDeal": "Cancel Deal",
+  "cancel": "Cancel",
+  "cancelSuccess": "Deal cancelled",
+  "cancelSuccessDescription": "Deal ({name}) has been cancelled successfully.",
+  "cancelError": "Cancel error",
+  "cancelErrorDescription": "Failed to cancel deal. Please try again.",
+  "cancelConfirmTitle": "Confirm cancellation",
+  "cancelConfirmDescription": "Are you sure you want to cancel deal ({name})? This action cannot be undone.",
+  "cancelConfirm": "Cancel deal"
 }
 

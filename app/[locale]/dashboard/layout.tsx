@@ -1,55 +1,38 @@
 /**
  * BizExit Dashboard Layout
- * Main layout for authenticated users with sidebar navigation
+ * Server component wrapper for dashboard layout
  */
 
-import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
-import { DashboardNav } from "@/components/dashboard/DashboardNav";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { Metadata } from "next";
+import { generateLocalizedMetadata } from "@/utils/metadata";
+import DashboardLayoutClient from "./DashboardLayoutClient";
 
-export default async function DashboardLayout({
-  children,
-  params,
-}: {
+export const dynamic = "force-dynamic";
+
+interface Props {
+  params: Promise<{
+    locale: string;
+  }>;
   children: React.ReactNode;
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
-  const supabase = await createClient();
-
-  // Check authentication
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect(`/${locale}/auth/sign-in`);
-  }
-
-  // Get user profile and organization
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*, organization:organizations(*)")
-    .eq("id", user.id)
-    .single();
-
-  return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Sidebar Navigation */}
-      <DashboardNav locale={locale} profile={profile} />
-
-      {/* Main Content */}
-      <div className="flex flex-col flex-1 overflow-hidden">
-        {/* Header */}
-        <DashboardHeader user={user} profile={profile} locale={locale} />
-
-        {/* Page Content */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-gray-900">
-          <div className="container mx-auto px-6 py-8">{children}</div>
-        </main>
-      </div>
-    </div>
-  );
 }
 
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  return generateLocalizedMetadata(locale, "Dashboard", {
+    title: "Dashboard",
+    description: "BizExit M&A Platform Dashboard",
+    type: "website",
+    canonicalUrl: "/dashboard",
+    noindex: true, // Dashboard pages should not be indexed
+  });
+}
+
+// Server component wrapper
+export default async function DashboardLayout({ children, params }: Props) {
+  const { locale } = await params;
+  return (
+    <DashboardLayoutClient params={{ locale }}>
+      {children}
+    </DashboardLayoutClient>
+  );
+}

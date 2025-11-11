@@ -7,8 +7,9 @@ import { createClient } from "@/utils/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { CancelDealButton } from "@/components/deals/CancelDealButton";
 import Link from "next/link";
-import { ArrowLeft, Edit, Trash2 } from "lucide-react";
+import { ArrowLeft, Edit } from "lucide-react";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { DealHeader } from "@/components/deals/DealHeader";
@@ -104,15 +105,16 @@ export default async function DealDetailPage({ params }: Props) {
             <Link href={`/${locale}/dashboard/deals/${id}/edit`}>
               <Button variant="outline">
                 <Edit className="w-4 h-4 mr-2" />
-                Edit
+                {t("edit")}
               </Button>
             </Link>
           )}
           {canDelete && (
-            <Button variant="destructive">
-              <Trash2 className="w-4 h-4 mr-2" />
-              Cancel Deal
-            </Button>
+            <CancelDealButton
+              dealId={id}
+              companyName={deal.companies?.name || "Deal"}
+              locale={locale}
+            />
           )}
         </div>
       </div>
