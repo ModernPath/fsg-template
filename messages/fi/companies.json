@@ -38,6 +38,35 @@
   "deleteConfirmTitle": "Vahvista poisto",
   "deleteConfirmDescription": "Haluatko varmasti poistaa yrityksen {name}? Tätä toimintoa ei voi perua.",
   "deleteConfirm": "Poista yritys",
-  "cancel": "Peruuta"
+  "cancel": "Peruuta",
+  "aiAssistant": {
+    "title": "AI-Avustaja",
+    "description": "Anna tekoälyn auttaa sinua luomaan houkutteleva listaus ja määrittämään oikea hinta",
+    "optimizeListing": "Optimoi Listaus",
+    "optimizing": "Optimoidaan...",
+    "suggestValuation": "Ehdota Arvonmääritys",
+    "analyzing": "Analysoidaan...",
+    "generateTeaser": "Luo Teaser-dokumentti",
+    "generating": "Luodaan...",
+    "identifyBuyers": "Tunnista Kohdeostajaaat",
+    "identifying": "Tunnistetaan...",
+    "missingInfo": "Puuttuvia tietoja",
+    "missingInfoDesc": "Täytä ensin yrityksen nimi ja toimiala",
+    "missingFinancials": "Puuttuvat taloudelliset tiedot",
+    "missingFinancialsDesc": "Täytä liikevaihto ja EBITDA arvonmääritystä varten",
+    "listingOptimized": "✨ Listaus optimoitu!",
+    "listingOptimizedDesc": "Sovellettiin {count} kohokohtaa ja SEO-optimointia",
+    "valuationSuggested": "💰 Arvonmääritys ehdotettu",
+    "valuationSuggestedDesc": "Hintahaarukka: €{low} - €{high}",
+    "teaserGenerated": "📄 Teaser-dokumentti luotu",
+    "teaserGeneratedDesc": "Markkinointidokumentti on luotu",
+    "buyersIdentified": "🎯 Kohdeostajaaat tunnistettu",
+    "buyersIdentifiedDesc": "Löydettiin {count} ihanteellista ostajaprofiilia",
+    "error": "Virhe",
+    "optimizeFailed": "Optimointi epäonnistui",
+    "valuationFailed": "Arvonmääritys epäonnistui",
+    "teaserFailed": "Teaser-dokumentin luonti epäonnistui",
+    "buyersFailed": "Ostajien tunnistus epäonnistui"
+  }
 }
 
