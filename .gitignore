@@ -28,6 +28,7 @@ yarn-error.log*
 # local env files
 .env*.local
 .env.production
+.env.test
 .env
 
 # vercel
@@ -56,3 +57,12 @@ dist/tools/
 
 # Ignore Vertex API service account key in root
 /vertex-ai-service-account.json
+# Development logs
+*.log
+dev.log
+dev-*.log
+next-dev.log
+bug-hunter-*.log
+
+# Scraper debug files
+/debug-scraper
