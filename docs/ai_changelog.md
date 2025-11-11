@@ -2,6 +2,103 @@
 
 ## Recent Changes
 
+### 2025-11-11 - Detail Pages & Navigation Flow
+
+**Complete view-only pages and navigation improvements:**
+
+#### Detail Pages (2 new files):
+
+**1. Company Detail** (`app/[locale]/dashboard/companies/[id]/page.tsx`):
+- Complete company information display
+- Header with logo, name, legal name, status badge
+- Quick info row: industry, location, founded year, employees
+- Website link with external icon
+- Full description section
+- **Financial Information Section:**
+  - Annual revenue with year
+  - EBITDA with margin percentage
+  - Asking price with EBITDA multiple
+  - Responsive 3-column grid
+- **Related Deals** (if any):
+  - List with deal stage and status
+  - Estimated value display
+  - Links to deal detail pages
+- **Business Details sidebar:**
+  - Business ID
+  - Owner type
+- **Activity sidebar:**
+  - Created date
+  - Last updated date
+- Edit and Delete buttons (role-based permissions)
+- Back navigation to companies list
+
+**2. Deal Detail** (`app/[locale]/dashboard/deals/[id]/page.tsx`):
+- Full deal information with existing components
+- Uses: DealHeader, DealTimeline, DealActivities, DealDocuments
+- **Left Column (2/3 width):**
+  - Deal timeline visualization
+  - Deal information card (company link, buyer, value, close date, notes)
+  - Activity feed
+- **Right Column (1/3 width - Sidebar):**
+  - Quick stats card (stage, status, type, created date)
+  - NDAs list with status badges
+  - Payments list with amounts and status
+  - Documents section
+- Company name links to company detail
+- Edit and Cancel buttons (role-based permissions)
+- Back navigation to deals list
+
+#### Create Page Updates (2 files):
+
+**Companies Create:**
+- Removed `organizationId` and `locale` props
+- Now uses: `<CompanyForm mode="create" />`
+- Added white card wrapper around form
+- Simplified component structure
+
+**Deals Create:**
+- Updated buyers query to use `buyer_profiles` table
+- Fixed company query to filter by active status
+- Pre-selection support via `initialData` prop
+- Now uses: `<DealForm mode="create" companies={...} buyers={...} />`
+- Added white card wrapper around form
+- Conditional initialData for company preselection
+
+#### Navigation & UX:
+
+**Companies List:**
+- View icon (Eye) - links to `/dashboard/companies/[id]`
+- Edit icon (Pencil) - links to `/dashboard/companies/[id]/edit`
+- Already implemented in CompaniesTable
+
+**Deals List:**
+- DealCard clickable - links to `/dashboard/deals/[id]`
+- Hover effect for better UX
+- Already implemented
+
+**Detail Pages:**
+- Back button to list pages
+- Edit button (if permitted)
+- Delete/Cancel button (if permitted)
+- Breadcrumb-style navigation
+
+#### Features:
+- ✅ Full read-only detail views
+- ✅ Financial metrics visualization
+- ✅ Related data display (deals, NDAs, payments)
+- ✅ Role-based action buttons
+- ✅ Organization validation
+- ✅ Proper redirects for unauthorized access
+- ✅ External link icons
+- ✅ Status badges with colors
+- ✅ Responsive layouts (3-column to 1-column)
+- ✅ Professional data formatting (currency, dates, percentages)
+
+#### Files Created/Updated: 4
+- 2 detail page components
+- 2 create page updates
+- 589 lines of code
+
 ### 2025-11-11 - Edit Pages & i18n Translations
 
 **Added edit functionality and comprehensive translations:**
