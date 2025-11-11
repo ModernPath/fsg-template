@@ -1,24 +1,28 @@
 /**
  * Deal Detail Page
- * View and manage individual deal details
+ * View deal information, timeline, and activities
  */
 
 import { createClient } from "@/utils/supabase/server";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+import { ArrowLeft, Edit, Trash2 } from "lucide-react";
+import { redirect } from "next/navigation";
 import { DealHeader } from "@/components/deals/DealHeader";
 import { DealTimeline } from "@/components/deals/DealTimeline";
 import { DealActivities } from "@/components/deals/DealActivities";
 import { DealDocuments } from "@/components/deals/DealDocuments";
-import { notFound } from "next/navigation";
 
-interface DealPageProps {
+interface Props {
   params: Promise<{
-    id: string;
     locale: string;
+    id: string;
   }>;
 }
 
-export default async function DealPage({ params }: DealPageProps) {
-  const { id, locale } = await params;
+export default async function DealDetailPage({ params }: Props) {
+  const { locale, id } = await params;
   const supabase = await createClient();
 
   // Get user context
@@ -27,7 +31,7 @@ export default async function DealPage({ params }: DealPageProps) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return null;
+    redirect(`/${locale}/login`);
   }
 
   const { data: profile } = await supabase
@@ -37,7 +41,7 @@ export default async function DealPage({ params }: DealPageProps) {
     .single();
 
   if (!profile?.organization_id) {
-    return null;
+    redirect(`/${locale}/dashboard`);
   }
 
   // Fetch deal with all related data
@@ -46,52 +50,15 @@ export default async function DealPage({ params }: DealPageProps) {
     .select(
       `
       *,
-      companies(
-        id,
-        name,
-        industry,
-        description,
-        logo_url,
-        website,
-        annual_revenue,
-        annual_ebitda,
-        employees_count
+      companies(*),
+      buyers:buyer_profiles(*),
+      stages:deal_stages(*),
+      activities:deal_activities(
+        *,
+        user:profiles(full_name, email)
       ),
-      buyer:profiles!deals_buyer_id_fkey(
-        id,
-        full_name,
-        email,
-        avatar_url
-      ),
-      deal_stages(
-        id,
-        stage,
-        entered_at,
-        exited_at,
-        notes
-      ),
-      deal_activities(
-        id,
-        activity_type,
-        description,
-        created_at,
-        created_by,
-        metadata
-      ),
-      ndas(
-        id,
-        status,
-        signed_at,
-        document_url
-      ),
-      payments(
-        id,
-        amount,
-        type,
-        status,
-        due_date,
-        paid_at
-      )
+      ndas(*),
+      payments(*)
     `,
     )
     .eq("id", id)
@@ -99,110 +66,261 @@ export default async function DealPage({ params }: DealPageProps) {
     .single();
 
   if (error || !deal) {
-    console.error("Error fetching deal:", error);
-    notFound();
+    redirect(`/${locale}/dashboard/deals`);
   }
+
+  // Can edit/delete based on role
+  const canEdit = ["seller", "broker", "admin", "partner"].includes(
+    profile.role.toLowerCase(),
+  );
+  const canDelete = ["admin", "broker"].includes(profile.role.toLowerCase());
 
   return (
     <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Link href={`/${locale}/dashboard/deals`}>
+            <Button variant="ghost" size="sm">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Deals
+            </Button>
+          </Link>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {canEdit && (
+            <Link href={`/${locale}/dashboard/deals/${id}/edit`}>
+              <Button variant="outline">
+                <Edit className="w-4 h-4 mr-2" />
+                Edit
+              </Button>
+            </Link>
+          )}
+          {canDelete && (
+            <Button variant="destructive">
+              <Trash2 className="w-4 h-4 mr-2" />
+              Cancel Deal
+            </Button>
+          )}
+        </div>
+      </div>
+
       {/* Deal Header */}
-      <DealHeader deal={deal} locale={locale} />
+      <DealHeader deal={deal} />
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column - Main Info */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Stage Timeline */}
-          <DealTimeline
-            currentStage={deal.current_stage}
-            stages={deal.deal_stages || []}
-          />
+          {/* Deal Timeline */}
+          <DealTimeline stages={deal.stages || []} currentStage={deal.stage} />
 
-          {/* Activities */}
-          <DealActivities
-            activities={deal.deal_activities || []}
-            dealId={deal.id}
-          />
-        </div>
-
-        {/* Right Column - Sidebar */}
-        <div className="space-y-6">
-          {/* Deal Info Card */}
+          {/* Deal Information */}
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
               Deal Information
-            </h3>
-            <dl className="space-y-3">
+            </h2>
+
+            <dl className="space-y-4">
+              {/* Company */}
               <div>
-                <dt className="text-sm text-gray-600 dark:text-gray-400">
-                  Estimated Value
+                <dt className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                  Company
                 </dt>
-                <dd className="text-lg font-semibold text-gray-900 dark:text-white">
-                  €{Number(deal.estimated_value).toLocaleString()}
+                <dd>
+                  <Link
+                    href={`/${locale}/dashboard/companies/${deal.companies.id}`}
+                    className="text-blue-600 hover:text-blue-700 font-medium"
+                  >
+                    {deal.companies.name}
+                  </Link>
                 </dd>
               </div>
-              {deal.actual_value && (
+
+              {/* Buyer */}
+              {deal.buyers && (
                 <div>
-                  <dt className="text-sm text-gray-600 dark:text-gray-400">
-                    Actual Value
+                  <dt className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                    Buyer
                   </dt>
-                  <dd className="text-lg font-semibold text-gray-900 dark:text-white">
-                    €{Number(deal.actual_value).toLocaleString()}
+                  <dd className="font-medium text-gray-900 dark:text-white">
+                    {deal.buyers.company_name}
                   </dd>
                 </div>
               )}
-              <div>
-                <dt className="text-sm text-gray-600 dark:text-gray-400">
-                  Created
-                </dt>
-                <dd className="text-sm text-gray-900 dark:text-white">
-                  {new Date(deal.created_at).toLocaleDateString()}
-                </dd>
-              </div>
-              {deal.closed_at && (
+
+              {/* Estimated Value */}
+              {deal.estimated_value && (
                 <div>
-                  <dt className="text-sm text-gray-600 dark:text-gray-400">
-                    Closed
+                  <dt className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                    Estimated Value
                   </dt>
-                  <dd className="text-sm text-gray-900 dark:text-white">
-                    {new Date(deal.closed_at).toLocaleDateString()}
+                  <dd className="text-2xl font-bold text-green-600 dark:text-green-400">
+                    €{(deal.estimated_value / 1000000).toFixed(1)}M
+                  </dd>
+                </div>
+              )}
+
+              {/* Expected Close Date */}
+              {deal.expected_close_date && (
+                <div>
+                  <dt className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                    Expected Close Date
+                  </dt>
+                  <dd className="font-medium text-gray-900 dark:text-white">
+                    {new Date(deal.expected_close_date).toLocaleDateString()}
+                  </dd>
+                </div>
+              )}
+
+              {/* Notes */}
+              {deal.notes && (
+                <div>
+                  <dt className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                    Notes
+                  </dt>
+                  <dd className="text-gray-900 dark:text-white whitespace-pre-wrap">
+                    {deal.notes}
                   </dd>
                 </div>
               )}
             </dl>
           </div>
 
-          {/* Company Info Card */}
+          {/* Activities */}
+          <DealActivities activities={deal.activities || []} />
+        </div>
+
+        {/* Right Column - Sidebar */}
+        <div className="space-y-6">
+          {/* Quick Stats */}
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Company
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
+              Quick Stats
             </h3>
-            <div className="flex items-start gap-3">
-              {deal.companies.logo_url ? (
-                <img
-                  src={deal.companies.logo_url}
-                  alt={deal.companies.name}
-                  className="w-12 h-12 rounded object-cover"
-                />
-              ) : (
-                <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded" />
-              )}
-              <div className="flex-1 min-w-0">
-                <h4 className="font-medium text-gray-900 dark:text-white">
-                  {deal.companies.name}
-                </h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {deal.companies.industry}
-                </p>
+            <dl className="space-y-3">
+              <div>
+                <dt className="text-sm text-gray-600 dark:text-gray-400">
+                  Stage
+                </dt>
+                <dd className="mt-1">
+                  <Badge variant="default">{deal.stage}</Badge>
+                </dd>
               </div>
-            </div>
+              <div>
+                <dt className="text-sm text-gray-600 dark:text-gray-400">
+                  Status
+                </dt>
+                <dd className="mt-1">
+                  <Badge
+                    variant={
+                      deal.status === "active" ? "default" : "secondary"
+                    }
+                    className={
+                      deal.status === "active"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-gray-100 text-gray-800"
+                    }
+                  >
+                    {deal.status}
+                  </Badge>
+                </dd>
+              </div>
+              <div>
+                <dt className="text-sm text-gray-600 dark:text-gray-400">
+                  Deal Type
+                </dt>
+                <dd className="text-sm font-medium text-gray-900 dark:text-white mt-1">
+                  {deal.deal_type || "acquisition"}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-sm text-gray-600 dark:text-gray-400">
+                  Created
+                </dt>
+                <dd className="text-sm font-medium text-gray-900 dark:text-white mt-1">
+                  {new Date(deal.created_at).toLocaleDateString()}
+                </dd>
+              </div>
+            </dl>
           </div>
 
+          {/* NDAs */}
+          {deal.ndas && deal.ndas.length > 0 && (
+            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
+                NDAs ({deal.ndas.length})
+              </h3>
+              <div className="space-y-2">
+                {deal.ndas.map((nda: any) => (
+                  <div
+                    key={nda.id}
+                    className="flex items-center justify-between p-2 border border-gray-200 dark:border-gray-700 rounded"
+                  >
+                    <span className="text-sm text-gray-900 dark:text-white">
+                      NDA #{nda.id.slice(0, 8)}
+                    </span>
+                    <Badge
+                      variant={
+                        nda.status === "signed" ? "default" : "secondary"
+                      }
+                      className={
+                        nda.status === "signed"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-yellow-100 text-yellow-800"
+                      }
+                    >
+                      {nda.status}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Payments */}
+          {deal.payments && deal.payments.length > 0 && (
+            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
+                Payments ({deal.payments.length})
+              </h3>
+              <div className="space-y-2">
+                {deal.payments.map((payment: any) => (
+                  <div
+                    key={payment.id}
+                    className="p-2 border border-gray-200 dark:border-gray-700 rounded"
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-medium text-gray-900 dark:text-white">
+                        €{Number(payment.amount).toLocaleString()}
+                      </span>
+                      <Badge
+                        variant={
+                          payment.status === "paid" ? "default" : "secondary"
+                        }
+                        className={
+                          payment.status === "paid"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-yellow-100 text-yellow-800"
+                        }
+                      >
+                        {payment.status}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                      {payment.type}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Documents */}
-          <DealDocuments dealId={deal.id} ndas={deal.ndas || []} />
+          <DealDocuments dealId={id} />
         </div>
       </div>
     </div>
   );
 }
-

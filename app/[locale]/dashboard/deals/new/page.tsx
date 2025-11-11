@@ -58,16 +58,17 @@ export default async function NewDealPage({
   // Get companies for selection
   const { data: companies } = await supabase
     .from("companies")
-    .select("id, name, industry")
+    .select("id, name")
     .eq("organization_id", profile.organization_id)
+    .eq("status", "active")
     .order("name");
 
   // Get buyers for selection
   const { data: buyers } = await supabase
-    .from("profiles")
-    .select("id, full_name, email")
-    .eq("role", "buyer")
-    .order("full_name");
+    .from("buyer_profiles")
+    .select("id, company_name")
+    .eq("organization_id", profile.organization_id)
+    .order("company_name");
 
   return (
     <div className="space-y-6">
@@ -80,13 +81,21 @@ export default async function NewDealPage({
         </p>
       </div>
 
-      <DealForm
-        organizationId={profile.organization_id}
-        companies={companies || []}
-        buyers={buyers || []}
-        preselectedCompanyId={companyId}
-        locale={locale}
-      />
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <DealForm
+          initialData={
+            companyId
+              ? {
+                  company_id: companyId,
+                  stage: "lead",
+                }
+              : undefined
+          }
+          companies={companies || []}
+          buyers={buyers || []}
+          mode="create"
+        />
+      </div>
     </div>
   );
 }

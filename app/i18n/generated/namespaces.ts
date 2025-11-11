@@ -21,5 +21,9 @@ export const availableNamespaces: string[] = [
   "bizexit",
   "companies",
   "dashboard",
-  "deals"
+  "deals",
+  "materials",
+  "ndas",
+  "payments",
+  "settings"
 ];
