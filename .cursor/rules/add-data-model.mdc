@@ -18,6 +18,38 @@ Generic instructions on adding a new datamodel:
 3. Construct the datamodel using guidance in this file
 4. Run the data migration locally using supabase db push in cli
 
+## ⚠️ CRITICAL MIGRATION RULES ⚠️
+
+**NEVER MODIFY EXISTING MIGRATION FILES**
+
+Migration files are immutable once created. They represent the historical state of the database at a specific point in time.
+
+**✅ CORRECT APPROACH:**
+```bash
+# Always create a NEW migration file
+supabase migration new fix_user_role_enum
+
+# Supabase will create a timestamped file like:
+# supabase/migrations/20251111200830_fix_user_role_enum.sql
+```
+
+**❌ WRONG APPROACH:**
+```bash
+# NEVER edit existing migration files like:
+# supabase/migrations/20251111153836_create_bizexit_phase2_tables.sql
+```
+
+**WHY?**
+- Existing migrations may have already been applied in production
+- Modifying them breaks the migration history
+- Team members may have different database states
+- Git history and rollbacks become unreliable
+
+**IF YOU NEED TO CHANGE SOMETHING:**
+1. Create a new migration file
+2. Add SQL to modify the existing structure
+3. Use `ALTER TABLE`, `DROP`, `CREATE` statements as needed
+
 If you need to reset the whole database, always ask before doing it.
 Reset by: supabase db reset
 After reset run all db inilisations as described in [README.md](mdc:README.md)
