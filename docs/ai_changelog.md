@@ -2,6 +2,169 @@
 
 ## Recent Changes
 
+### 2025-11-11 - BizExit API Endpoints (CRUD)
+
+**Complete REST API implementation for all BizExit entities:**
+
+#### API Endpoints (17 routes created)
+
+**1. Companies API:**
+- `GET /api/bizexit/companies` - List companies with filters
+  - Filters: status, industry
+  - Pagination: limit, offset
+  - Includes: financials
+- `POST /api/bizexit/companies` - Create new company
+  - Permission check: seller, broker, admin, partner
+  - Optional financials record
+- `GET /api/bizexit/companies/[id]` - Get company details
+  - Includes: financials, assets, listings
+  - Organization verification
+- `PUT /api/bizexit/companies/[id]` - Update company
+  - Full field updates
+  - Automatic timestamps
+- `DELETE /api/bizexit/companies/[id]` - Soft delete
+  - Permission: admin, broker only
+  - Status change to 'inactive'
+
+**2. Deals API:**
+- `GET /api/bizexit/deals` - List deals with filters
+  - Filters: stage, status
+  - Includes: companies, buyers, stages
+- `POST /api/bizexit/deals` - Create new deal
+  - Auto-creates initial stage record
+  - Creates activity log entry
+  - Company verification
+- `GET /api/bizexit/deals/[id]` - Get deal details
+  - Includes: companies, buyers, stages, activities, NDAs
+  - Full relationship loading
+- `PUT /api/bizexit/deals/[id]` - Update deal
+  - Stage transition tracking
+  - Automatic activity logging
+  - Deal progression history
+- `DELETE /api/bizexit/deals/[id]` - Cancel deal
+  - Permission: admin, broker only
+  - Activity log: "Deal cancelled"
+
+**3. NDAs API:**
+- `GET /api/bizexit/ndas` - List NDAs
+  - Filters: status, deal_id
+  - Includes: deals, companies, signer, witness
+- `POST /api/bizexit/ndas` - Create NDA
+  - Permission: broker, admin, partner
+  - Auto-logs "NDA sent" activity
+  - Deal verification
+- `GET /api/bizexit/ndas/[id]` - Get NDA details
+  - Full relationship loading
+- `PUT /api/bizexit/ndas/[id]` - Update NDA status
+  - Auto-timestamp on signing
+  - Activity log: "NDA signed"
+
+**4. Materials API (AI-generated documents):**
+- `GET /api/bizexit/materials` - List materials
+  - Filters: type (teaser, im, pitch_deck, valuation_report)
+  - Filter: company_id
+  - Stored as company_assets
+- `POST /api/bizexit/materials` - Create material
+  - Asset types: teaser, im, pitch_deck, valuation_report
+  - AI generation metadata
+  - Company verification
+
+**5. Payments API:**
+- `GET /api/bizexit/payments` - List payments
+  - Filters: status, type
+  - Includes: deals, companies
+- `POST /api/bizexit/payments` - Create invoice
+  - Permission: broker, admin only
+  - Auto-generates invoice number (INV-YYYY-NNNN)
+  - Activity log entry
+- `GET /api/bizexit/payments/[id]` - Get payment details
+- `PUT /api/bizexit/payments/[id]` - Update payment
+  - Permission: broker, admin only
+  - Auto-timestamp on payment
+  - Activity log: "Payment received"
+
+#### Features Implemented:
+- ✅ Organization-scoped data access (RLS)
+- ✅ Role-based permissions (RBAC)
+- ✅ Activity logging for deals
+- ✅ Pagination support
+- ✅ Soft deletes (status changes)
+- ✅ Deal stage tracking with history
+- ✅ Invoice number generation
+- ✅ Comprehensive error handling
+- ✅ Input validation
+- ✅ TypeScript type safety
+- ✅ Organization verification
+- ✅ Resource ownership checks
+
+#### Files Created: 9
+- `app/api/bizexit/companies/route.ts`
+- `app/api/bizexit/companies/[id]/route.ts`
+- `app/api/bizexit/deals/route.ts`
+- `app/api/bizexit/deals/[id]/route.ts`
+- `app/api/bizexit/ndas/route.ts`
+- `app/api/bizexit/ndas/[id]/route.ts`
+- `app/api/bizexit/materials/route.ts`
+- `app/api/bizexit/payments/route.ts`
+- `app/api/bizexit/payments/[id]/route.ts`
+
+**1787 lines of production-ready TypeScript code**
+
+### 2025-11-11 - BizExit Management Pages (NDAs, Materials, Payments, Settings)
+
+**Added 4 comprehensive management pages:**
+
+#### Pages Created (4 files):
+
+**1. NDAs Page** (`app/[locale]/dashboard/ndas/page.tsx`):
+- View all NDAs with filtering by status
+- Stats cards: Total, Pending, Signed
+- Table view with company, signer, status, date
+- NDA document download
+- Empty state with CTA
+- Permission checks
+
+**2. Materials Page** (`app/[locale]/dashboard/materials/page.tsx`):
+- AI-generated materials dashboard
+- 4 material types: Teasers, IMs, Pitch Decks, Valuation Reports
+- Type-based grid with counts
+- Materials list with preview
+- Download functionality
+- Empty state: "Generate your first AI-powered sale material"
+- Sparkles icon for AI branding
+
+**3. Payments Page** (`app/[locale]/dashboard/payments/page.tsx`):
+- Payment management and invoicing
+- 4 stats cards: Total Revenue, Paid, Pending, Overdue
+- Color-coded status badges
+- Invoice table with payment tracking
+- Fixed fee vs. Success fee distinction
+- Download invoice action
+- Empty state with CTA
+
+**4. Settings Page** (`app/[locale]/dashboard/settings/page.tsx`):
+- 5-tab interface: Organization, Profile, Notifications, Security, Billing
+- **Organization Tab**: Name, website, country, industry
+- **Profile Tab**: Name, email (disabled), phone, LinkedIn
+- **Notifications Tab**: 4 preference toggles
+- **Security Tab**: Password change, 2FA setup
+- **Billing Tab**: Current plan display, payment method, billing history
+
+#### Features:
+- ✅ Responsive layouts
+- ✅ Dark mode support
+- ✅ Loading states
+- ✅ Empty states with CTAs
+- ✅ Permission-based access
+- ✅ Stats cards with icons
+- ✅ Table views
+- ✅ Status badges
+- ✅ Form inputs
+- ✅ Tab navigation
+
+#### Files Created: 4
+- 1122 lines of code
+
 ### 2025-11-11 - BizExit Forms, Listings & Buyers Implementation
 
 **Added CRUD functionality and management pages:**
