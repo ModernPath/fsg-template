@@ -2,6 +2,65 @@
 
 ## Recent Changes
 
+### 2025-11-11 - BizExit Forms, Listings & Buyers Implementation
+
+**Added CRUD functionality and management pages:**
+
+#### Forms & Pages (6 new files)
+- **CompanyForm** (`components/companies/CompanyForm.tsx`):
+  - Full company creation/editing form
+  - Basic info: name, legal name, business ID, location
+  - Business details: industry, description, employees
+  - Financial info: revenue, EBITDA, asking price
+  - Currency and country selectors
+  - Form validation and error handling
+  
+- **DealForm** (`components/deals/DealForm.tsx`):
+  - Deal creation/editing form
+  - Company and buyer selection
+  - Stage selection (9 stages)
+  - Estimated value input
+  - Notes field
+  
+- **New Company Page** (`app/[locale]/dashboard/companies/new/page.tsx`):
+  - Company creation page
+  - Permission checks (seller, broker, admin)
+  - Organization validation
+  
+- **New Deal Page** (`app/[locale]/dashboard/deals/new/page.tsx`):
+  - Deal creation page
+  - Pre-selected company support
+  - Companies and buyers dropdowns
+  
+- **Listings Page** (`app/[locale]/dashboard/listings/page.tsx`):
+  - View all company listings
+  - Portal syndication status (BizBuySell, Transfindo, etc.)
+  - Views and leads tracking per portal
+  - Published/draft status badges
+  - Empty state with CTA
+  
+- **Buyers Page** (`app/[locale]/dashboard/buyers/page.tsx`):
+  - Buyer profile grid
+  - Active deals count
+  - NDA signing status
+  - Contact info (email, phone)
+  - Email verification badges
+  - Quick actions (view, email)
+
+#### Features:
+- Responsive layouts for all screen sizes
+- Dark mode support throughout
+- Loading and error states
+- Empty states with CTAs
+- Permission-based access control
+- Form validation
+- TypeScript type safety
+
+#### Files Added: 6
+- 2 form components
+- 4 page components
+- 1181 lines of code
+
 ### 2025-11-11 - BizExit Frontend Implementation Complete
 
 **Comprehensive frontend for BizExit M&A platform:**
