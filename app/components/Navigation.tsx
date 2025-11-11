@@ -141,8 +141,14 @@ export default function Navigation() {
   const { session, loading, isAdmin, error } = useAuth();
   const [enabledLocales, setEnabledLocales] = useState<string[]>(locales);
   const [showLoading, setShowLoading] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
   const supabase = createClient();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Set mounted state on client side
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Fetch enabled locales
   const fetchEnabledLocales = useCallback(async () => {
@@ -251,39 +257,48 @@ export default function Navigation() {
     : publicLinks;
 
   // Desktop auth buttons section
-  const renderAuthButtons = () => (
-    <>
-      {session ? (
-        <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center text-sm font-medium text-gray-300 hover:text-white transition-colors outline-none">
-            <User className="h-4 w-4 mr-2" />
-            {t('account.title')}
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem asChild>
-              <Link href="/account/settings">{t('account.settings')}</Link>
-            </DropdownMenuItem>
-            {isAdmin && (
+  const renderAuthButtons = () => {
+    // Prevent hydration mismatch by waiting for client-side mount
+    if (!isMounted) {
+      return (
+        <div className="w-24 h-9 bg-gray-800 rounded animate-pulse" />
+      );
+    }
+
+    return (
+      <>
+        {session ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center text-sm font-medium text-gray-300 hover:text-white transition-colors outline-none">
+              <User className="h-4 w-4 mr-2" />
+              {t('account.title')}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
               <DropdownMenuItem asChild>
-                <Link href="/admin">{t('admin_link')}</Link>
+                <Link href="/account/settings">{t('account.settings')}</Link>
               </DropdownMenuItem>
-            )}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href="/auth/sign-out">{t('signOut')}</Link>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ) : (
-        <Link
-          href="/auth/sign-in"
-          className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
-        >
-          {t('signIn')}
-        </Link>
-      )}
-    </>
-  );
+              {isAdmin && (
+                <DropdownMenuItem asChild>
+                  <Link href="/admin">{t('admin_link')}</Link>
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/auth/sign-out">{t('signOut')}</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Link
+            href="/auth/sign-in"
+            className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
+          >
+            {t('signIn')}
+          </Link>
+        )}
+      </>
+    );
+  };
 
   // Add menu toggle function
   const toggleMenu = () => {
