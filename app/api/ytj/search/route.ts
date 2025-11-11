@@ -149,9 +149,8 @@ async function searchByName(name: string) {
 
   const data = await response.json();
   
-  // Parse results (format may vary)
-  const companies = data.results || data.data || data || [];
-  const companyArray = Array.isArray(companies) ? companies : [];
+  // YTJ API returns direct array, not wrapped object
+  const companyArray = Array.isArray(data) ? data : [];
 
   console.log(`  ✅ Found ${companyArray.length} companies`);
 
@@ -163,47 +162,54 @@ async function searchByName(name: string) {
 }
 
 /**
- * Parse and normalize company data from YTJ API
+ * Parse and normalize company data from YTJ API v3
+ * Based on actual PRH API structure from Trusty Finance
  */
 function parseCompany(raw: any): YTJCompany {
-  // YTJ API has inconsistent field names, try multiple variations
-  const businessId = raw.businessId || raw.businessid || raw.y_tunnus || '';
-  const name = raw.name || raw.companyName || raw.nimi || '';
-  const registrationDate = raw.registrationDate || raw.registrationdate || raw.rekisterointipaiva || '';
-  const companyForm = raw.companyForm || raw.companyform || raw.yhtiömuoto || '';
+  // YTJ API v3 structure:
+  // - businessId is an object: { value: "1234567-8", registrationDate: "...", source: "..." }
+  // - names is array: [{ name: "Company Oy", type: "1", ... }]
+  // - addresses is array: [{ street: "...", postCode: "...", ... }]
+  
+  const businessId = raw.businessId?.value || '';
+  const name = raw.names?.[0]?.name || '';
+  const registrationDate = raw.businessId?.registrationDate || raw.registrationDate || '';
+  
+  // Parse company form from companyForms array
+  const companyForm = raw.companyForms?.[0]?.descriptions?.find(
+    (d: any) => d.languageCode === '1' // Finnish
+  )?.description || raw.companyForms?.[0]?.descriptions?.[0]?.description || '';
 
-  // Parse address (might be in different formats)
-  let addresses: any[] = [];
-  if (raw.addresses && Array.isArray(raw.addresses)) {
-    addresses = raw.addresses;
-  } else if (raw.address) {
-    addresses = [raw.address];
-  }
+  // Parse addresses
+  const addresses = (raw.addresses || []).map((addr: any) => {
+    // postOffices contains city name with languageCode
+    const cityObj = addr.postOffices?.find((p: any) => p.languageCode === '1') || addr.postOffices?.[0];
+    
+    return {
+      street: addr.street || '',
+      postCode: addr.postCode || '',
+      city: cityObj?.city || '',
+      country: 'FI',
+      type: addr.type === 1 ? 'visiting' : addr.type === 2 ? 'postal' : 'business',
+    };
+  });
 
   // Parse business lines
-  let businessLines: any[] = [];
-  if (raw.businessLines && Array.isArray(raw.businessLines)) {
-    businessLines = raw.businessLines;
-  } else if (raw.businessLine) {
-    businessLines = [raw.businessLine];
-  }
+  const businessLine = raw.mainBusinessLine || raw.businessLines?.[0];
+  const businessLines = businessLine ? [{
+    code: businessLine.type || businessLine.code || '',
+    name: businessLine.descriptions?.find(
+      (d: any) => d.languageCode === '1' // Finnish
+    )?.description || businessLine.descriptions?.[0]?.description || '',
+  }] : [];
 
   return {
     businessId,
     name,
     registrationDate,
     companyForm,
-    detailsUri: raw.detailsUri || raw.uri || '',
-    addresses: addresses.map(addr => ({
-      street: addr.street || addr.katu || '',
-      postCode: addr.postCode || addr.postinumero || '',
-      city: addr.city || addr.kaupunki || '',
-      country: addr.country || addr.maa || 'FI',
-      type: addr.type || addr.tyyppi || 'business',
-    })),
-    businessLines: businessLines.map(line => ({
-      code: line.code || line.koodi || '',
-      name: line.name || line.nimi || '',
-    })),
+    detailsUri: raw.detailsUri || '',
+    addresses,
+    businessLines,
   };
 }
