@@ -31,7 +31,7 @@ interface Props {
 
 export default function BizExitLanding({ params }: Props) {
   const { locale } = params
-  const t = useTranslations('BizExit')
+  const t = useTranslations('bizexit')
 
   return (
     <main className="flex min-h-screen flex-col">

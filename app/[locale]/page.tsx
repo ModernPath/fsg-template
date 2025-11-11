@@ -13,8 +13,8 @@ interface Props {
 
 export async function generateMetadata({ params }: Props) {
   const { locale } = await params
-  const t = await getTranslations('BizExit')
-  const metadata = await generateLocalizedMetadata(locale, 'BizExit', {
+  const t = await getTranslations('bizexit')
+  const metadata = await generateLocalizedMetadata(locale, 'bizexit', {
     title: 'BizExit - AI-Powered M&A Platform',
     description: t('hero.description'),
     type: 'website',
