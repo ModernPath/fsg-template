@@ -50,6 +50,13 @@
     "negotiation": "Förhandling",
     "closed_won": "Affär Stängd",
     "closed_lost": "Affär Förlorad"
+  },
+  "quickActions": {
+    "title": "Snabbåtgärder",
+    "addCompany": "Lägg till företag",
+    "createDeal": "Skapa affär",
+    "uploadDocuments": "Ladda upp dokument",
+    "viewAnalytics": "Visa analys"
   }
 }
 

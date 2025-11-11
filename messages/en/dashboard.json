@@ -50,6 +50,13 @@
     "negotiation": "Negotiation",
     "closed_won": "Closed Won",
     "closed_lost": "Closed Lost"
+  },
+  "quickActions": {
+    "title": "Quick Actions",
+    "addCompany": "Add Company",
+    "createDeal": "Create Deal",
+    "uploadDocuments": "Upload Documents",
+    "viewAnalytics": "View Analytics"
   }
 }
 

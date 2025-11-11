@@ -7,6 +7,7 @@ import { createClient } from "@/utils/supabase/server";
 import { DashboardStats } from "@/components/dashboard/DashboardStats";
 import { RecentDeals } from "@/components/dashboard/RecentDeals";
 import { ActivityFeed } from "@/components/dashboard/ActivityFeed";
+import { QuickActions } from "@/components/dashboard/QuickActions";
 import { getTranslations } from "next-intl/server";
 
 export default async function DashboardPage() {
@@ -120,6 +121,9 @@ export default async function DashboardPage() {
 
       {/* Stats */}
       <DashboardStats stats={stats} />
+
+      {/* Quick Actions */}
+      <QuickActions userRole={profile.role} />
 
       {/* Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -50,6 +50,13 @@
     "negotiation": "Neuvottelu",
     "closed_won": "Kauppa Tehty",
     "closed_lost": "Kauppa Menetetty"
+  },
+  "quickActions": {
+    "title": "Pikatoiminnot",
+    "addCompany": "Lisää yritys",
+    "createDeal": "Luo kauppa",
+    "uploadDocuments": "Lataa dokumentteja",
+    "viewAnalytics": "Näytä analytiikka"
   }
 }
 
