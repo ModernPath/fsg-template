@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/components/ui/use-toast";
 import { createClient } from "@/utils/supabase/client";
+import { DataQualityIndicator } from "@/components/onboarding/DataQualityIndicator";
 import {
   Sparkles,
   Building2,
@@ -27,6 +28,7 @@ import {
   Search,
   AlertCircle,
   Info,
+  TrendingUp,
 } from "lucide-react";
 
 interface OrganizationOnboardingProps {
@@ -66,9 +68,11 @@ export function OrganizationOnboarding({
   const [loading, setLoading] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [ytjLoading, setYtjLoading] = useState(false);
+  const [enrichLoading, setEnrichLoading] = useState(false);
   const [ytjResults, setYtjResults] = useState<YTJCompany[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [ytjVerified, setYtjVerified] = useState(false);
+  const [enrichedData, setEnrichedData] = useState<any>(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -79,6 +83,8 @@ export function OrganizationOnboarding({
     industry: "",
     description: "",
     address: "",
+    employees: null as number | null,
+    revenue: null as number | null,
   });
 
   /**
@@ -137,10 +143,10 @@ export function OrganizationOnboarding({
   };
 
   /**
-   * Select company from YTJ results
+   * Select company from YTJ results and enrich with additional data
    */
-  const selectYTJCompany = (company: YTJCompany) => {
-    // Fill form with YTJ data
+  const selectYTJCompany = async (company: YTJCompany) => {
+    // Fill form with YTJ basic data first
     const address = company.addresses?.[0];
     const addressStr = address
       ? `${address.street || ""}, ${address.postCode || ""} ${
@@ -162,10 +168,75 @@ export function OrganizationOnboarding({
     setYtjResults([]);
     setSearchQuery("");
 
-    toast({
-      title: "✅ YTJ-tiedot haettu",
-      description: "Perustiedot täytetty - tarkista ja täydennä",
-    });
+    // Now enrich with additional data
+    await enrichCompanyData(company);
+  };
+
+  /**
+   * Enrich company data with Gemini AI and public sources
+   * Gets: financial data, employee count, market info, etc.
+   */
+  const enrichCompanyData = async (company: YTJCompany) => {
+    setEnrichLoading(true);
+    
+    try {
+      console.log("🔍 Enriching company data:", company.businessId);
+
+      const response = await fetch("/api/companies/enrich", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          businessId: company.businessId,
+          companyName: company.name,
+          country: "FI",
+          industry: company.businessLines?.[0]?.name,
+          website: formData.website,
+          locale: "fi",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Tietojen rikastus epäonnistui");
+      }
+
+      const data = await response.json();
+
+      if (data.success && data.data) {
+        setEnrichedData(data.data);
+
+        // Update form with enriched data
+        const enriched = data.data.basicInfo;
+        setFormData((prev) => ({
+          ...prev,
+          description: enriched.description || prev.description,
+          website: enriched.website || prev.website,
+          employees: enriched.employees,
+          // Don't override industry if YTJ provided better one
+          industry: enriched.industry || prev.industry,
+        }));
+
+        toast({
+          title: "✨ Tiedot rikastettu!",
+          description: `Löysimme lisätietoja ${data.data.financialData.yearsFound > 0 ? "ja taloustietoja" : ""} yrityksestä`,
+        });
+      } else {
+        // No enrichment data, but YTJ data is still valid
+        toast({
+          title: "✅ YTJ-tiedot haettu",
+          description: "Perustiedot täytetty - lisää puuttuvat tiedot",
+        });
+      }
+    } catch (error) {
+      console.error("Enrichment error:", error);
+      // Don't fail the whole flow if enrichment fails
+      toast({
+        title: "⚠️ Osittainen haku",
+        description: "YTJ-perustiedot haettu, mutta lisätietojen haku epäonnistui",
+        variant: "default",
+      });
+    } finally {
+      setEnrichLoading(false);
+    }
   };
 
   /**
@@ -396,6 +467,22 @@ export function OrganizationOnboarding({
                 </p>
               </div>
 
+              {/* Enrichment Loading */}
+              {enrichLoading && (
+                <Alert className="bg-blue-900/20 border-blue-500">
+                  <TrendingUp className="h-4 w-4 text-blue-400 animate-pulse" />
+                  <AlertDescription className="text-slate-300">
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Haetaan lisätietoja yrityksestä...</span>
+                    </div>
+                    <p className="text-xs mt-1 text-slate-400">
+                      Etsimme talouslukuja ja markkinatietoja julkisista lähteistä
+                    </p>
+                  </AlertDescription>
+                </Alert>
+              )}
+
               {/* YTJ Results */}
               {ytjResults.length > 0 && (
                 <div className="space-y-2 max-h-64 overflow-y-auto">
@@ -432,6 +519,13 @@ export function OrganizationOnboarding({
                     </div>
                   ))}
                 </div>
+              )}
+
+              {/* Data Quality Indicator */}
+              {enrichedData && enrichedData.basicInfo && (
+                <DataQualityIndicator
+                  dataQuality={enrichedData.basicInfo.dataQuality}
+                />
               )}
 
               {/* Manual Entry Option */}
@@ -629,9 +723,22 @@ export function OrganizationOnboarding({
                       <li>• Y-tunnus: {formData.businessId}</li>
                     )}
                     <li>• Toimiala: {formData.industry}</li>
+                    {formData.employees && (
+                      <li>• Henkilöstö: ~{formData.employees} henkilöä</li>
+                    )}
+                    {enrichedData?.financialData?.yearsFound > 0 && (
+                      <li className="text-blue-400">
+                        • 💰 Talousdata: {enrichedData.financialData.yearsFound} vuotta
+                      </li>
+                    )}
                     <li>• Maa: {formData.country}</li>
                     {ytjVerified && (
                       <li className="text-green-500">• ✅ YTJ-vahvistettu</li>
+                    )}
+                    {enrichedData && (
+                      <li className="text-purple-400">
+                        • ✨ AI-rikastettu
+                      </li>
                     )}
                   </ul>
                 </AlertDescription>
