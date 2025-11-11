@@ -1,3 +1,0 @@
-2025-10-10 10:02:18: checkpoint-20250110-setup - AI Agent system setup complete
-2025-10-10 10:06:50: checkpoint-20250110-git-safety-rules - Git safety rules implemented (NEVER auto-merge to main)
-2025-10-10 10:18:55: checkpoint-20250110-csp-fix - CSP headers fixed for Google Tag Manager and Analytics
