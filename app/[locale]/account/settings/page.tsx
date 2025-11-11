@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/app/components/ThemeToggle'
 import LocaleSwitcher from '@/app/components/LocaleSwitcher'
 import { useState, useEffect } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { use } from 'react'
 
@@ -29,7 +29,7 @@ export default function SettingsPage({ params }: Props) {
   const [name, setName] = useState('')
   const [isSaving, setIsSaving] = useState(false)
   const [isClient, setIsClient] = useState(false)
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   // Set isClient to true when component mounts
   useEffect(() => {
