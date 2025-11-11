@@ -143,14 +143,52 @@ async function seedRoles() {
         continue;
       }
 
-      // Create organization for seller, broker, partner
-      if (['seller', 'broker', 'partner'].includes(demoUser.role)) {
+      // Create organization for seller, broker, partner, admin
+      if (['seller', 'broker', 'partner', 'admin'].includes(demoUser.role)) {
+        // Determine organization type and name
+        let orgType: string;
+        let orgName: string;
+        let orgSlug: string;
+        let userOrgRole: string;
+
+        switch (demoUser.role) {
+          case 'admin':
+            orgType = 'platform';
+            orgName = `${demoUser.full_name} Platform`;
+            orgSlug = `${demoUser.email.split('@')[0]}-platform`;
+            userOrgRole = 'admin';
+            break;
+          case 'seller':
+            orgType = 'seller';
+            orgName = `${demoUser.full_name} Oy`;
+            orgSlug = `${demoUser.email.split('@')[0]}-oy`;
+            userOrgRole = 'seller';
+            break;
+          case 'broker':
+            orgType = 'broker';
+            orgName = `${demoUser.full_name} Oy`;
+            orgSlug = `${demoUser.email.split('@')[0]}-oy`;
+            userOrgRole = 'broker';
+            break;
+          case 'partner':
+            orgType = 'broker'; // Partner uses broker type
+            orgName = `${demoUser.full_name} Rahoitus`;
+            orgSlug = `${demoUser.email.split('@')[0]}-rahoitus`;
+            userOrgRole = 'broker'; // Partner uses broker role in user_organizations
+            break;
+          default:
+            orgType = 'broker';
+            orgName = `${demoUser.full_name} Oy`;
+            orgSlug = `${demoUser.email.split('@')[0]}-oy`;
+            userOrgRole = demoUser.role;
+        }
+
         const { data: org, error: orgError } = await supabase
           .from('organizations')
           .insert({
-            name: `${demoUser.full_name} Oy`,
-            type: demoUser.role === 'partner' ? 'bank' : 'company',
-            created_by: authData.user.id,
+            name: orgName,
+            slug: orgSlug,
+            type: orgType,
           })
           .select()
           .single();
@@ -164,11 +202,13 @@ async function seedRoles() {
             .insert({
               user_id: authData.user.id,
               organization_id: org.id,
-              role: demoUser.role,
+              role: userOrgRole,
             });
 
           if (userOrgError) {
             console.error(`❌ Error linking user to organization:`, userOrgError.message);
+          } else {
+            console.log(`   📁 Created organization: ${orgName}`);
           }
         }
       }

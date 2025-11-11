@@ -16,6 +16,7 @@ import { DealHeader } from "@/components/deals/DealHeader";
 import { DealTimeline } from "@/components/deals/DealTimeline";
 import { DealActivities } from "@/components/deals/DealActivities";
 import { DealDocuments } from "@/components/deals/DealDocuments";
+import { DealAnalysis } from "@/components/deals/DealAnalysis";
 
 interface Props {
   params: Promise<{

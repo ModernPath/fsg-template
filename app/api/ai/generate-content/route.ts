@@ -34,11 +34,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { type, resourceType, resourceId, params } = await request.json();
+    const { type, resourceType, resourceId, params, context } = await request.json();
 
-    if (!type || !resourceType || !resourceId) {
+    // Allow onboarding types without resourceType/resourceId
+    const onboardingTypes = ["organization_name", "organization_description"];
+    const isOnboarding = onboardingTypes.includes(type);
+
+    if (!isOnboarding && (!type || !resourceType || !resourceId)) {
       return NextResponse.json(
         { error: "Missing required fields: type, resourceType, resourceId" },
+        { status: 400 }
+      );
+    }
+
+    if (!type) {
+      return NextResponse.json(
+        { error: "Missing required field: type" },
         { status: 400 }
       );
     }
@@ -58,22 +69,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Fetch resource data
-    const resourceData = await fetchResourceData(
-      supabase,
-      resourceType,
-      resourceId
-    );
+    let resourceData = null;
+    let prompt = "";
 
-    if (!resourceData) {
-      return NextResponse.json(
-        { error: "Resource not found" },
-        { status: 404 }
+    // Handle onboarding types
+    if (isOnboarding) {
+      prompt = buildOnboardingPrompt(type, context);
+    } else {
+      // Fetch resource data for regular content types
+      resourceData = await fetchResourceData(
+        supabase,
+        resourceType,
+        resourceId
       );
-    }
 
-    // Generate content based on type
-    const prompt = buildPromptForType(type, resourceData, params);
+      if (!resourceData) {
+        return NextResponse.json(
+          { error: "Resource not found" },
+          { status: 404 }
+        );
+      }
+
+      // Generate content based on type
+      prompt = buildPromptForType(type, resourceData, params);
+    }
     
     const model = genAI.getGenerativeModel({
       model: "gemini-2.0-flash-exp",
@@ -83,37 +102,42 @@ export async function POST(request: NextRequest) {
     const response = result.response;
     const generatedContent = response.text();
 
-    // Save generated content to database
-    const { data: savedContent, error: saveError } = await supabase
-      .from("ai_generated_content")
-      .insert({
-        user_id: user.id,
-        content_type: type,
-        content: generatedContent,
-        resource_type: resourceType,
-        resource_id: resourceId,
-        model_used: "gemini-2.0-flash-exp",
-        metadata: {
-          params,
-          resourceData: {
-            name: resourceData.name,
-            type: resourceType,
+    // Save generated content to database (skip for onboarding types)
+    let savedContent = null;
+    if (!isOnboarding) {
+      const { data, error: saveError } = await supabase
+        .from("ai_generated_content")
+        .insert({
+          user_id: user.id,
+          content_type: type,
+          content: generatedContent,
+          resource_type: resourceType,
+          resource_id: resourceId,
+          model_used: "gemini-2.0-flash-exp",
+          metadata: {
+            params,
+            resourceData: {
+              name: resourceData?.name,
+              type: resourceType,
+            },
           },
-        },
-      })
-      .select()
-      .single();
+        })
+        .select()
+        .single();
 
-    if (saveError) {
-      console.error("Failed to save generated content:", saveError);
+      if (saveError) {
+        console.error("Failed to save generated content:", saveError);
+      } else {
+        savedContent = data;
+      }
     }
 
     return NextResponse.json({
       content: generatedContent,
       contentId: savedContent?.id,
       type,
-      resourceType,
-      resourceId,
+      resourceType: resourceType || null,
+      resourceId: resourceId || null,
     });
   } catch (error) {
     console.error("Content generation error:", error);
@@ -135,6 +159,8 @@ function canGenerateContent(role: string | undefined, contentType: string): bool
     due_diligence: ["buyer", "broker", "partner", "admin"],
     risk_assessment: ["buyer", "partner", "admin"],
     recommendation: ["buyer", "seller", "broker", "admin"],
+    organization_name: ["seller", "broker", "partner", "admin", "buyer", "visitor"],
+    organization_description: ["seller", "broker", "partner", "admin", "buyer", "visitor"],
   };
 
   return permissions[contentType]?.includes(role || "") || false;
@@ -336,3 +362,49 @@ ${deal.buyer_profiles ? `
 ` : ""}
 `;
 }
+
+/**
+ * Build prompt for onboarding content types
+ */
+function buildOnboardingPrompt(type: string, context: any): string {
+  if (type === "organization_name") {
+    return `Generate a professional organization name based on the following information:
+
+**User Information:**
+- Name: ${context.userName || "N/A"}
+- Email: ${context.userEmail || "N/A"}
+- Role: ${context.userRole || "N/A"}
+- Industry: ${context.industry || "N/A"}
+
+**Requirements:**
+- Generate ONE professional company name
+- The name should be appropriate for the ${context.userRole} role
+- ${context.industry ? `The name should reflect the ${context.industry} industry` : ""}
+- Keep it short, professional, and memorable (max 50 characters)
+- Do NOT include legal suffixes like Oy, Ab, Ltd (user will add these)
+- Return ONLY the company name, nothing else
+
+Generate the organization name now:`;
+  }
+
+  if (type === "organization_description") {
+    return `Generate a professional organization description based on the following information:
+
+**Organization Information:**
+- Name: ${context.name}
+- Industry: ${context.industry || "N/A"}
+- Role: ${context.userRole || "N/A"}
+
+**Requirements:**
+- Write a 2-3 sentence professional description
+- Highlight the organization's focus and expertise in ${context.industry}
+- Keep it concise, professional, and engaging
+- Appropriate for a ${context.userRole} in the business services industry
+- Return ONLY the description, nothing else
+
+Generate the organization description now:`;
+  }
+
+  return "Generate relevant content based on the provided information.";
+}
+
