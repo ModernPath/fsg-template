@@ -1,0 +1,101 @@
+---
+description: Use when you need to do supabase client - api authentication
+globs: 
+alwaysApply: false
+---
+# Supabase API Route Authentication Pattern
+
+This document outlines the correct pattern for handling token-based authentication within Next.js API routes when interacting with Supabase, particularly when needing both user verification and privileged database access (e.g., bypassing RLS using the service role key).
+
+## The Problem
+
+Using a single Supabase client instance, especially one initialized with the `SERVICE_ROLE_KEY`, for both verifying the user's authentication token (via `auth.getUser(token)`) and performing database operations can lead to:
+
+1.  **Incorrect Authentication:** The service role client bypasses standard authentication checks, potentially leading to incorrect user context or failing the `auth.getUser(token)` call.
+2.  **Security Issues:** Accidentally performing operations with the service role client when user-context RLS should apply.
+
+## The Solution: Separate Clients
+
+The reliable pattern involves initializing and using two distinct Supabase client instances within your API route:
+
+1.  **Authentication Client (`authClient`)**: 
+    *   Initialized using the **standard `@supabase/supabase-js` client**.
+    *   Uses the public **`NEXT_PUBLIC_SUPABASE_ANON_KEY`**.
+    *   Its **sole purpose** is to verify the Bearer token extracted from the `Authorization` header using `authClient.auth.getUser(token)`.
+    *   Should *not* be used for general database operations where RLS should apply based on the verified user.
+
+2.  **Service Role Client (`supabaseAdmin`)**: 
+    *   Initialized using the **standard `@supabase/supabase-js` client** (or potentially a server-side helper if configured for service role).
+    *   Uses the **`SUPABASE_SERVICE_ROLE_KEY`**.
+    *   Used for all database operations that require **bypassing Row Level Security (RLS)** or performing actions needing administrative privileges.
+
+## Implementation Example
+
+```typescript
+// app/api/some-protected-route/route.ts
+import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js'; 
+import { Database } from '@/types/supabase'; // Assuming DB types are generated
+
+// 1. Initialize Auth Client (using ANON key)
+const authClient = createClient<Database>(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  { auth: { autoRefreshToken: false, persistSession: false } }
+);
+
+// 2. Initialize Service Role Client (using SERVICE_ROLE key)
+const supabaseAdmin = createClient<Database>(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  { auth: { autoRefreshToken: false, persistSession: false } }
+);
+
+export async function POST(request: Request) {
+  try {
+    // 3. Extract Bearer Token
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    const token = authHeader.split(' ')[1];
+
+    // 4. Verify Token using Auth Client
+    const { data: { user }, error: authError } = await authClient.auth.getUser(token);
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    console.log('User authenticated:', user.id);
+
+    // 5. Perform Database Operations using Service Role Client
+    // Example: Fetching data that requires bypassing RLS
+    const { data: adminData, error: dbError } = await supabaseAdmin
+      .from('some_admin_table')
+      .select('*')
+      .eq('owner_id', user.id); // Can still use user.id for filtering
+
+    if (dbError) {
+      throw dbError; // Handle DB errors
+    }
+
+    // --- IMPORTANT --- 
+    // If you need to perform operations respecting user RLS, 
+    // you would typically use a client initialized *specifically* 
+    // for that user's session, often handled differently 
+    // (e.g., using Supabase server helpers with cookies/session context 
+    // OR initializing a client with the user's JWT if appropriate).
+    // This pattern focuses on the split between *token verification* and *service role* access.
+
+    return NextResponse.json({ data: adminData });
+
+  } catch (error: any) {
+    console.error('API Error:', error);
+    return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
+  }
+}
+```
+
+## See Also
+
+*   A working example implementing this pattern can be found in [app/api/offers/[offerId]/accept/route.ts](mdc:app/api/offers/[offerId]/accept/route.ts).
+*   Refer to the official Supabase documentation for details on client initialization and authentication.

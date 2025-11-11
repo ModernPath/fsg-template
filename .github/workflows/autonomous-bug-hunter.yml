@@ -1,0 +1,201 @@
+name: Autonomous Bug Hunter
+
+on:
+  # Run every 6 hours
+  schedule:
+    - cron: '0 */6 * * *'
+  
+  # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      browsers:
+        description: 'Browsers to test (comma-separated)'
+        required: false
+        default: 'chrome,firefox'
+      devices:
+        description: 'Devices to test (comma-separated)'
+        required: false
+        default: 'desktop,mobile'
+      locales:
+        description: 'Locales to test (comma-separated)'
+        required: false
+        default: 'fi,en,sv'
+
+jobs:
+  bug-hunt:
+    name: Run Autonomous Bug Hunter
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: 📦 Install dependencies
+        run: npm ci
+      
+      - name: 🚀 Start dev server in background
+        run: |
+          npm run dev &
+          sleep 30
+          curl -f http://localhost:3000 || exit 1
+      
+      - name: 🤖 Run Bug Hunter
+        env:
+          GOOGLE_AI_STUDIO_KEY: ${{ secrets.GOOGLE_AI_STUDIO_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          NODE_ENV: test
+        run: |
+          if [ -n "${{ github.event.inputs.browsers }}" ]; then
+            npm run bug-hunter:ci -- --browsers ${{ github.event.inputs.browsers }} --devices ${{ github.event.inputs.devices }} --locales ${{ github.event.inputs.locales }}
+          else
+            npm run bug-hunter:ci
+          fi
+      
+      - name: 📊 Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bug-hunter-reports-${{ github.run_number }}
+          path: test-results/autonomous-bug-hunter/
+          retention-days: 30
+      
+      - name: 📸 Upload screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bug-hunter-screenshots-${{ github.run_number }}
+          path: cypress/screenshots/
+          retention-days: 7
+      
+      - name: 🎥 Upload videos
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bug-hunter-videos-${{ github.run_number }}
+          path: cypress/videos/
+          retention-days: 7
+      
+      - name: 📝 Parse bug report
+        if: always()
+        id: parse-report
+        run: |
+          if [ -f "test-results/autonomous-bug-hunter/report-*.json" ]; then
+            LATEST_REPORT=$(ls -t test-results/autonomous-bug-hunter/report-*.json | head -1)
+            TOTAL_BUGS=$(jq '.summary.bugsFound' "$LATEST_REPORT")
+            CRITICAL=$(jq '[.bugs[] | select(.severity == "critical")] | length' "$LATEST_REPORT")
+            HIGH=$(jq '[.bugs[] | select(.severity == "high")] | length' "$LATEST_REPORT")
+            
+            echo "total_bugs=$TOTAL_BUGS" >> $GITHUB_OUTPUT
+            echo "critical_bugs=$CRITICAL" >> $GITHUB_OUTPUT
+            echo "high_bugs=$HIGH" >> $GITHUB_OUTPUT
+          else
+            echo "total_bugs=0" >> $GITHUB_OUTPUT
+            echo "critical_bugs=0" >> $GITHUB_OUTPUT
+            echo "high_bugs=0" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: 🚨 Create GitHub Issue for Critical Bugs
+        if: steps.parse-report.outputs.critical_bugs > 0
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            // Find latest report
+            const reportDir = 'test-results/autonomous-bug-hunter';
+            const files = fs.readdirSync(reportDir)
+              .filter(f => f.startsWith('report-') && f.endsWith('.json'))
+              .sort()
+              .reverse();
+            
+            if (files.length === 0) return;
+            
+            const reportPath = path.join(reportDir, files[0]);
+            const report = JSON.parse(fs.readFileSync(reportPath, 'utf-8'));
+            
+            const criticalBugs = report.bugs.filter(b => b.severity === 'critical');
+            
+            let issueBody = `# 🚨 Critical Bugs Detected by Autonomous Bug Hunter\n\n`;
+            issueBody += `**Total Bugs Found:** ${report.summary.bugsFound}\n`;
+            issueBody += `**Critical:** ${criticalBugs.length}\n`;
+            issueBody += `**High:** ${report.bugs.filter(b => b.severity === 'high').length}\n\n`;
+            issueBody += `**Report:** [View Full Report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})\n\n`;
+            issueBody += `---\n\n`;
+            
+            criticalBugs.forEach((bug, i) => {
+              issueBody += `## ${i + 1}. ${bug.title}\n\n`;
+              issueBody += `**Severity:** ${bug.severity}\n`;
+              issueBody += `**Category:** ${bug.category}\n`;
+              issueBody += `**Impact:** ${bug.impact}\n\n`;
+              issueBody += `**Description:** ${bug.description}\n\n`;
+              issueBody += `**Reproduction Steps:**\n`;
+              bug.reproductionSteps.forEach((step, j) => {
+                issueBody += `${j + 1}. ${step}\n`;
+              });
+              issueBody += `\n`;
+              
+              if (bug.fixPlan) {
+                issueBody += `**Automated Fix Plan (Confidence: ${bug.fixPlan.confidence}%):**\n`;
+                issueBody += `- **Effort:** ${bug.fixPlan.estimatedEffort}\n`;
+                issueBody += `- **Files:** ${bug.fixPlan.filesAffected.join(', ')}\n\n`;
+              }
+              
+              issueBody += `---\n\n`;
+            });
+            
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚨 ${criticalBugs.length} Critical Bug(s) Detected - ${new Date().toISOString().split('T')[0]}`,
+              body: issueBody,
+              labels: ['bug', 'critical', 'autonomous-testing']
+            });
+      
+      - name: 💬 Comment on PR if exists
+        if: github.event_name == 'pull_request' && steps.parse-report.outputs.total_bugs > 0
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const totalBugs = '${{ steps.parse-report.outputs.total_bugs }}';
+            const critical = '${{ steps.parse-report.outputs.critical_bugs }}';
+            const high = '${{ steps.parse-report.outputs.high_bugs }}';
+            
+            let comment = `## 🤖 Autonomous Bug Hunter Report\n\n`;
+            comment += `**Total Bugs Found:** ${totalBugs}\n`;
+            if (critical > 0) comment += `**Critical:** 🔴 ${critical}\n`;
+            if (high > 0) comment += `**High:** 🟠 ${high}\n`;
+            comment += `\n`;
+            comment += `[View Full Report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})\n`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+      
+      - name: ❌ Fail if critical bugs found
+        if: steps.parse-report.outputs.critical_bugs > 0
+        run: |
+          echo "::error::Found ${{ steps.parse-report.outputs.critical_bugs }} critical bug(s)"
+          exit 1
+      
+      - name: ⚠️ Warning if high severity bugs found
+        if: steps.parse-report.outputs.high_bugs > 0 && steps.parse-report.outputs.critical_bugs == 0
+        run: |
+          echo "::warning::Found ${{ steps.parse-report.outputs.high_bugs }} high severity bug(s)"
+      
+      - name: ✅ Success - No critical bugs
+        if: steps.parse-report.outputs.critical_bugs == 0
+        run: |
+          echo "✅ No critical bugs detected!"
+          echo "Total bugs found: ${{ steps.parse-report.outputs.total_bugs }}"
+

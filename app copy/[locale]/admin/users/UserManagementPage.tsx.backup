@@ -1,0 +1,637 @@
+'use client'
+
+import { useState, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
+import { useAuth } from '@/components/auth/AuthProvider'
+import { 
+  useAdminUsersAdvanced, 
+  useDeleteUser, 
+  useBulkUserOperations,
+  useCreateUser,
+  useUpdateUser
+} from '@/hooks/useAdminQueries'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
+import { useToast } from '@/components/ui/use-toast'
+import { 
+  Search, 
+  Plus, 
+  MoreHorizontal, 
+  Trash2, 
+  Edit, 
+  Eye, 
+  RefreshCw,
+  UserCheck,
+  UserX,
+  Key,
+  ChevronLeft,
+  ChevronRight,
+  Users
+} from 'lucide-react'
+import { UserDetailsModal } from './UserDetailsModal'
+import { CreateUserModal } from './CreateUserModal'
+import { EditUserModal } from './EditUserModal'
+
+interface User {
+  id: string
+  email: string
+  first_name?: string
+  last_name?: string
+  phone_number?: string
+  is_admin: boolean
+  is_partner: boolean
+  created_at: string
+  companies?: Array<{ id: string; name: string; business_id: string }>
+  partners?: Array<{ id: string; name: string; email: string }>
+  auth?: {
+    last_sign_in_at?: string
+    email_confirmed_at?: string
+  }
+}
+
+export default function UserManagementPage() {
+  const t = useTranslations('AdminUsers')
+  const { session } = useAuth()
+  const { toast } = useToast()
+
+  // State
+  const [page, setPage] = useState(1)
+  const [search, setSearch] = useState('')
+  const [roleFilter, setRoleFilter] = useState('')
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([])
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [showDetailsModal, setShowDetailsModal] = useState(false)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [showBulkDialog, setShowBulkDialog] = useState(false)
+  const [selectedUser, setSelectedUser] = useState<User | null>(null)
+  const [bulkAction, setBulkAction] = useState<'delete' | 'update_role' | 'reset_password'>('delete')
+  const [bulkRoleData, setBulkRoleData] = useState({ is_admin: false, is_partner: false })
+
+  const limit = 20
+
+  // Queries
+  const { 
+    data: usersResponse, 
+    isLoading, 
+    error, 
+    refetch 
+  } = useAdminUsersAdvanced(page, limit, search, roleFilter)
+
+  const deleteUserMutation = useDeleteUser()
+  const bulkOperationMutation = useBulkUserOperations()
+
+  const users = usersResponse?.data || []
+  const pagination = usersResponse?.pagination || { total: 0, totalPages: 0 }
+
+  // Computed values
+  const allSelected = users.length > 0 && selectedUsers.length === users.length
+  const someSelected = selectedUsers.length > 0 && selectedUsers.length < users.length
+
+  // Handlers
+  const handleSearch = (value: string) => {
+    setSearch(value)
+    setPage(1)
+  }
+
+  const handleRoleFilter = (value: string) => {
+    setRoleFilter(value === 'all' ? '' : value)
+    setPage(1)
+  }
+
+  const handleSelectAll = () => {
+    if (allSelected) {
+      setSelectedUsers([])
+    } else {
+      setSelectedUsers(users.map(user => user.id))
+    }
+  }
+
+  const handleSelectUser = (userId: string) => {
+    setSelectedUsers(prev => 
+      prev.includes(userId) 
+        ? prev.filter(id => id !== userId)
+        : [...prev, userId]
+    )
+  }
+
+  const handleViewUser = (user: User) => {
+    setSelectedUser(user)
+    setShowDetailsModal(true)
+  }
+
+  const handleEditUser = (user: User) => {
+    setSelectedUser(user)
+    setShowEditModal(true)
+  }
+
+  const handleDeleteUser = (user: User) => {
+    setSelectedUser(user)
+    setShowDeleteDialog(true)
+  }
+
+  const confirmDeleteUser = async () => {
+    if (!selectedUser) return
+
+    try {
+      await deleteUserMutation.mutateAsync(selectedUser.id)
+      toast({
+        title: t('deleteUser.success'),
+        description: `${selectedUser.email} ${t('messages.deleted')}`,
+      })
+      setShowDeleteDialog(false)
+      setSelectedUser(null)
+    } catch (error) {
+      toast({
+        title: t('deleteUser.error'),
+        description: error instanceof Error ? error.message : t('error'),
+        variant: 'destructive'
+      })
+    }
+  }
+
+  const handleBulkAction = (action: 'delete' | 'update_role' | 'reset_password') => {
+    if (selectedUsers.length === 0) return
+    setBulkAction(action)
+    setShowBulkDialog(true)
+  }
+
+  const confirmBulkAction = async () => {
+    if (selectedUsers.length === 0) return
+
+    try {
+      const updateData = bulkAction === 'update_role' ? bulkRoleData : undefined
+      
+      await bulkOperationMutation.mutateAsync({
+        action: bulkAction,
+        userIds: selectedUsers,
+        updateData
+      })
+
+      toast({
+        title: t('bulkActions.success'),
+        description: t('messages.bulkOperationSuccess'),
+      })
+      
+      setShowBulkDialog(false)
+      setSelectedUsers([])
+    } catch (error) {
+      toast({
+        title: t('bulkActions.error'),
+        description: error instanceof Error ? error.message : t('messages.bulkOperationError'),
+        variant: 'destructive'
+      })
+    }
+  }
+
+  const getRoleBadge = (user: User) => {
+    if (user.is_admin && user.is_partner) {
+      return <Badge variant="destructive">{t('roles.adminPartner')}</Badge>
+    } else if (user.is_admin) {
+      return <Badge variant="destructive">{t('roles.admin')}</Badge>
+    } else if (user.is_partner) {
+      return <Badge variant="secondary">{t('roles.partner')}</Badge>
+    } else {
+      return <Badge variant="outline">{t('roles.user')}</Badge>
+    }
+  }
+
+  const getStatusBadge = (user: User) => {
+    const isConfirmed = user.auth?.email_confirmed_at
+    const hasSignedIn = user.auth?.last_sign_in_at
+    
+    if (isConfirmed && hasSignedIn) {
+      return <Badge variant="default" className="bg-green-100 text-green-800">{t('status.active')}</Badge>
+    } else if (isConfirmed) {
+      return <Badge variant="secondary">{t('status.confirmed')}</Badge>
+    } else {
+      return <Badge variant="outline">{t('status.unconfirmed')}</Badge>
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <LoadingSpinner size="lg" text={t('loading')} />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-center">
+              <p className="text-red-600 mb-4">{error.message}</p>
+              <Button onClick={() => refetch()} variant="outline">
+                <RefreshCw className="h-4 w-4 mr-2" />
+                {t('retry')}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8 space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            {t('title')}
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
+            {t('subtitle')}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button onClick={() => refetch()} variant="outline" size="sm">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            {t('refresh')}
+          </Button>
+          <Button onClick={() => setShowCreateModal(true)} size="sm">
+            <Plus className="h-4 w-4 mr-2" />
+            {t('createUser.button')}
+          </Button>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder={t('searchPlaceholder')}
+                  value={search}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            <Select value={roleFilter || 'all'} onValueChange={handleRoleFilter}>
+              <SelectTrigger className="w-full sm:w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t('filters.all')}</SelectItem>
+                <SelectItem value="admin">{t('filters.admin')}</SelectItem>
+                <SelectItem value="partner">{t('filters.partner')}</SelectItem>
+                <SelectItem value="user">{t('filters.user')}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Bulk Actions */}
+      {selectedUsers.length > 0 && (
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  {selectedUsers.length} {t('bulkActions.selected')}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSelectedUsers([])}
+                >
+                  {t('bulkActions.deselectAll')}
+                </Button>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleBulkAction('update_role')}
+                >
+                  <UserCheck className="h-4 w-4 mr-2" />
+                  {t('bulkActions.changeRole')}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleBulkAction('reset_password')}
+                >
+                  <Key className="h-4 w-4 mr-2" />
+                  {t('bulkActions.resetPassword')}
+                </Button>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => handleBulkAction('delete')}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  {t('bulkActions.delete')}
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Users Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Users className="h-5 w-5" />
+            {t('title')} ({pagination.total})
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {users.length === 0 ? (
+            <div className="text-center py-8">
+              <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600 dark:text-gray-400">
+                {search || roleFilter ? t('messages.noUsersFiltered') : t('messages.noUsers')}
+              </p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-3 px-4">
+                      <Checkbox
+                        checked={allSelected}
+                        onCheckedChange={handleSelectAll}
+                        ref={(el) => {
+                          if (el) {
+                            el.indeterminate = someSelected
+                          }
+                        }}
+                      />
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium">{t('table.email')}</th>
+                    <th className="text-left py-3 px-4 font-medium">{t('table.name')}</th>
+                    <th className="text-left py-3 px-4 font-medium">{t('table.role')}</th>
+                    <th className="text-left py-3 px-4 font-medium">{t('table.status')}</th>
+                    <th className="text-left py-3 px-4 font-medium">{t('table.created')}</th>
+                    <th className="text-left py-3 px-4 font-medium">{t('table.lastSignIn')}</th>
+                    <th className="text-left py-3 px-4 font-medium">{t('table.actions')}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((user) => (
+                    <tr key={user.id} className="border-b hover:bg-gray-50 dark:hover:bg-gray-800">
+                      <td className="py-3 px-4">
+                        <Checkbox
+                          checked={selectedUsers.includes(user.id)}
+                          onCheckedChange={() => handleSelectUser(user.id)}
+                        />
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="font-medium">{user.email}</div>
+                        {user.companies && user.companies.length > 0 && (
+                          <div className="text-sm text-gray-500">
+                            {user.companies.length} {t('table.companies')}
+                          </div>
+                        )}
+                      </td>
+                      <td className="py-3 px-4">
+                        {user.first_name || user.last_name ? (
+                          <div>
+                            <div className="font-medium">
+                              {user.first_name} {user.last_name}
+                            </div>
+                            {user.phone_number && (
+                              <div className="text-sm text-gray-500">{user.phone_number}</div>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-gray-400">-</span>
+                        )}
+                      </td>
+                      <td className="py-3 px-4">
+                        {getRoleBadge(user)}
+                      </td>
+                      <td className="py-3 px-4">
+                        {getStatusBadge(user)}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">
+                        {new Date(user.created_at).toLocaleDateString('fi-FI')}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">
+                        {user.auth?.last_sign_in_at 
+                          ? new Date(user.auth.last_sign_in_at).toLocaleDateString('fi-FI')
+                          : t('never')
+                        }
+                      </td>
+                      <td className="py-3 px-4">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleViewUser(user)}>
+                              <Eye className="h-4 w-4 mr-2" />
+                              {t('actions.view')}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleEditUser(user)}>
+                              <Edit className="h-4 w-4 mr-2" />
+                              {t('actions.edit')}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => handleDeleteUser(user)}
+                              className="text-red-600"
+                              disabled={user.id === session?.user?.id}
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              {t('actions.delete')}
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Pagination */}
+      {pagination.totalPages > 1 && (
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            {t('pagination.showing', {
+              start: (page - 1) * limit + 1,
+              end: Math.min(page * limit, pagination.total),
+              total: pagination.total
+            })}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(page - 1)}
+              disabled={page === 1}
+            >
+              <ChevronLeft className="h-4 w-4 mr-2" />
+              {t('pagination.previous')}
+            </Button>
+            <span className="text-sm">
+              {t('pagination.page')} {page} {t('pagination.of')} {pagination.totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(page + 1)}
+              disabled={page === pagination.totalPages}
+            >
+              {t('pagination.next')}
+              <ChevronRight className="h-4 w-4 ml-2" />
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Modals */}
+      <CreateUserModal
+        open={showCreateModal}
+        onOpenChange={setShowCreateModal}
+      />
+
+      {selectedUser && (
+        <>
+          <EditUserModal
+            open={showEditModal}
+            onOpenChange={setShowEditModal}
+            user={selectedUser}
+          />
+
+          <UserDetailsModal
+            open={showDetailsModal}
+            onOpenChange={setShowDetailsModal}
+            userId={selectedUser.id}
+          />
+        </>
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('deleteUser.title')}</DialogTitle>
+            <DialogDescription>
+              {t('deleteUser.message', { email: selectedUser?.email })}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowDeleteDialog(false)}>
+              {t('deleteUser.cancel')}
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={confirmDeleteUser}
+              disabled={deleteUserMutation.isPending}
+            >
+              {deleteUserMutation.isPending ? (
+                <LoadingSpinner size="sm" className="mr-2" />
+              ) : (
+                <Trash2 className="h-4 w-4 mr-2" />
+              )}
+              {t('deleteUser.confirm')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Bulk Action Dialog */}
+      <Dialog open={showBulkDialog} onOpenChange={setShowBulkDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('bulkActions.title')}</DialogTitle>
+            <DialogDescription>
+              {bulkAction === 'delete' && t('bulkActions.confirmDelete', { count: selectedUsers.length })}
+              {bulkAction === 'update_role' && t('bulkActions.confirmRoleChange', { count: selectedUsers.length })}
+              {bulkAction === 'reset_password' && t('bulkActions.confirmPasswordReset', { count: selectedUsers.length })}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {bulkAction === 'update_role' && (
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="bulk-admin"
+                  checked={bulkRoleData.is_admin}
+                  onCheckedChange={(checked) => 
+                    setBulkRoleData(prev => ({ ...prev, is_admin: !!checked }))
+                  }
+                />
+                <label htmlFor="bulk-admin">{t('roles.admin')}</label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="bulk-partner"
+                  checked={bulkRoleData.is_partner}
+                  onCheckedChange={(checked) => 
+                    setBulkRoleData(prev => ({ ...prev, is_partner: !!checked }))
+                  }
+                />
+                <label htmlFor="bulk-partner">{t('roles.partner')}</label>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowBulkDialog(false)}>
+              {t('cancel')}
+            </Button>
+            <Button 
+              variant={bulkAction === 'delete' ? 'destructive' : 'default'}
+              onClick={confirmBulkAction}
+              disabled={bulkOperationMutation.isPending}
+            >
+              {bulkOperationMutation.isPending ? (
+                <LoadingSpinner size="sm" className="mr-2" />
+              ) : bulkAction === 'delete' ? (
+                <Trash2 className="h-4 w-4 mr-2" />
+              ) : bulkAction === 'update_role' ? (
+                <UserCheck className="h-4 w-4 mr-2" />
+              ) : (
+                <Key className="h-4 w-4 mr-2" />
+              )}
+              {t(`bulkActions.${bulkAction}`)}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}

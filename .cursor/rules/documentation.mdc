@@ -1,30 +1,251 @@
 ---
-description: the list of documentation for this project. 
+description: Comprehensive documentation plan for TrustyFinance AI-powered financing analysis platform
 globs:
 alwaysApply: true
 ---
-<documentation>
-  ## Documentation and Context Files in /docs folder. Use for using, creating, updating documentation.
-  Reference these files for understanding the project and architecture.
-    - `description.md`: App description, use cases, features.
-    - `architecture.md`: Tech stack, folder structure, testing frameworks.
-    - `datamodel.md`: Entities, attributes, relationships.
-    - `frontend.md`: Views/screens, UI/UX patterns, styling.
-    - `backend.md`: API endpoints, authentication, service architecture.
-    - `todo.md`: Task list (✅ done, ⏳ in progress, ❌ not started). Update status, don't remove tasks.
-    - `ai_changelog.md`: Log of changes made by AI. Add concise summaries here.
-    - `learnings.md`: Technical learnings, best practices, error solutions. Add new findings here.
 
-  ## Subfolders under the docs folder to update software subsystem decomposition and sw design patterns
-    - patterns: folder that contains software pattern for implementing certain kind of parts in the system. Use these always to get up to date information about how to implement features.
-    - subsystems: folder that contains subsystem descriptions and links to the files belonging to a subsystem. Use these to document and understand about the details of single subsystems and to evaluate the relations between the componenents. 
+# TrustyFinance Documentation Plan
 
-  ## important files at root folder   
-    - `package.json`: List of used npm packages and versions.
-    - `README.md`: **Comprehensive setup guide**, tool descriptions, usage examples, and API key instructions
-    - `.env.example`: Template for required environment variables and API keys
+## Overview
+TrustyFinance is an AI-powered business financing analysis service designed to analyze company financial data and present key metrics through a comprehensive dashboard. The service provides accurate numerical analysis and strategic recommendations to help businesses optimize their financial health and make informed funding decisions.
 
-  **Link Handling:**
-    - Documents might contain links to certain document in external repos. Read them separately when needed.
-    - For `http://` or `https://` links: Use web search to get information from the URL if needed for the task (e.g., documentation, error context). 
-</documentation>
+## Core Documentation Structure
+
+### 1. Project Overview (`docs/description.md`)
+- **Application Purpose**: AI-powered business financing analysis and recommendations
+- **Target Users**: SMEs, financial managers, CFOs, business owners, financial advisors
+- **Key Features**: 
+  - AI-powered financial health assessment
+  - Cash flow and liquidity analysis
+  - Document upload and processing (PDF extraction via Gemini AI)
+  - Multi-step onboarding with AI guidance
+  - Lender integration and offer management
+  - Real-time dashboard with financial metrics
+  - Multi-language support (Finnish, Swedish, English)
+- **Business Domain**: Financial analysis, lending, business financing
+
+### 2. System Architecture (`docs/architecture.md`)
+- **Frontend**: Next.js 15 (App Router) + React 19 + TypeScript
+- **Backend**: Next.js API Routes + TypeScript
+- **Database**: PostgreSQL via Supabase
+- **Authentication**: Supabase Auth (Google OAuth, email, SSO)
+- **AI/ML**: Google Gemini API (@google/genai) for document analysis
+- **State Management**: React Context API + TanStack React Query
+- **Styling**: Tailwind CSS + Shadcn UI components
+- **Deployment**: Vercel (frontend) + Supabase Cloud (database)
+- **Background Jobs**: Inngest for task scheduling and polling
+- **Testing**: Jest + React Testing Library + Cypress E2E
+
+### 3. Data Model (`docs/datamodel.md`)
+- **Core Entities**:
+  - `users`: System users with authentication
+  - `profiles`: Extended user information
+  - `companies`: Business entity information
+  - `documents`: Uploaded financial documents and system-generated analyses
+  - `financial_metrics`: Detailed financial metrics extracted from documents
+  - `financing_needs`: Company's financing requirements and goals
+  - `future_goals`: Company's future growth plans
+  - `funding_recommendations`: AI-generated funding recommendations
+  - `funding_applications`: User-submitted applications for funding
+  - `financing_offers`: Offers received from financing providers
+- **Supporting Entities**:
+  - `document_types`: Categories for different document types
+  - `financing_options`: Generic financing option types
+  - `financing_providers`: Organizations providing financing
+  - `ai_analysis_logs`: Tracks AI processing for auditing
+  - `analysis_jobs`: Tracks background analysis jobs
+
+### 4. Backend Documentation (`docs/backend.md`)
+- **API Modules**:
+  - Authentication (`/api/auth`): Login, registration, password reset
+  - Companies (`/api/companies`): Company management, YTJ integration
+  - Documents (`/api/documents`): Upload, analyze documents
+  - Financial Metrics (`/api/financial-metrics`): Financial data management
+  - Future Goals (`/api/future-goals`): Company goals management
+  - Funding Recommendations (`/api/funding-recommendations`): AI-generated recommendations
+  - Financing Needs (`/api/financing-needs`): Financing requirements
+  - Applications (`/api/applications`): Funding application management
+  - Lenders (`/api/lenders`): Lender integration (Qred, Capital Box)
+  - Admin (`/api/admin`): Admin panel functionality
+- **Security**: Supabase RLS policies, JWT authentication, server-side validation
+- **Database**: Supabase migrations, Row Level Security (RLS)
+
+### 5. Frontend Documentation (`docs/frontend.md`)
+- **Application Structure**:
+  - App Router architecture (Next.js 15)
+  - Locale-based routing (`[locale]` parameter)
+  - Role-based access control
+  - Multi-language support (Finnish, Swedish, English)
+  - Dark theme with gold accents
+- **Key Views**:
+  - Authentication (Login, registration, onboarding)
+  - Dashboard (authenticated users)
+  - Admin Panel (admin-only)
+  - Onboarding Flow (multi-step company setup)
+  - Financial Analysis Hub
+  - Lender Applications
+- **State Management**: React Query for server state, Context API for global state
+- **UI Components**: Shadcn UI + custom components
+
+### 6. Development Workflow (`docs/development/README.md`)
+- **Setup Instructions**: Node.js v22+, Supabase CLI, environment configuration
+- **Code Standards**: ESLint, Prettier, TypeScript strict mode
+- **Testing**: Jest (unit tests), Cypress (E2E tests)
+- **Database Management**: Supabase migrations, local development setup
+- **Deployment**: Vercel automatic deployments, environment variables
+
+### 7. Development Planning (`docs/development/architecture/IMPLEMENTATION_PLAN.md`)
+- **Sprint-based Tasks**: Detailed implementation tasks (Task 0.1, 0.2, etc.)
+- **Technical Specifications**: Implementation guides for each feature
+- **Code Examples**: Example implementations and file paths
+- **Testing Strategy**: Test coverage requirements
+- **Translation Keys**: Localization requirements
+- **Recent Completions**: Latest implemented features
+
+### 8. Strategic Roadmap (`docs/development/architecture/CONSOLIDATED_ROADMAP.md`)
+- **Long-term Vision**: 2025-2028 strategic planning
+- **Prioritization**: P0-P3 priority levels
+- **ROI Estimates**: Business value assessments
+- **Quarterly Planning**: Q1-Q4 breakdown
+- **Resource Requirements**: Team and infrastructure needs
+
+### 9. Progress Tracking (`docs/development/progress/DEVELOPMENT_PROGRESS.md`)
+- **Recent Implementations**: Latest completed features
+- **Active Work**: Current tasks in progress
+- **Active Issues**: Open bugs and blockers
+- **Performance Metrics**: System performance data
+- **Learnings**: Recent insights and solutions
+- **Checkpoint History**: Git checkpoint tracking
+
+### 10. Git Workflow (`docs/development/GIT_RULES.md`)
+- **Branching Strategy**: Feature branches (feature/*)
+- **Commit Guidelines**: Conventional commit messages
+- **Pull Request Process**: Code review requirements
+- **Never Merge to Main**: Manual merge only for main branch
+- **Documentation Requirements**: Pre-commit documentation checklist
+
+### 11. Migration Management (`docs/development/migrations/MIGRATION_TRACKER.md`)
+- **Completed Migrations**: Historical migration log
+- **Planned Migrations**: Upcoming database changes
+- **Rollback Procedures**: Recovery instructions
+- **Production Migrations**: Safe deployment guidelines
+
+### 12. AI Integration (`docs/ai-ecosystem/`)
+- **SMART-GEMINI.md**: Gemini AI integration patterns
+- **Layered Scraper System**: Multi-layer web scraping with AI
+- **Document Processing**: PDF extraction and analysis
+- **Financial Analysis**: AI-powered metrics calculation
+
+## Subsystem Documentation
+
+### Analysis (`docs/analysis/`)
+- **ONBOARDING_FLOW_ANALYSIS.md**: Onboarding flow detailed analysis
+- **PARTNER_REFERRAL_SYSTEM_ANALYSIS.md**: Partner commission system analysis
+- **ONBOARDING_FLOW_COMPLETE_FIX.md**: Onboarding fixes documentation
+
+### Features (`docs/development/features/`)
+- **DASHBOARD_IMPROVEMENT_PLAN.md**: Dashboard-specific improvements
+- **ONBOARDING_RECOMMENDATIONS_PERSISTENCE.md**: Recommendation persistence logic
+
+### Files (`docs/files/`)
+- **Component Documentation**: Detailed documentation for key components
+- **Service Documentation**: Backend service documentation
+- **Route Documentation**: API route specifications
+
+## Integration Documentation
+
+### Lender Integrations
+- **Qred Integration**: `docs/qred_datamodel.md`
+- **Capital Box Integration**: `docs/capitalbox_datamodel.md`, `docs/capitalbox_openapi.md`
+
+### API Integrations
+- **YTJ Business Registry**: Finnish business information system
+- **Gemini AI**: Document processing and analysis
+- **SendGrid/Resend**: Email services
+- **Inngest**: Background job processing
+
+## Maintenance Documentation
+
+### Learnings (`docs/learnings.md`)
+- **Technical Solutions**: Solutions to encountered problems
+- **Best Practices**: Project-specific best practices
+- **Common Patterns**: Reusable implementation patterns
+
+### Changelog (`docs/ai_changelog.md`)
+- **Change History**: Record of AI-assisted changes
+- **Implementation Summaries**: Brief summaries of changes
+- **Date Tracking**: Chronological change log
+
+### Todo (`docs/todo.md` or `docs/@todo.md`)
+- **Task Tracking**: Completed (✅), In Progress (⏳), Not Started (❌)
+- **Feature Backlog**: Planned features
+- **Technical Debt**: Known issues to address
+
+## Development Tools Documentation
+
+### Code Quality
+- **ESLint Configuration**: Code linting rules
+- **Prettier Configuration**: Code formatting rules
+- **TypeScript Configuration**: Type checking settings
+
+### Testing
+- **Jest Setup**: Unit test configuration
+- **Cypress Setup**: E2E test configuration
+- **Test Utilities**: Custom test helpers
+
+### Deployment
+- **Vercel Configuration**: `vercel.json`
+- **Environment Variables**: `.env.example`
+- **Supabase Configuration**: `supabase/config.toml`
+
+## Key Architectural Patterns
+
+### 1. App Router Architecture (Next.js 15)
+- File-based routing with layout hierarchy
+- Server and client components separation
+- Streaming and Suspense for loading states
+
+### 2. Multi-tenant Company Architecture
+- User profiles linked to companies
+- Row Level Security for data isolation
+- Company-scoped financial data
+
+### 3. AI-Driven Financial Analysis
+- Document upload and processing pipeline
+- Gemini AI for financial document extraction
+- Automated risk assessment and recommendations
+
+### 4. Real-time Lender Integration
+- Polling system for external lender APIs (Inngest)
+- Asynchronous offer processing
+- Real-time status updates via Supabase Realtime
+
+### 5. Internationalization (i18n)
+- Multi-language support (Finnish, English, Swedish)
+- Locale-based routing with [locale] dynamic segments
+- Translation management with next-intl
+
+## Document Organization Priority
+
+**Must Read First:**
+1. `docs/development/README.md` - Main development guide
+2. `docs/development/DOCUMENTATION_WORKFLOW.md` - Development process
+3. `docs/architecture.md` - Technical architecture
+4. `docs/datamodel.md` - Database schema
+
+**For Feature Development:**
+1. `docs/development/architecture/IMPLEMENTATION_PLAN.md` - Task breakdown
+2. `docs/development/progress/DEVELOPMENT_PROGRESS.md` - Current status
+3. `docs/backend.md` - API specifications
+4. `docs/frontend.md` - UI/UX guidelines
+
+**For Database Changes:**
+1. `docs/development/migrations/MIGRATION_TRACKER.md` - Migration tracking
+2. `docs/datamodel.md` - Entity relationships
+3. `docs/learnings.md` - Previous solutions
+
+**For Strategic Planning:**
+1. `docs/development/architecture/CONSOLIDATED_ROADMAP.md` - Long-term vision
+2. `docs/description.md` - Business requirements
+
+This documentation plan provides comprehensive coverage of the TrustyFinance platform, ensuring developers, administrators, and users have the information they need to understand, develop, deploy, and use the application effectively.

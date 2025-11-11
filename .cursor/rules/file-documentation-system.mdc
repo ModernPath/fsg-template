@@ -1,0 +1,259 @@
+---
+description: System for iteratively documenting all files in the codebase with coordinated todo tracking for parallel agents
+---
+
+# File Documentation System
+
+This rule provides a systematic approach for documenting all files in the codebase by creating summary files in `docs/files/`. It includes coordination mechanisms for multiple parallel agents.
+
+## Overview
+
+The goal is to create comprehensive documentation for every file in the system by generating summary files at `docs/files/[relative_path]/[filename].md`. This allows multiple agents to work in parallel while avoiding conflicts.
+
+## Todo List Management
+
+### Master Todo File: `docs/files/documentation-todo.md`
+
+The master todo list tracks all folders and their processing status:
+
+```markdown
+# File Documentation Todo
+
+## Status Legend
+- ❌ Not started
+- ⏳ In progress (Agent: agent-name, Started: timestamp)
+- ✅ Completed (Agent: agent-name, Completed: timestamp)
+
+## Folders to Process
+
+### Root Level
+- ❌ `app/` (Files: X, Subdirs: Y)
+- ❌ `components/` (Files: X, Subdirs: Y)
+- ❌ `lib/` (Files: X, Subdirs: Y)
+- ❌ `utils/` (Files: X, Subdirs: Y)
+- ❌ `types/` (Files: X, Subdirs: Y)
+- ❌ `hooks/` (Files: X, Subdirs: Y)
+- ❌ `public/` (Files: X, Subdirs: Y)
+- ❌ `docs/` (Files: X, Subdirs: Y)
+- ❌ `scripts/` (Files: X, Subdirs: Y)
+- ❌ `tools/` (Files: X, Subdirs: Y)
+- ❌ `supabase/` (Files: X, Subdirs: Y)
+- ❌ `messages/` (Files: X, Subdirs: Y)
+- ❌ `styles/` (Files: X, Subdirs: Y)
+- ❌ `test/` (Files: X, Subdirs: Y)
+- ❌ `__tests__/` (Files: X, Subdirs: Y)
+- ❌ `cypress/` (Files: X, Subdirs: Y)
+- ❌ `mocks/` (Files: X, Subdirs: Y)
+
+### Subdirectories (populated as discovered)
+- ❌ `app/api/` (Files: X, Subdirs: Y)
+- ❌ `app/[locale]/` (Files: X, Subdirs: Y)
+- ❌ `components/ui/` (Files: X, Subdirs: Y)
+- ❌ `components/auth/` (Files: X, Subdirs: Y)
+... (continue as folders are discovered)
+```
+
+## Workflow Steps
+
+### 1. Initialize Documentation System
+
+```bash
+# Create the documentation directory structure
+mkdir -p docs/files
+
+# Create the master todo file
+touch docs/files/documentation-todo.md
+```
+
+### 2. Agent Coordination Protocol
+
+Before starting work on any folder:
+
+1. **Claim a folder**: Update the todo list to mark folder as ⏳ with your agent identifier
+2. **Process the folder**: Document all files in that folder
+3. **Mark complete**: Update the todo list to mark folder as ✅
+4. **Discover subdirectories**: Add any new subdirectories to the todo list
+
+### 3. Folder Processing Steps
+
+For each folder being processed:
+
+1. **List all files** in the target folder (non-recursive)
+2. **Create documentation directory**: `docs/files/[folder_path]/`
+3. **For each file**:
+   - Read the file content
+   - Generate a comprehensive summary
+   - Create `docs/files/[folder_path]/[filename].md`
+4. **Update progress** in the todo list
+5. **Discover subdirectories** and add them to the master todo
+
+### 4. File Summary Template
+
+Each file summary should follow this template:
+
+```markdown
+# [Filename] Documentation
+
+**Path**: `[relative/path/to/file]`
+**Type**: [File type/extension]
+**Size**: [File size]
+**Last Modified**: [Timestamp]
+
+## Purpose
+
+[Brief description of what this file does]
+
+## Key Components
+
+### [Component/Function/Class Name]
+- **Purpose**: [What it does]
+- **Parameters**: [If applicable]
+- **Returns**: [If applicable]
+- **Dependencies**: [Key imports/dependencies]
+
+### [Additional components...]
+
+## Dependencies
+
+- [List of key dependencies/imports]
+- [External libraries used]
+- [Internal modules referenced]
+
+## Usage Examples
+
+[Code examples or usage patterns if applicable]
+
+## Notes
+
+- [Important implementation details]
+- [Potential issues or considerations]
+- [Relationships to other files]
+
+## Related Files
+
+- [List of related files in the codebase]
+- [Files that import this file]
+- [Files imported by this file]
+```
+
+### 5. Implementation Tools and Commands
+
+Use these tools for the documentation process:
+
+```typescript
+// Read file contents
+const content = await read_file(filePath)
+
+// List directory contents
+const files = await list_dir(folderPath)
+
+// Search for file usage
+const usage = await grep_search(filename, { output_mode: "files_with_matches" })
+
+// Find related files
+const related = await codebase_search(`imports from ${filename}`)
+```
+
+## Agent Coordination Examples
+
+### Starting Work on a Folder
+
+```markdown
+# Before starting
+- ❌ `components/ui/` (Files: 35, Subdirs: 0)
+
+# After claiming
+- ⏳ `components/ui/` (Files: 35, Subdirs: 0) [Agent: agent-alpha, Started: 2024-01-15T10:30:00Z]
+```
+
+### Completing a Folder
+
+```markdown
+# After completion
+- ✅ `components/ui/` (Files: 35, Subdirs: 0) [Agent: agent-alpha, Completed: 2024-01-15T11:45:00Z]
+```
+
+### Discovering New Subdirectories
+
+When processing a folder, if subdirectories are found, add them to the todo:
+
+```markdown
+# Newly discovered during processing
+- ❌ `components/auth/onboarding/` (Files: 3, Subdirs: 0) [Discovered by: agent-alpha]
+- ❌ `components/auth/providers/` (Files: 2, Subdirs: 0) [Discovered by: agent-alpha]
+```
+
+## File Filtering Rules
+
+### Include These Files:
+- All `.ts`, `.tsx`, `.js`, `.jsx` files
+- Configuration files (`.json`, `.yaml`, `.toml`, etc.)
+- Documentation files (`.md`, `.mdx`)
+- Style files (`.css`, `.scss`)
+- SQL files (`.sql`)
+- Shell scripts (`.sh`)
+- Important dot files (`.env.example`, `.gitignore`, etc.)
+
+### Exclude These Files:
+- `node_modules/` directory
+- `.git/` directory
+- Build artifacts (`dist/`, `build/`, `.next/`)
+- Log files (`.log`)
+- Temporary files
+- Binary files (images, videos, etc.) - but document their existence
+- Generated files that are frequently updated
+
+## Quality Standards
+
+### File Summaries Should Include:
+1. **Clear purpose statement**
+2. **Key functionality breakdown**
+3. **Dependencies and relationships**
+4. **Usage patterns or examples**
+5. **Important implementation notes**
+
+### Documentation Quality Checks:
+- [ ] File purpose is clearly explained
+- [ ] All major functions/components are documented
+- [ ] Dependencies are listed
+- [ ] Related files are identified
+- [ ] Examples are provided where helpful
+- [ ] Special considerations are noted
+
+## Progress Tracking
+
+### Metrics to Track:
+- Total folders to process
+- Folders completed
+- Files documented
+- Agent assignments
+- Time estimates
+
+### Reporting Format:
+```markdown
+## Documentation Progress Report
+
+**Generated**: [Timestamp]
+**Total Folders**: X
+**Completed**: Y (Z%)
+**In Progress**: N
+**Remaining**: M
+
+### Active Agents:
+- agent-alpha: Working on `components/auth/`
+- agent-beta: Working on `app/api/admin/`
+
+### Recent Completions:
+- ✅ `components/ui/` (35 files) - agent-alpha
+- ✅ `lib/utils/` (8 files) - agent-beta
+```
+
+## Usage Instructions
+
+1. **Initialize**: Create the todo list with all top-level folders
+2. **Claim**: Update todo to mark folder as in-progress
+3. **Process**: Document all files in the claimed folder
+4. **Complete**: Mark folder as done and add any discovered subdirectories
+5. **Repeat**: Continue with next available folder
+
+This system ensures comprehensive coverage while preventing conflicts between parallel agents.
