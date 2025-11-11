@@ -125,6 +125,10 @@ async function seedRoles() {
         continue;
       }
 
+      // Determine if this role needs organization
+      const needsOrganization = ['broker', 'partner', 'admin'].includes(demoUser.role);
+      // seller intentionally left out for onboarding testing
+      
       // Update profile with role
       const { error: profileError } = await supabase
         .from('profiles')
@@ -133,7 +137,11 @@ async function seedRoles() {
           full_name: demoUser.full_name,
           phone: demoUser.phone,
           email_verified: true,
-          onboarding_completed: demoUser.role !== 'visitor', // Visitors don't need onboarding
+          // Only mark onboarding complete if:
+          // - visitor (doesn't need onboarding)
+          // - buyer (doesn't need organization)
+          // - roles that will get organization created below
+          onboarding_completed: demoUser.role === 'visitor' || demoUser.role === 'buyer' || needsOrganization,
         })
         .eq('id', authData.user.id);
 
@@ -143,9 +151,9 @@ async function seedRoles() {
         continue;
       }
 
-      // Create organization for seller, broker, partner, admin
-      if (['seller', 'broker', 'partner', 'admin'].includes(demoUser.role)) {
-        // Determine organization type and name
+      // Create organization for broker, partner, admin (NOT seller - for onboarding test)
+      if (needsOrganization) {
+        // Determine organization type and name based on role
         let orgType: string;
         let orgName: string;
         let orgSlug: string;
@@ -157,12 +165,6 @@ async function seedRoles() {
             orgName = `${demoUser.full_name} Platform`;
             orgSlug = `${demoUser.email.split('@')[0]}-platform`;
             userOrgRole = 'admin';
-            break;
-          case 'seller':
-            orgType = 'seller';
-            orgName = `${demoUser.full_name} Oy`;
-            orgSlug = `${demoUser.email.split('@')[0]}-oy`;
-            userOrgRole = 'seller';
             break;
           case 'broker':
             orgType = 'broker';
@@ -177,10 +179,8 @@ async function seedRoles() {
             userOrgRole = 'broker'; // Partner uses broker role in user_organizations
             break;
           default:
-            orgType = 'broker';
-            orgName = `${demoUser.full_name} Oy`;
-            orgSlug = `${demoUser.email.split('@')[0]}-oy`;
-            userOrgRole = demoUser.role;
+            console.warn(`⚠️  Unexpected role for organization creation: ${demoUser.role}`);
+            continue; // Skip organization creation for unexpected roles
         }
 
         const { data: org, error: orgError } = await supabase
