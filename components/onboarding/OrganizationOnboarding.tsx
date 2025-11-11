@@ -306,10 +306,16 @@ export function OrganizationOnboarding({
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-|-$/g, "");
 
-      // Create organization
-      const { data: org, error: orgError } = await supabase
+      // Generate UUID client-side to avoid RLS SELECT policy conflict
+      const orgId = crypto.randomUUID();
+      console.log("🆔 Generated org ID:", orgId);
+
+      // Create organization WITHOUT .select() to avoid RLS policy conflict
+      // RLS allows INSERT but SELECT requires user to be member first
+      const { error: orgError } = await supabase
         .from("organizations")
         .insert({
+          id: orgId, // Use pre-generated UUID
           name: formData.name,
           slug: `${slug}-${Date.now()}`,
           type: formData.type,
@@ -317,46 +323,63 @@ export function OrganizationOnboarding({
           country: formData.country,
           industry: formData.industry || null,
           description: formData.description || null,
-        })
-        .select()
-        .single();
+          business_id: formData.businessId || null,
+          data_quality: enrichedData?.basicInfo?.dataQuality || null,
+        });
 
-      if (orgError) throw orgError;
+      if (orgError) {
+        console.error("❌ Error creating organization:", orgError);
+        throw new Error(`Organisaation luonti epäonnistui: ${orgError.message}`);
+      }
+
+      console.log("✅ Organization created:", orgId);
 
       // Link user to organization with admin role
-      // Note: user_organizations.role = 'admin' means organization admin (not platform admin)
+      // This MUST happen before we try to SELECT the organization again
       const { error: linkError } = await supabase
         .from("user_organizations")
         .insert({
           user_id: userId,
-          organization_id: org.id,
+          organization_id: orgId,
           role: "admin", // Organization admin (valid: admin, broker, seller, analyst, viewer)
         });
 
       if (linkError) {
-        console.error("Error linking user to organization:", linkError);
-        throw linkError;
+        console.error("❌ Error linking user to organization:", linkError);
+        throw new Error(`Käyttäjän linkitys epäonnistui: ${linkError.message}`);
       }
 
-      // Update profile
+      console.log("✅ User linked to organization");
+
+      // Update profile with organization and mark onboarding complete
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
-          organization_id: org.id,
+          organization_id: orgId,
           onboarding_completed: true,
         })
         .eq("id", userId);
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        console.error("❌ Error updating profile:", profileError);
+        throw new Error(`Profiilin päivitys epäonnistui: ${profileError.message}`);
+      }
+
+      console.log("✅ Profile updated");
+
+      console.log("🎉 Organization creation complete!");
 
       toast({
         title: "✅ Organisaatio luotu!",
         description: "Tervetuloa BizExitiin",
       });
 
-      // Redirect to dashboard
-      router.push("/dashboard");
+      // Small delay to ensure database changes propagate
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Force refresh and redirect to dashboard
       router.refresh();
+      window.location.href = "/dashboard"; // Force full page reload to clear auth cache
     } catch (error) {
       console.error("Error creating organization:", error);
       toast({
