@@ -10,6 +10,7 @@ import { redirect } from "next/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { DashboardNav } from "@/components/dashboard/DashboardNav";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { Toaster } from "@/components/ui/toaster";
 import { createClient } from "@/utils/supabase/client";
 
 interface DashboardLayoutClientProps {
@@ -84,21 +85,26 @@ export default function DashboardLayoutClient({
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Sidebar Navigation */}
-      <DashboardNav locale={locale} profile={profile} />
+    <>
+      <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+        {/* Sidebar Navigation */}
+        <DashboardNav locale={locale} profile={profile} />
 
-      {/* Main Content */}
-      <div className="flex flex-col flex-1 overflow-hidden">
-        {/* Header */}
-        <DashboardHeader user={session.user} profile={profile} locale={locale} />
+        {/* Main Content */}
+        <div className="flex flex-col flex-1 overflow-hidden">
+          {/* Header */}
+          <DashboardHeader user={session.user} profile={profile} locale={locale} />
 
-        {/* Page Content */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-gray-900">
-          <div className="container mx-auto px-6 py-8">{children}</div>
-        </main>
+          {/* Page Content */}
+          <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-gray-900">
+            <div className="container mx-auto px-6 py-8">{children}</div>
+          </main>
+        </div>
       </div>
-    </div>
+      
+      {/* Toast Notifications */}
+      <Toaster />
+    </>
   );
 }
 
