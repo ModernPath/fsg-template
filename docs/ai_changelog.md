@@ -2,6 +2,97 @@
 
 ## Recent Changes
 
+### 2025-11-11 - Edit Pages & i18n Translations
+
+**Added edit functionality and comprehensive translations:**
+
+#### Edit Pages (2 new files):
+
+**1. Company Edit** (`app/[locale]/dashboard/companies/[id]/edit/page.tsx`):
+- Edit existing company details
+- Pre-loads company data with latest financials
+- Uses CompanyForm in edit mode
+- Permission checks and organization validation
+- Redirects if company not found or unauthorized
+
+**2. Deal Edit** (`app/[locale]/dashboard/deals/[id]/edit/page.tsx`):
+- Edit existing deal details
+- Pre-loads deal data with relations (company, buyer)
+- Loads all companies and buyers for dropdowns
+- Uses DealForm in edit mode
+- Permission checks and organization validation
+- Redirects if deal not found or unauthorized
+
+#### Form Updates:
+
+**CompanyForm.tsx:**
+- New props: `initialData`, `companyId`, `mode`
+- Supports both `create` and `edit` modes
+- API calls to `/api/bizexit/companies` (POST/PUT)
+- Proper type conversion for numbers (employees, revenue, etc.)
+- Router refresh after save
+- Error handling and validation
+
+**DealForm.tsx:**
+- New props: `initialData`, `dealId`, `mode`
+- Supports both `create` and `edit` modes
+- API calls to `/api/bizexit/deals` (POST/PUT)
+- Proper type conversion for estimated_value
+- Router refresh after save
+- Notes field included
+- Error handling and validation
+
+#### i18n Translations (12 new files):
+
+**NDAs (`ndas.json` - en, fi, sv):**
+- Title, subtitle, create NDA button
+- Stats: total, pending, signed
+- Table columns: company, signer, status, date, actions
+- Status badges: pending, signed, expired
+- Actions: download, view, sign
+- Empty state messages
+
+**Materials (`materials.json` - en, fi, sv):**
+- Title, subtitle, generate materials button
+- Material types: teasers, IMs, pitch decks, valuation reports
+- Type descriptions for each material
+- Actions: preview, download, generate
+- Recent materials section
+- Empty state messages
+
+**Payments (`payments.json` - en, fi, sv):**
+- Title, subtitle, create invoice button
+- Stats: total revenue, paid, pending, overdue
+- Table columns: invoice, deal, type, amount, due date, status
+- Types: fixed fee, success fee
+- Status badges: pending, paid, overdue
+- Actions: download, view, mark as paid
+- Empty state messages
+
+**Settings (`settings.json` - en, fi, sv):**
+- Tab navigation: organization, profile, notifications, security, billing
+- **Organization tab:** name, website, country, industry fields
+- **Profile tab:** full name, email, phone, LinkedIn fields
+- **Notifications tab:** 4 preferences with descriptions
+- **Security tab:** password change, 2FA setup
+- **Billing tab:** current plan, payment method, billing history
+- All form labels and save buttons
+- Helper text and descriptions
+
+#### Translation Features:
+- ✅ Natural, culturally appropriate phrasing
+- ✅ Finnish: Shorter constructions, formal tone
+- ✅ Swedish: Proper formal/informal balance
+- ✅ English: Clear, concise American English
+- ✅ Consistent terminology per feature
+- ✅ Proper placeholders preserved
+- ✅ UI space constraints considered
+
+#### Files Created: 14
+- 2 edit page components
+- 12 translation files (4 namespaces × 3 languages)
+- 841 lines of code
+
 ### 2025-11-11 - BizExit API Endpoints (CRUD)
 
 **Complete REST API implementation for all BizExit entities:**
