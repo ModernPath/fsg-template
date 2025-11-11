@@ -1,7 +1,30 @@
-# AI-Powered Next.js Template for Cursor IDE
+# BizExit - AI-Powered M&A Platform
 
 ## Overview
-A modern, feature-rich Next.js template built with AI capabilities at its core. This template serves as a foundation for building AI-powered web applications with Next.js 15, React 19, TypeScript, and Tailwind CSS, specifically optimized for development in Cursor IDE.
+BizExit is a comprehensive M&A (Mergers & Acquisitions) platform designed to automate and streamline the entire business sale process. Built with Next.js 15, React 19, TypeScript, and powered by advanced AI capabilities, BizExit serves sellers, brokers, buyers, and partners through intelligent automation, AI-powered content generation, and seamless integrations with major business sale portals.
+
+## Value Proposition
+
+### For Sellers
+- Automated creation of professional sale materials (Teasers, Information Memorandums, Pitch Decks)
+- Managed sales process with qualified buyer access
+- Secure document sharing with NDA management
+- Transparent deal pipeline tracking
+- Success fee model aligns our success with yours
+
+### For Brokers
+- AI-powered material generation reduces time from weeks to hours
+- Multi-portal syndication from single platform
+- Automated buyer qualification and NDA management
+- Deal pipeline management with stage automation
+- Commission tracking and payment automation
+
+### For Buyers
+- Access to curated business opportunities
+- Structured information with consistent format
+- Secure NDA signing with immediate access
+- Direct communication channels
+- Due diligence document management
 
 ## Development Tools
 
@@ -49,45 +72,60 @@ A modern, feature-rich Next.js template built with AI capabilities at its core. 
 
 ## Core Features
 
-### Authentication & Users
-- Supabase Auth integration
-- Social provider support
-- Protected routes
-- Role-based access
-- User profiles
+### 1. Company Management
+- Comprehensive company profile creation
+- Financial data import and analysis
+- Asset management (documents, images, videos)
+- Public data integration (YTJ, business registries)
+- RAG-based company intelligence
 
-### Content Management
-- Blog system with AI assistance
-- Media library
-  - Asset organization
-  - AI-powered generation
-  - Optimization pipeline
-- Landing page builder
-- SEO optimization
+### 2. AI-Powered Material Generation
+- **Teaser Generation**: 2-page executive summary
+- **Information Memorandum (IM)**: 20-50 page detailed document
+- **Pitch Deck**: Investor-ready presentation
+- **Valuation Reports**: AI-assisted company valuation
+- **FAQ Documents**: Common questions and answers
+- **Due Diligence Lists**: Comprehensive DD checklists
 
-### Internationalization
-- Multi-language support
-- Translation management
-- Language switching
-- Content localization
+### 3. Deal Pipeline Management
+- Visual kanban-style deal board
+- Stage-based workflow automation
+- Activity timeline and audit trail
+- Milestone tracking
+- Automated notifications
 
-### Analytics
-- Page view tracking
-- Event tracking
-- Session management
-- User journey analysis
+### 4. Buyer Management & NDA Workflow
+- Buyer profile creation and qualification
+- NDA template management
+- E-signature integration
+- Tiered information access
+- Lead tracking and scoring
 
-### Booking System
-- Appointment scheduling
-- Calendar management
-- Timezone support
-- Email notifications
+### 5. Listing & Portal Integration
+- Multi-portal syndication (BizBuySell, Transfindo, Yritysporssi.fi)
+- Lead capture and sync
+- Performance metrics per portal
+- Automated status updates
 
-### Real-time Features
-- Live updates
-- Data synchronization
-- Presence indicators
-- Collaborative editing
+### 6. Payment & Billing
+- Fixed fee collection (setup/onboarding)
+- Success fee calculation and tracking
+- Milestone-based payments
+- Stripe integration
+- Invoice generation
+
+### 7. Document Management
+- Secure document storage
+- Virus scanning
+- Version control
+- Access control by NDA status
+- OCR and text extraction
+- Full-text search
+
+### 8. Multi-Tenant Architecture
+- Organization-scoped data isolation
+- Role-based access control (RBAC)
+- Multiple user roles (Admin, Broker, Seller, Buyer, Partner, Analyst)
 
 ## Technical Features
 - Modern, responsive UI with Tailwind CSS
