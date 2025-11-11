@@ -12,15 +12,30 @@ const isValidCookieStore = (obj: any): boolean => {
     typeof obj.remove === 'function';
 }
 
-export const createClient = (cookieStore?: any, useServiceRole: boolean = false) => {
+export const createClient = async (cookieStore?: any, useServiceRole: boolean = false) => {
+  // Get environment variables
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  // Validate required environment variables
+  if (!supabaseUrl) {
+    throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL environment variable')
+  }
+
+  const apiKey = useServiceRole ? serviceRoleKey : anonKey
+  if (!apiKey) {
+    throw new Error(
+      `Missing ${useServiceRole ? 'SUPABASE_SERVICE_ROLE_KEY' : 'NEXT_PUBLIC_SUPABASE_ANON_KEY'} environment variable`
+    )
+  }
+
   // If no cookie store is provided, or it doesn't have the expected methods,
   // create a client without cookie handling
   if (!cookieStore || !isValidCookieStore(cookieStore)) {
     return createSupabaseClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      useServiceRole 
-        ? process.env.SUPABASE_SERVICE_ROLE_KEY!
-        : process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      supabaseUrl,
+      apiKey,
       {
         auth: {
           autoRefreshToken: false,
@@ -36,10 +51,8 @@ export const createClient = (cookieStore?: any, useServiceRole: boolean = false)
   // If cookieStore is the Next.js cookies() object, use its methods
   if (cookieStore.getAll && typeof cookieStore.getAll === 'function') {
     return createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      useServiceRole 
-        ? process.env.SUPABASE_SERVICE_ROLE_KEY!
-        : process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      supabaseUrl,
+      apiKey,
       {
         cookies: {
           getAll() {
@@ -94,13 +107,8 @@ export const createClient = (cookieStore?: any, useServiceRole: boolean = false)
     }
   }
 
-  // Use service role key for admin operations
-  const apiKey = useServiceRole 
-    ? process.env.SUPABASE_SERVICE_ROLE_KEY!
-    : process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    supabaseUrl,
     apiKey,
     config
   )
