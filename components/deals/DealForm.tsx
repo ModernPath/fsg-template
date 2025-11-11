@@ -19,33 +19,39 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+interface DealFormData {
+  company_id: string;
+  buyer_id?: string;
+  stage: string;
+  estimated_value?: number;
+  notes?: string;
+}
+
 interface DealFormProps {
-  organizationId: string;
-  companies: Array<{ id: string; name: string; industry: string }>;
-  buyers: Array<{ id: string; full_name: string; email: string }>;
-  preselectedCompanyId?: string;
-  locale: string;
-  deal?: any;
+  initialData?: DealFormData;
+  companies: Array<{ id: string; name: string }>;
+  buyers: Array<{ id: string; company_name: string }>;
+  dealId?: string;
+  mode?: "create" | "edit";
 }
 
 export function DealForm({
-  organizationId,
+  initialData,
   companies,
   buyers,
-  preselectedCompanyId,
-  locale,
-  deal,
+  dealId,
+  mode = "create",
 }: DealFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    company_id: deal?.company_id || preselectedCompanyId || "",
-    buyer_id: deal?.buyer_id || "",
-    estimated_value: deal?.estimated_value || "",
-    current_stage: deal?.current_stage || "lead",
-    notes: deal?.notes || "",
+    company_id: initialData?.company_id || "",
+    buyer_id: initialData?.buyer_id || "",
+    estimated_value: initialData?.estimated_value || "",
+    stage: initialData?.stage || "lead",
+    notes: initialData?.notes || "",
   });
 
   const stages = [
@@ -66,8 +72,11 @@ export function DealForm({
     setError(null);
 
     try {
-      const url = deal ? `/api/deals/${deal.id}` : "/api/deals";
-      const method = deal ? "PATCH" : "POST";
+      const url =
+        mode === "edit" && dealId
+          ? `/api/bizexit/deals/${dealId}`
+          : "/api/bizexit/deals";
+      const method = mode === "edit" ? "PUT" : "POST";
 
       const response = await fetch(url, {
         method,
@@ -75,12 +84,13 @@ export function DealForm({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          ...formData,
-          organization_id: organizationId,
-          estimated_value: formData.estimated_value
-            ? parseFloat(formData.estimated_value)
-            : null,
+          company_id: formData.company_id,
           buyer_id: formData.buyer_id || null,
+          stage: formData.stage,
+          estimated_value: formData.estimated_value
+            ? parseFloat(String(formData.estimated_value))
+            : null,
+          notes: formData.notes || null,
         }),
       });
 
@@ -90,7 +100,8 @@ export function DealForm({
       }
 
       const data = await response.json();
-      router.push(`/${locale}/dashboard/deals/${data.id}`);
+      router.push(`/dashboard/deals/${data.deal.id}`);
+      router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {

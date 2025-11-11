@@ -1,0 +1,32 @@
+{
+  "title": "Salassapitosopimukset",
+  "subtitle": "Hallinnoi salassapitosopimuksia",
+  "createNda": "Luo NDA",
+  "stats": {
+    "total": "Yhteensä",
+    "pending": "Odottaa",
+    "signed": "Allekirjoitettu"
+  },
+  "table": {
+    "company": "Yritys",
+    "signer": "Allekirjoittaja",
+    "status": "Tila",
+    "date": "Päivämäärä",
+    "actions": "Toiminnot"
+  },
+  "status": {
+    "pending": "Odottaa",
+    "signed": "Allekirjoitettu",
+    "expired": "Vanhentunut"
+  },
+  "actions": {
+    "download": "Lataa",
+    "view": "Katso",
+    "sign": "Allekirjoita"
+  },
+  "empty": {
+    "title": "Ei salassapitosopimuksia",
+    "description": "Luo ensimmäinen salassapitosopimuksesi"
+  }
+}
+

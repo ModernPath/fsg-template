@@ -20,16 +20,34 @@ import {
 } from "@/components/ui/select";
 import { useTranslations } from "next-intl";
 
+interface CompanyFormData {
+  name: string;
+  legal_name?: string;
+  business_id?: string;
+  website?: string;
+  description?: string;
+  industry: string;
+  country: string;
+  city?: string;
+  founded_year?: number;
+  employees?: number;
+  owner_type?: string;
+  revenue?: number;
+  ebitda?: number;
+  asking_price?: number;
+  currency?: string;
+}
+
 interface CompanyFormProps {
-  organizationId: string;
-  locale: string;
-  company?: any;
+  initialData?: CompanyFormData;
+  companyId?: string;
+  mode?: "create" | "edit";
 }
 
 export function CompanyForm({
-  organizationId,
-  locale,
-  company,
+  initialData,
+  companyId,
+  mode = "create",
 }: CompanyFormProps) {
   const router = useRouter();
   const t = useTranslations("companies");
@@ -37,22 +55,21 @@ export function CompanyForm({
   const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    name: company?.name || "",
-    legal_name: company?.legal_name || "",
-    business_id: company?.business_id || "",
-    country: company?.country || "FI",
-    city: company?.city || "",
-    founded_year: company?.founded_year || "",
-    website: company?.website || "",
-    industry: company?.industry || "",
-    sub_industry: company?.sub_industry || "",
-    description: company?.description || "",
-    employees_count: company?.employees_count || "",
-    legal_structure: company?.legal_structure || "",
-    annual_revenue: company?.annual_revenue || "",
-    annual_ebitda: company?.annual_ebitda || "",
-    asking_price: company?.asking_price || "",
-    currency: company?.currency || "EUR",
+    name: initialData?.name || "",
+    legal_name: initialData?.legal_name || "",
+    business_id: initialData?.business_id || "",
+    country: initialData?.country || "Finland",
+    city: initialData?.city || "",
+    founded_year: initialData?.founded_year || "",
+    website: initialData?.website || "",
+    industry: initialData?.industry || "",
+    description: initialData?.description || "",
+    employees: initialData?.employees || "",
+    owner_type: initialData?.owner_type || "family_owned",
+    revenue: initialData?.revenue || "",
+    ebitda: initialData?.ebitda || "",
+    asking_price: initialData?.asking_price || "",
+    currency: initialData?.currency || "EUR",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -61,10 +78,11 @@ export function CompanyForm({
     setError(null);
 
     try {
-      const url = company
-        ? `/api/companies/${company.id}`
-        : "/api/companies";
-      const method = company ? "PATCH" : "POST";
+      const url =
+        mode === "edit" && companyId
+          ? `/api/bizexit/companies/${companyId}`
+          : "/api/bizexit/companies";
+      const method = mode === "edit" ? "PUT" : "POST";
 
       const response = await fetch(url, {
         method,
@@ -72,23 +90,33 @@ export function CompanyForm({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          ...formData,
-          organization_id: organizationId,
+          name: formData.name,
+          legal_name: formData.legal_name || null,
+          business_id: formData.business_id || null,
+          website: formData.website || null,
+          description: formData.description || null,
+          industry: formData.industry,
+          country: formData.country,
+          city: formData.city || null,
           founded_year: formData.founded_year
-            ? parseInt(formData.founded_year)
+            ? parseInt(String(formData.founded_year))
             : null,
-          employees_count: formData.employees_count
-            ? parseInt(formData.employees_count)
+          employees: formData.employees
+            ? parseInt(String(formData.employees))
             : null,
-          annual_revenue: formData.annual_revenue
-            ? parseFloat(formData.annual_revenue)
-            : null,
-          annual_ebitda: formData.annual_ebitda
-            ? parseFloat(formData.annual_ebitda)
-            : null,
+          owner_type: formData.owner_type || "family_owned",
           asking_price: formData.asking_price
-            ? parseFloat(formData.asking_price)
+            ? parseFloat(String(formData.asking_price))
             : null,
+          currency: formData.currency || "EUR",
+          financials: {
+            revenue: formData.revenue
+              ? parseFloat(String(formData.revenue))
+              : null,
+            ebitda: formData.ebitda
+              ? parseFloat(String(formData.ebitda))
+              : null,
+          },
         }),
       });
 
@@ -98,7 +126,8 @@ export function CompanyForm({
       }
 
       const data = await response.json();
-      router.push(`/${locale}/dashboard/companies/${data.id}`);
+      router.push(`/dashboard/companies/${data.company.id}`);
+      router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {

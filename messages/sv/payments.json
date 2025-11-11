@@ -1,0 +1,39 @@
+{
+  "title": "Betalningar",
+  "subtitle": "Hantera betalningar, fakturor och provisioner",
+  "createInvoice": "Skapa faktura",
+  "stats": {
+    "totalRevenue": "Totala intäkter",
+    "paid": "Betald",
+    "pending": "Väntande",
+    "overdue": "Försenad"
+  },
+  "table": {
+    "invoice": "Faktura #",
+    "deal": "Affär",
+    "type": "Typ",
+    "amount": "Belopp",
+    "dueDate": "Förfallodatum",
+    "status": "Status",
+    "actions": "Åtgärder"
+  },
+  "types": {
+    "fixedFee": "Fast arvode",
+    "successFee": "Framgångsarvode"
+  },
+  "status": {
+    "pending": "Väntande",
+    "paid": "Betald",
+    "overdue": "Försenad"
+  },
+  "actions": {
+    "download": "Ladda ner",
+    "view": "Visa",
+    "markPaid": "Markera som betald"
+  },
+  "empty": {
+    "title": "Inga betalningar än",
+    "description": "Skapa din första faktura för att börja spåra betalningar"
+  }
+}
+

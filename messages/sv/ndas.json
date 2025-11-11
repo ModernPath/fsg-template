@@ -1,0 +1,32 @@
+{
+  "title": "Sekretessavtal",
+  "subtitle": "Hantera sekretessavtal",
+  "createNda": "Skapa NDA",
+  "stats": {
+    "total": "Totalt",
+    "pending": "Väntande",
+    "signed": "Undertecknad"
+  },
+  "table": {
+    "company": "Företag",
+    "signer": "Undertecknare",
+    "status": "Status",
+    "date": "Datum",
+    "actions": "Åtgärder"
+  },
+  "status": {
+    "pending": "Väntande",
+    "signed": "Undertecknad",
+    "expired": "Utgången"
+  },
+  "actions": {
+    "download": "Ladda ner",
+    "view": "Visa",
+    "sign": "Underteckna"
+  },
+  "empty": {
+    "title": "Inga sekretessavtal än",
+    "description": "Skapa ditt första sekretessavtal"
+  }
+}
+

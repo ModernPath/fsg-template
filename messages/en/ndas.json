@@ -1,0 +1,32 @@
+{
+  "title": "NDAs",
+  "subtitle": "Manage Non-Disclosure Agreements",
+  "createNda": "Create NDA",
+  "stats": {
+    "total": "Total NDAs",
+    "pending": "Pending",
+    "signed": "Signed"
+  },
+  "table": {
+    "company": "Company",
+    "signer": "Signer",
+    "status": "Status",
+    "date": "Date",
+    "actions": "Actions"
+  },
+  "status": {
+    "pending": "Pending",
+    "signed": "Signed",
+    "expired": "Expired"
+  },
+  "actions": {
+    "download": "Download",
+    "view": "View",
+    "sign": "Sign"
+  },
+  "empty": {
+    "title": "No NDAs yet",
+    "description": "Create your first NDA to start managing agreements"
+  }
+}
+

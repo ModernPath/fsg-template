@@ -1,0 +1,29 @@
+{
+  "title": "AI-material",
+  "subtitle": "AI-genererat försäljningsmaterial för dina företag",
+  "generateMaterials": "Generera material",
+  "types": {
+    "teaser": "Teasers",
+    "im": "Information Memorandum",
+    "pitch_deck": "Pitch Decks",
+    "valuation_report": "Värderingsrapporter"
+  },
+  "descriptions": {
+    "teaser": "2-sidiga sammanfattningar",
+    "im": "20-50 sidor detaljerade dokument",
+    "pitch_deck": "Investerarpresentationer",
+    "valuation_report": "AI-assisterade värderingar"
+  },
+  "recentMaterials": "Senaste material",
+  "actions": {
+    "preview": "Förhandsgranska",
+    "download": "Ladda ner",
+    "generate": "Generera"
+  },
+  "created": "Skapad",
+  "empty": {
+    "title": "Inget material än",
+    "description": "Skapa ditt första AI-drivna försäljningsmaterial"
+  }
+}
+

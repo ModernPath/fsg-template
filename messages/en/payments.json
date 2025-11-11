@@ -1,0 +1,39 @@
+{
+  "title": "Payments",
+  "subtitle": "Manage payments, invoices, and commissions",
+  "createInvoice": "Create Invoice",
+  "stats": {
+    "totalRevenue": "Total Revenue",
+    "paid": "Paid",
+    "pending": "Pending",
+    "overdue": "Overdue"
+  },
+  "table": {
+    "invoice": "Invoice #",
+    "deal": "Deal",
+    "type": "Type",
+    "amount": "Amount",
+    "dueDate": "Due Date",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  "types": {
+    "fixedFee": "Fixed Fee",
+    "successFee": "Success Fee"
+  },
+  "status": {
+    "pending": "Pending",
+    "paid": "Paid",
+    "overdue": "Overdue"
+  },
+  "actions": {
+    "download": "Download",
+    "view": "View",
+    "markPaid": "Mark as Paid"
+  },
+  "empty": {
+    "title": "No payments yet",
+    "description": "Create your first invoice to start tracking payments"
+  }
+}
+

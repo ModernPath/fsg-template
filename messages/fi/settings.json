@@ -1,0 +1,71 @@
+{
+  "title": "Asetukset",
+  "subtitle": "Hallinnoi organisaatio- ja tiliasetuksia",
+  "tabs": {
+    "organization": "Organisaatio",
+    "profile": "Profiili",
+    "notifications": "Ilmoitukset",
+    "security": "Turvallisuus",
+    "billing": "Laskutus"
+  },
+  "organization": {
+    "title": "Organisaatioasetukset",
+    "name": "Organisaation nimi",
+    "website": "Verkkosivusto",
+    "country": "Maa",
+    "industry": "Toimiala",
+    "saveChanges": "Tallenna muutokset"
+  },
+  "profile": {
+    "title": "Profiiliasetukset",
+    "fullName": "Koko nimi",
+    "email": "Sähköposti",
+    "emailDisabled": "Sähköpostia ei voi muuttaa täällä",
+    "phone": "Puhelin",
+    "linkedIn": "LinkedIn-osoite",
+    "saveChanges": "Tallenna muutokset"
+  },
+  "notifications": {
+    "title": "Ilmoitusasetukset",
+    "dealActivity": {
+      "title": "Uusi kaupp atoiminta",
+      "description": "Saat ilmoituksen kauppojesi toiminnasta"
+    },
+    "ndaSigned": {
+      "title": "Salassapitosopimus allekirjoitettu",
+      "description": "Saat hälytyksen kun NDA allekirjoitetaan"
+    },
+    "paymentReceived": {
+      "title": "Maksu vastaanotettu",
+      "description": "Saat ilmoituksen kun maksuja vastaanotetaan"
+    },
+    "weeklySummary": {
+      "title": "Viikkoyhteenveto",
+      "description": "Vastaanota viikottainen yhteenveto toiminnastasi"
+    },
+    "savePreferences": "Tallenna asetukset"
+  },
+  "security": {
+    "title": "Turvallisuusasetukset",
+    "changePassword": "Vaihda salasana",
+    "currentPassword": "Nykyinen salasana",
+    "newPassword": "Uusi salasana",
+    "confirmPassword": "Vahvista uusi salasana",
+    "updatePassword": "Päivitä salasana",
+    "twoFactor": "Kaksivaiheinen tunnistautuminen",
+    "twoFactorDescription": "Lisää ylimääräinen suojaus tilillesi",
+    "enable2FA": "Ota 2FA käyttöön"
+  },
+  "billing": {
+    "title": "Laskutusasetukset",
+    "currentPlan": "Nykyinen tilaus",
+    "professional": "Professional",
+    "planDescription": "Rajattomat yritykset ja kaupat",
+    "perMonth": "kuukaudessa",
+    "paymentMethod": "Maksutapa",
+    "expires": "Vanhenee",
+    "update": "Päivitä",
+    "viewHistory": "Näytä laskutushistoria"
+  }
+}
+

@@ -1,0 +1,71 @@
+{
+  "title": "Inställningar",
+  "subtitle": "Hantera din organisation och kontoinställningar",
+  "tabs": {
+    "organization": "Organisation",
+    "profile": "Profil",
+    "notifications": "Aviseringar",
+    "security": "Säkerhet",
+    "billing": "Fakturering"
+  },
+  "organization": {
+    "title": "Organisationsinställningar",
+    "name": "Organisationsnamn",
+    "website": "Webbplats",
+    "country": "Land",
+    "industry": "Bransch",
+    "saveChanges": "Spara ändringar"
+  },
+  "profile": {
+    "title": "Profilinställningar",
+    "fullName": "Fullständigt namn",
+    "email": "E-post",
+    "emailDisabled": "E-post kan inte ändras här",
+    "phone": "Telefon",
+    "linkedIn": "LinkedIn-URL",
+    "saveChanges": "Spara ändringar"
+  },
+  "notifications": {
+    "title": "Aviseringsinställningar",
+    "dealActivity": {
+      "title": "Ny affärsaktivitet",
+      "description": "Få meddelanden när det finns aktivitet på dina affärer"
+    },
+    "ndaSigned": {
+      "title": "Sekretessavtal undertecknat",
+      "description": "Få aviseringar när ett sekretessavtal undertecknas"
+    },
+    "paymentReceived": {
+      "title": "Betalning mottagen",
+      "description": "Få meddelanden när betalningar tas emot"
+    },
+    "weeklySummary": {
+      "title": "Veckosammanfattning",
+      "description": "Ta emot en veckosammanfattning av din aktivitet"
+    },
+    "savePreferences": "Spara inställningar"
+  },
+  "security": {
+    "title": "Säkerhetsinställningar",
+    "changePassword": "Byt lösenord",
+    "currentPassword": "Nuvarande lösenord",
+    "newPassword": "Nytt lösenord",
+    "confirmPassword": "Bekräfta nytt lösenord",
+    "updatePassword": "Uppdatera lösenord",
+    "twoFactor": "Tvåfaktorsautentisering",
+    "twoFactorDescription": "Lägg till ett extra lager av säkerhet till ditt konto",
+    "enable2FA": "Aktivera 2FA"
+  },
+  "billing": {
+    "title": "Faktureringsinställningar",
+    "currentPlan": "Nuvarande plan",
+    "professional": "Professional",
+    "planDescription": "Obegränsat med företag och affärer",
+    "perMonth": "per månad",
+    "paymentMethod": "Betalningsmetod",
+    "expires": "Utgår",
+    "update": "Uppdatera",
+    "viewHistory": "Visa faktureringshistorik"
+  }
+}
+

@@ -1,0 +1,71 @@
+{
+  "title": "Settings",
+  "subtitle": "Manage your organization and account settings",
+  "tabs": {
+    "organization": "Organization",
+    "profile": "Profile",
+    "notifications": "Notifications",
+    "security": "Security",
+    "billing": "Billing"
+  },
+  "organization": {
+    "title": "Organization Settings",
+    "name": "Organization Name",
+    "website": "Website",
+    "country": "Country",
+    "industry": "Industry",
+    "saveChanges": "Save Changes"
+  },
+  "profile": {
+    "title": "Profile Settings",
+    "fullName": "Full Name",
+    "email": "Email",
+    "emailDisabled": "Email cannot be changed here",
+    "phone": "Phone",
+    "linkedIn": "LinkedIn URL",
+    "saveChanges": "Save Changes"
+  },
+  "notifications": {
+    "title": "Notification Preferences",
+    "dealActivity": {
+      "title": "New Deal Activity",
+      "description": "Get notified when there's activity on your deals"
+    },
+    "ndaSigned": {
+      "title": "NDA Signed",
+      "description": "Receive alerts when an NDA is signed"
+    },
+    "paymentReceived": {
+      "title": "Payment Received",
+      "description": "Get notified when payments are received"
+    },
+    "weeklySummary": {
+      "title": "Weekly Summary",
+      "description": "Receive a weekly summary of your activity"
+    },
+    "savePreferences": "Save Preferences"
+  },
+  "security": {
+    "title": "Security Settings",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "updatePassword": "Update Password",
+    "twoFactor": "Two-Factor Authentication",
+    "twoFactorDescription": "Add an extra layer of security to your account",
+    "enable2FA": "Enable 2FA"
+  },
+  "billing": {
+    "title": "Billing Settings",
+    "currentPlan": "Current Plan",
+    "professional": "Professional",
+    "planDescription": "Unlimited companies and deals",
+    "perMonth": "per month",
+    "paymentMethod": "Payment Method",
+    "expires": "Expires",
+    "update": "Update",
+    "viewHistory": "View Billing History"
+  }
+}
+

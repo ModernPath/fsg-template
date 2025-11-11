@@ -1,0 +1,29 @@
+{
+  "title": "AI-materiaalit",
+  "subtitle": "AI-generoidut myyntimateriaalit yrityksillesi",
+  "generateMaterials": "Generoi materiaaleja",
+  "types": {
+    "teaser": "Teaserit",
+    "im": "Information Memorandum",
+    "pitch_deck": "Pitch Deckit",
+    "valuation_report": "Arvostusraportit"
+  },
+  "descriptions": {
+    "teaser": "2-sivuiset tiivistelmät",
+    "im": "20-50 sivuiset yksityiskohtaiset dokumentit",
+    "pitch_deck": "Sijoittajapresentaatiot",
+    "valuation_report": "AI-avusteiset arvostukset"
+  },
+  "recentMaterials": "Viimeisimmät materiaalit",
+  "actions": {
+    "preview": "Esikatselu",
+    "download": "Lataa",
+    "generate": "Generoi"
+  },
+  "created": "Luotu",
+  "empty": {
+    "title": "Ei materiaaleja vielä",
+    "description": "Luo ensimmäinen AI-pohjainen myyntimateriaali"
+  }
+}
+

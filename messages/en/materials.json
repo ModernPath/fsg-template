@@ -1,0 +1,29 @@
+{
+  "title": "AI Materials",
+  "subtitle": "AI-generated sale materials for your companies",
+  "generateMaterials": "Generate Materials",
+  "types": {
+    "teaser": "Teasers",
+    "im": "Information Memorandums",
+    "pitch_deck": "Pitch Decks",
+    "valuation_report": "Valuation Reports"
+  },
+  "descriptions": {
+    "teaser": "2-page executive summaries",
+    "im": "20-50 page detailed documents",
+    "pitch_deck": "Investor presentations",
+    "valuation_report": "AI-assisted valuations"
+  },
+  "recentMaterials": "Recent Materials",
+  "actions": {
+    "preview": "Preview",
+    "download": "Download",
+    "generate": "Generate"
+  },
+  "created": "Created",
+  "empty": {
+    "title": "No materials yet",
+    "description": "Generate your first AI-powered sale material"
+  }
+}
+

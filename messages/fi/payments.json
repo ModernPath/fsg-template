@@ -1,0 +1,39 @@
+{
+  "title": "Maksut",
+  "subtitle": "Hallinnoi maksuja, laskuja ja provisioita",
+  "createInvoice": "Luo lasku",
+  "stats": {
+    "totalRevenue": "Kokonaistulot",
+    "paid": "Maksettu",
+    "pending": "Odottaa",
+    "overdue": "Erääntynyt"
+  },
+  "table": {
+    "invoice": "Lasku nro",
+    "deal": "Kauppa",
+    "type": "Tyyppi",
+    "amount": "Summa",
+    "dueDate": "Eräpäivä",
+    "status": "Tila",
+    "actions": "Toiminnot"
+  },
+  "types": {
+    "fixedFee": "Kiinteä palkkio",
+    "successFee": "Onnistumispalkkio"
+  },
+  "status": {
+    "pending": "Odottaa",
+    "paid": "Maksettu",
+    "overdue": "Erääntynyt"
+  },
+  "actions": {
+    "download": "Lataa",
+    "view": "Katso",
+    "markPaid": "Merkitse maksetuksi"
+  },
+  "empty": {
+    "title": "Ei maksuja vielä",
+    "description": "Luo ensimmäinen laskusi aloittaaksesi maksujen seurannan"
+  }
+}
+
