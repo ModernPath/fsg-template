@@ -2,6 +2,7 @@
   "title": "Yritykset",
   "subtitle": "Hallitse yrityslistauksiasi ja kauppojasi",
   "addCompany": "Lisää Yritys",
+  "backToList": "Takaisin yrityksiin",
   "table": {
     "company": "Yritys",
     "industry": "Toimiala",

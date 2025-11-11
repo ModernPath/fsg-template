@@ -2,6 +2,7 @@
   "title": "Deals Pipeline",
   "subtitle": "Manage your M&A deal pipeline",
   "newDeal": "New Deal",
+  "backToList": "Back to Deals",
   "kanban": {
     "noDeals": "No deals in this stage",
     "moveHere": "Move here"

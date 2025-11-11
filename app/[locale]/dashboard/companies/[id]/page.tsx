@@ -6,6 +6,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -18,6 +19,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 
 interface Props {
   params: Promise<{
@@ -29,6 +31,7 @@ interface Props {
 export default async function CompanyDetailPage({ params }: Props) {
   const { locale, id } = await params;
   const supabase = await createClient();
+  const t = await getTranslations("companies");
 
   // Get user context
   const {
@@ -86,13 +89,21 @@ export default async function CompanyDetailPage({ params }: Props) {
 
   return (
     <div className="space-y-6">
+      {/* Breadcrumbs */}
+      <Breadcrumbs
+        items={[
+          { label: t("title"), href: `/${locale}/dashboard/companies` },
+          { label: company.name },
+        ]}
+      />
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Link href={`/${locale}/dashboard/companies`}>
             <Button variant="ghost" size="sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Companies
+              {t("backToList")}
             </Button>
           </Link>
         </div>

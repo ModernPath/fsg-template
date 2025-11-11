@@ -2,6 +2,7 @@
   "title": "Companies",
   "subtitle": "Manage your company listings and deals",
   "addCompany": "Add Company",
+  "backToList": "Back to Companies",
   "table": {
     "company": "Company",
     "industry": "Industry",

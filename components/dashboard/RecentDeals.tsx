@@ -5,10 +5,11 @@
  */
 
 import Link from "next/link";
-import { ArrowRight, Clock } from "lucide-react";
+import { ArrowRight, Clock, Handshake } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { EmptyState } from "@/components/ui/empty-state";
 
 interface Deal {
   id: string;
@@ -71,9 +72,11 @@ export function RecentDeals({ deals }: RecentDealsProps) {
 
       <div className="divide-y divide-gray-200 dark:divide-gray-700">
         {deals.length === 0 ? (
-          <div className="px-6 py-8 text-center">
-            <p className="text-gray-500 dark:text-gray-400">{t("empty")}</p>
-          </div>
+          <EmptyState
+            icon={Handshake}
+            title={t("empty")}
+            description="Start tracking your M&A deals and buyer relationships"
+          />
         ) : (
           deals.map((deal) => (
             <Link

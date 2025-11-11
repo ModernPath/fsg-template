@@ -2,6 +2,7 @@
   "title": "Kauppaputki",
   "subtitle": "Hallitse yrityskauppaputkeasi",
   "newDeal": "Uusi Kauppa",
+  "backToList": "Takaisin kauppoihin",
   "kanban": {
     "noDeals": "Ei kauppoja tässä vaiheessa",
     "moveHere": "Siirrä tänne"

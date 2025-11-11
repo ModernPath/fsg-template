@@ -2,6 +2,7 @@
   "title": "Företag",
   "subtitle": "Hantera dina företagsannonser och affärer",
   "addCompany": "Lägg Till Företag",
+  "backToList": "Tillbaka till företag",
   "table": {
     "company": "Företag",
     "industry": "Bransch",

@@ -13,8 +13,10 @@ import {
   CheckCircle,
   XCircle,
   Clock,
+  Activity,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { EmptyState } from "@/components/ui/empty-state";
 
 interface Activity {
   id: string;
@@ -67,9 +69,12 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
 
       <div className="p-6">
         {activities.length === 0 ? (
-          <p className="text-center text-gray-500 dark:text-gray-400 py-4">
-            {t("empty")}
-          </p>
+          <EmptyState
+            icon={Activity}
+            title={t("empty")}
+            description="Activity will appear here as deals progress"
+            className="py-8"
+          />
         ) : (
           <div className="space-y-4">
             {activities.slice(0, 8).map((activity) => {

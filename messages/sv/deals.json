@@ -2,6 +2,7 @@
   "title": "Affärspipeline",
   "subtitle": "Hantera din M&A-affärspipeline",
   "newDeal": "Ny Affär",
+  "backToList": "Tillbaka till affärer",
   "kanban": {
     "noDeals": "Inga affärer i detta stadium",
     "moveHere": "Flytta hit"
