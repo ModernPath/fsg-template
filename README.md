@@ -180,6 +180,42 @@ A modern, AI-integrated Next.js template designed specifically for the Cursor ID
 
 6. Open [http://localhost:3000](http://localhost:3000) to view the application
 
+## Email Testing with Mailpit
+
+This project uses **Mailpit** for testing emails in the development environment. All emails sent by the application are automatically captured and can be viewed in a web interface.
+
+### Accessing Mailpit
+
+```bash
+npm run mailpit
+```
+
+This command will:
+- ✅ Check if Mailpit is running
+- 📧 Show the number of captured emails
+- 🌐 Open Mailpit in your browser at http://localhost:54324
+
+### Features
+
+- **View all emails**: See signup confirmations, password resets, magic links, etc.
+- **Test email flows**: Click links in emails to test the complete user journey
+- **Search emails**: Find specific emails by recipient, subject, or content
+- **HTML/Text preview**: View emails in both formats
+- **API access**: Automate email testing in Cypress tests
+
+### Testing Authentication Emails
+
+```bash
+# 1. Register a new user via UI or API
+# 2. Open Mailpit: npm run mailpit
+# 3. Click the confirmation email
+# 4. Use the confirmation link to verify email
+```
+
+All Supabase Auth emails (signup, password reset, magic links) are automatically captured!
+
+📚 **Full Documentation**: See `docs/MAILPIT.md` for detailed usage, API access, and troubleshooting.
+
 ## Using Inngest for Background Jobs
 
 This project uses [Inngest](https://www.inngest.com/) for handling background jobs, scheduled tasks, and event-driven processing in a serverless environment.
