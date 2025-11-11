@@ -19,63 +19,64 @@ import {
   FileSignature,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 interface DashboardNavProps {
   locale: string;
   profile: any;
 }
 
-const navigation = [
+const navigationItems = [
   {
-    name: "Dashboard",
+    key: "dashboard",
     href: "/dashboard",
     icon: LayoutDashboard,
     roles: ["seller", "broker", "buyer", "partner", "admin", "analyst"],
   },
   {
-    name: "Companies",
+    key: "companies",
     href: "/dashboard/companies",
     icon: Building2,
     roles: ["seller", "broker", "admin"],
   },
   {
-    name: "Deals",
+    key: "deals",
     href: "/dashboard/deals",
     icon: Handshake,
     roles: ["seller", "broker", "buyer", "admin", "analyst"],
   },
   {
-    name: "Listings",
+    key: "listings",
     href: "/dashboard/listings",
     icon: FileStack,
     roles: ["broker", "admin"],
   },
   {
-    name: "Buyers",
+    key: "buyers",
     href: "/dashboard/buyers",
     icon: Users,
     roles: ["broker", "admin"],
   },
   {
-    name: "NDAs",
+    key: "ndas",
     href: "/dashboard/ndas",
     icon: FileSignature,
     roles: ["broker", "buyer", "admin"],
   },
   {
-    name: "Materials",
+    key: "materials",
     href: "/dashboard/materials",
     icon: FileText,
     roles: ["seller", "broker", "admin"],
   },
   {
-    name: "Payments",
+    key: "payments",
     href: "/dashboard/payments",
     icon: CreditCard,
     roles: ["seller", "broker", "admin"],
   },
   {
-    name: "Settings",
+    key: "settings",
     href: "/dashboard/settings",
     icon: Settings,
     roles: ["seller", "broker", "buyer", "partner", "admin", "analyst"],
@@ -85,9 +86,10 @@ const navigation = [
 export function DashboardNav({ locale, profile }: DashboardNavProps) {
   const pathname = usePathname();
   const userRole = profile?.role || "buyer";
+  const t = useTranslations("dashboard.nav");
 
   // Filter navigation based on user role
-  const filteredNavigation = navigation.filter((item) =>
+  const filteredNavigation = navigationItems.filter((item) =>
     item.roles.includes(userRole),
   );
 
@@ -127,7 +129,7 @@ export function DashboardNav({ locale, profile }: DashboardNavProps) {
 
             return (
               <Link
-                key={item.name}
+                key={item.key}
                 href={`/${locale}${item.href}`}
                 className={cn(
                   "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors",
@@ -137,7 +139,7 @@ export function DashboardNav({ locale, profile }: DashboardNavProps) {
                 )}
               >
                 <Icon className="mr-3 h-5 w-5" />
-                {item.name}
+                {t(item.key)}
               </Link>
             );
           })}

@@ -14,6 +14,7 @@ import {
   XCircle,
   Clock,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface Activity {
   id: string;
@@ -54,18 +55,20 @@ const activityColors: Record<string, string> = {
 };
 
 export function ActivityFeed({ activities }: ActivityFeedProps) {
+  const t = useTranslations("dashboard.activityFeed");
+  
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700">
       <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Recent Activity
+          {t("title")}
         </h2>
       </div>
 
       <div className="p-6">
         {activities.length === 0 ? (
           <p className="text-center text-gray-500 dark:text-gray-400 py-4">
-            No recent activity
+            {t("empty")}
           </p>
         ) : (
           <div className="space-y-4">

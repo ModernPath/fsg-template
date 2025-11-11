@@ -7,9 +7,11 @@ import { createClient } from "@/utils/supabase/server";
 import { DashboardStats } from "@/components/dashboard/DashboardStats";
 import { RecentDeals } from "@/components/dashboard/RecentDeals";
 import { ActivityFeed } from "@/components/dashboard/ActivityFeed";
+import { getTranslations } from "next-intl/server";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
+  const t = await getTranslations("dashboard");
 
   // Get user context
   const {
@@ -32,10 +34,10 @@ export default async function DashboardPage() {
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            No Organization
+            {t("noOrganization.title")}
           </h2>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Please contact support to set up your organization.
+            {t("noOrganization.description")}
           </p>
         </div>
       </div>
@@ -60,7 +62,11 @@ export default async function DashboardPage() {
       // Recent deals
       supabase
         .from("deals")
-        .select("*, companies(name), buyer:buyer_id(email, full_name)")
+        .select(`
+          *,
+          companies(id, name, logo_url),
+          buyers:buyer_profiles(id, company_name, full_name)
+        `)
         .eq("organization_id", profile.organization_id)
         .order("created_at", { ascending: false })
         .limit(5),
@@ -68,7 +74,15 @@ export default async function DashboardPage() {
       // Recent activities
       supabase
         .from("deal_activities")
-        .select("*, deals(id, companies(name))")
+        .select(`
+          *,
+          deals!inner(
+            id,
+            organization_id,
+            companies(name)
+          )
+        `)
+        .eq("deals.organization_id", profile.organization_id)
         .order("created_at", { ascending: false })
         .limit(10),
     ]);
@@ -85,8 +99,11 @@ export default async function DashboardPage() {
     companiesCount,
     dealsCount,
     totalValue,
-    activeDeals: deals.filter((d) => !["closed", "lost"].includes(d.current_stage || ""))
-      .length,
+    activeDeals: deals.filter(
+      (d: any) =>
+        d.status === "active" &&
+        !["closed_won", "closed_lost", "cancelled"].includes(d.stage || ""),
+    ).length,
   };
 
   return (
@@ -94,10 +111,10 @@ export default async function DashboardPage() {
       {/* Welcome */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Dashboard
+          {t("title")}
         </h1>
         <p className="mt-1 text-gray-600 dark:text-gray-400">
-          Welcome back! Here's what's happening with your deals.
+          {t("welcome")}
         </p>
       </div>
 

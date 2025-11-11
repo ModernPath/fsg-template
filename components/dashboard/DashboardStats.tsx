@@ -5,6 +5,7 @@
  */
 
 import { Building2, Handshake, TrendingUp, Activity } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface DashboardStatsProps {
   stats: {
@@ -16,30 +17,32 @@ interface DashboardStatsProps {
 }
 
 export function DashboardStats({ stats }: DashboardStatsProps) {
+  const t = useTranslations("dashboard");
+  
   const cards = [
     {
-      title: "Companies",
+      title: t("stats.companies"),
       value: stats.companiesCount,
       icon: Building2,
       change: "+12%",
       changeType: "positive" as const,
     },
     {
-      title: "Total Deals",
+      title: t("stats.totalDeals"),
       value: stats.dealsCount,
       icon: Handshake,
       change: "+8%",
       changeType: "positive" as const,
     },
     {
-      title: "Pipeline Value",
+      title: t("stats.pipelineValue"),
       value: `€${(stats.totalValue / 1000000).toFixed(1)}M`,
       icon: TrendingUp,
       change: "+23%",
       changeType: "positive" as const,
     },
     {
-      title: "Active Deals",
+      title: t("stats.activeDeals"),
       value: stats.activeDeals,
       icon: Activity,
       change: "+5%",
@@ -82,7 +85,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
                 {card.change}
               </span>
               <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">
-                vs last month
+                {t("stats.vsLastMonth")}
               </span>
             </div>
           </div>

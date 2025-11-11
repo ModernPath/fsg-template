@@ -7,17 +7,23 @@
 import Link from "next/link";
 import { ArrowRight, Clock } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 interface Deal {
   id: string;
-  current_stage: string;
+  stage: string;
+  status: string;
   estimated_value: number;
   created_at: string;
   companies: {
+    id: string;
     name: string;
+    logo_url: string | null;
   } | null;
-  buyer: {
-    email: string;
+  buyers: {
+    id: string;
+    company_name: string | null;
     full_name: string | null;
   } | null;
 }
@@ -28,26 +34,36 @@ interface RecentDealsProps {
 
 const stageColors: Record<string, string> = {
   initial_contact: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300",
+  nda_review: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400",
   nda_signed: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400",
   due_diligence: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400",
+  loi_submitted: "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400",
   negotiation: "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400",
-  closed: "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400",
-  lost: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400",
+  final_agreement: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/20 dark:text-indigo-400",
+  closing: "bg-teal-100 text-teal-800 dark:bg-teal-900/20 dark:text-teal-400",
+  closed_won: "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400",
+  closed_lost: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400",
+  on_hold: "bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400",
+  cancelled: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300",
 };
 
 export function RecentDeals({ deals }: RecentDealsProps) {
+  const params = useParams();
+  const locale = params?.locale || "en";
+  const t = useTranslations("dashboard.recentDeals");
+  
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700">
       <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Recent Deals
+            {t("title")}
           </h2>
           <Link
-            href="/dashboard/deals"
+            href={`/${locale}/dashboard/deals`}
             className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center"
           >
-            View all
+            {t("viewAll")}
             <ArrowRight className="ml-1 h-4 w-4" />
           </Link>
         </div>
@@ -56,13 +72,13 @@ export function RecentDeals({ deals }: RecentDealsProps) {
       <div className="divide-y divide-gray-200 dark:divide-gray-700">
         {deals.length === 0 ? (
           <div className="px-6 py-8 text-center">
-            <p className="text-gray-500 dark:text-gray-400">No deals yet</p>
+            <p className="text-gray-500 dark:text-gray-400">{t("empty")}</p>
           </div>
         ) : (
           deals.map((deal) => (
             <Link
               key={deal.id}
-              href={`/dashboard/deals/${deal.id}`}
+              href={`/${locale}/dashboard/deals/${deal.id}`}
               className="block px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
             >
               <div className="flex items-center justify-between">
@@ -73,16 +89,16 @@ export function RecentDeals({ deals }: RecentDealsProps) {
                     </p>
                     <span
                       className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        stageColors[deal.current_stage] || stageColors.initial_contact
+                        stageColors[deal.stage] || stageColors.initial_contact
                       }`}
                     >
-                      {deal.current_stage?.replace(/_/g, " ") || "Initial"}
+                      {deal.stage?.replace(/_/g, " ") || "Initial"}
                     </span>
                   </div>
                   <div className="mt-1 flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-                    {deal.buyer && (
+                    {deal.buyers && (
                       <span>
-                        Buyer: {deal.buyer.full_name || deal.buyer.email}
+                        {t("columns.buyer")}: {deal.buyers.company_name || deal.buyers.full_name}
                       </span>
                     )}
                     <span className="flex items-center">
@@ -98,7 +114,7 @@ export function RecentDeals({ deals }: RecentDealsProps) {
                     €{(deal.estimated_value / 1000000).toFixed(1)}M
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Estimated
+                    {t("columns.value")}
                   </p>
                 </div>
               </div>
