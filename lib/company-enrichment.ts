@@ -1,16 +1,30 @@
 /**
  * BizExit Company Enrichment using Gemini AI with Google Search Grounding
  * 
- * This module uses Google's Gemini API with Google Search grounding to:
- * 1. Fetch company basic information from YTJ and public sources
- * 2. Extract financial data from public Finnish sources (Finder.fi, Asiakastieto.fi)
- * 3. Gather business intelligence for deal analysis
+ * Core enrichment engine using Gemini AI for:
+ * 1. Company basic information (YTJ + public sources)
+ * 2. Financial data extraction (Finder.fi, Asiakastieto.fi, Kauppalehti.fi)
+ * 3. Business intelligence for M&A analysis
+ * 
+ * Architecture:
+ * - Core Engine (this file) - Gemini AI integration
+ * - Service Layer (services/company-enrichment.service.ts) - Business logic
+ * - React Hook (hooks/useCompanyEnrichment.ts) - State management
+ * - Types (types/company-enrichment.ts) - Type definitions
  * 
  * Based on Trusty Finance's unified-company-enrichment.ts
- * Adapted for BizExit M&A platform
+ * Adapted for BizExit M&A platform with modular architecture
  */
 
 import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai';
+import type {
+  CompanyBasicInfo,
+  YearlyFinancialData,
+  CompanyFinancialData,
+  EnrichedCompanyData,
+  Currency,
+  ConfidenceLevel,
+} from '@/types/company-enrichment';
 
 export interface CompanyBasicInfo {
   name: string;
