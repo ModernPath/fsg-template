@@ -35,10 +35,45 @@ export async function middleware(request: NextRequest) {
   // For API routes, pass through the request with headers
   if (request.nextUrl.pathname.startsWith("/api/")) {
     const response = NextResponse.next();
+    
     // Copy all headers from the request to the response
     request.headers.forEach((value, key) => {
       response.headers.set(key, value);
     });
+    
+    // For authenticated API routes, add organization context
+    const supabaseApi = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return request.cookies.get(name)?.value;
+          },
+          set() {},
+          remove() {},
+        },
+      },
+    );
+    
+    const { data: { user } } = await supabaseApi.auth.getUser();
+    
+    if (user) {
+      // Get user's organization
+      const { data: profile } = await supabaseApi
+        .from("profiles")
+        .select("organization_id, role, is_admin")
+        .eq("id", user.id)
+        .single();
+      
+      if (profile?.organization_id) {
+        // Add organization context to request headers
+        response.headers.set("x-organization-id", profile.organization_id);
+        response.headers.set("x-user-role", profile.role || "");
+        response.headers.set("x-is-admin", profile.is_admin ? "true" : "false");
+      }
+    }
+    
     return response;
   }
 
