@@ -14,15 +14,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/components/ui/use-toast";
 import { createClient } from "@/utils/supabase/client";
 import {
   Sparkles,
   Building2,
-  Users,
   CheckCircle2,
   Loader2,
   ArrowRight,
+  Search,
+  AlertCircle,
+  Info,
 } from "lucide-react";
 
 interface OrganizationOnboardingProps {
@@ -30,6 +34,22 @@ interface OrganizationOnboardingProps {
   userRole: string;
   userName: string;
   userEmail: string;
+}
+
+interface YTJCompany {
+  businessId: string;
+  name: string;
+  registrationDate?: string;
+  companyForm?: string;
+  addresses?: Array<{
+    street?: string;
+    postCode?: string;
+    city?: string;
+    country?: string;
+  }>;
+  businessLines?: Array<{
+    name?: string;
+  }>;
 }
 
 export function OrganizationOnboarding({
@@ -45,50 +65,111 @@ export function OrganizationOnboarding({
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
+  const [ytjLoading, setYtjLoading] = useState(false);
+  const [ytjResults, setYtjResults] = useState<YTJCompany[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [ytjVerified, setYtjVerified] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
+    businessId: "",
     type: userRole === "seller" ? "seller" : "broker",
     website: "",
     country: "FI",
     industry: "",
     description: "",
+    address: "",
   });
 
-  // AI-assisted name generation
-  const generateOrgName = async () => {
-    setAiLoading(true);
-    try {
-      const response = await fetch("/api/ai/generate-content", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: "organization_name",
-          context: {
-            userName,
-            userEmail,
-            userRole,
-            industry: formData.industry,
-          },
-        }),
+  /**
+   * Search companies from YTJ registry
+   */
+  const searchYTJ = async () => {
+    if (!searchQuery || searchQuery.length < 2) {
+      toast({
+        title: "Liian lyhyt hakusana",
+        description: "Kirjoita vähintään 2 merkkiä",
+        variant: "destructive",
       });
+      return;
+    }
 
-      if (response.ok) {
-        const data = await response.json();
-        setFormData({ ...formData, name: data.content });
+    setYtjLoading(true);
+    setYtjResults([]);
+
+    try {
+      console.log("🔍 Searching YTJ for:", searchQuery);
+
+      const response = await fetch(
+        `/api/ytj/search?q=${encodeURIComponent(searchQuery)}`
+      );
+
+      if (!response.ok) {
+        throw new Error("YTJ-haku epäonnistui");
+      }
+
+      const data = await response.json();
+
+      if (data.success && data.data.length > 0) {
+        setYtjResults(data.data);
         toast({
-          title: "✨ AI ehdotti nimeä!",
-          description: "Voit muokata sitä tarpeen mukaan",
+          title: `✅ Löytyi ${data.data.length} yritystä`,
+          description: "Valitse oikea yritys listasta",
+        });
+      } else {
+        toast({
+          title: "Ei tuloksia",
+          description: "Kokeile toista hakusanaa",
+          variant: "destructive",
         });
       }
     } catch (error) {
-      console.error("Error generating name:", error);
+      console.error("YTJ search error:", error);
+      toast({
+        title: "YTJ-haku epäonnistui",
+        description: "Yritä hetken kuluttua uudelleen",
+        variant: "destructive",
+      });
     } finally {
-      setAiLoading(false);
+      setYtjLoading(false);
     }
   };
 
-  // AI-assisted description generation
+  /**
+   * Select company from YTJ results
+   */
+  const selectYTJCompany = (company: YTJCompany) => {
+    // Fill form with YTJ data
+    const address = company.addresses?.[0];
+    const addressStr = address
+      ? `${address.street || ""}, ${address.postCode || ""} ${
+          address.city || ""
+        }`.trim()
+      : "";
+
+    const industry = company.businessLines?.[0]?.name || "";
+
+    setFormData({
+      ...formData,
+      name: company.name,
+      businessId: company.businessId,
+      address: addressStr,
+      industry: industry,
+    });
+
+    setYtjVerified(true);
+    setYtjResults([]);
+    setSearchQuery("");
+
+    toast({
+      title: "✅ YTJ-tiedot haettu",
+      description: "Perustiedot täytetty - tarkista ja täydennä",
+    });
+  };
+
+  /**
+   * AI-assisted description generation
+   */
   const generateDescription = async () => {
     if (!formData.name || !formData.industry) {
       toast({
@@ -118,22 +199,35 @@ export function OrganizationOnboarding({
         const data = await response.json();
         setFormData({ ...formData, description: data.content });
         toast({
-          title: "✨ AI loi kuvauksen!",
+          title: "✨ AI loi kuvauksen",
           description: "Voit muokata sitä tarpeen mukaan",
         });
       }
     } catch (error) {
       console.error("Error generating description:", error);
+      toast({
+        title: "Virhe",
+        description: "AI-generointi epäonnistui",
+        variant: "destructive",
+      });
     } finally {
       setAiLoading(false);
     }
   };
 
+  /**
+   * Submit organization
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      // Validate required fields
+      if (!formData.name) {
+        throw new Error("Organisaation nimi vaaditaan");
+      }
+
       // Generate slug from name
       const slug = formData.name
         .toLowerCase()
@@ -150,6 +244,7 @@ export function OrganizationOnboarding({
           website: formData.website || null,
           country: formData.country,
           industry: formData.industry || null,
+          description: formData.description || null,
         })
         .select()
         .single();
@@ -157,27 +252,21 @@ export function OrganizationOnboarding({
       if (orgError) throw orgError;
 
       // Link user to organization
-      const userOrgRole =
-        userRole === "partner"
-          ? "broker"
-          : ["seller", "broker", "admin"].includes(userRole)
-            ? userRole
-            : "viewer";
-
       const { error: linkError } = await supabase
         .from("user_organizations")
         .insert({
           user_id: userId,
           organization_id: org.id,
-          role: userOrgRole,
+          role: userRole === "seller" ? "owner" : "admin",
         });
 
       if (linkError) throw linkError;
 
-      // Update profile to mark onboarding as complete
+      // Update profile
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
+          organization_id: org.id,
           onboarding_completed: true,
         })
         .eq("id", userId);
@@ -185,18 +274,19 @@ export function OrganizationOnboarding({
       if (profileError) throw profileError;
 
       toast({
-        title: "🎉 Organisaatio luotu!",
-        description: "Tervetuloa BizExit-alustalle",
+        title: "✅ Organisaatio luotu!",
+        description: "Tervetuloa BizExitiin",
       });
 
       // Redirect to dashboard
+      router.push("/dashboard");
       router.refresh();
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error creating organization:", error);
       toast({
         title: "Virhe",
         description:
-          error.message || "Organisaation luonti epäonnistui. Yritä uudelleen.",
+          error instanceof Error ? error.message : "Organisaation luonti epäonnistui",
         variant: "destructive",
       });
     } finally {
@@ -205,157 +295,196 @@ export function OrganizationOnboarding({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900 flex items-center justify-center p-6">
-      <Card className="max-w-2xl w-full p-8">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <Card className="w-full max-w-2xl p-8 space-y-6 bg-slate-900/90 border-slate-700">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center">
+        <div className="text-center space-y-2">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 mb-4">
             <Building2 className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-3xl font-bold text-white">
             Tervetuloa BizExit-alustalle! 🎉
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-slate-400">
             Luodaan organisaatiosi muutamassa vaiheessa
           </p>
         </div>
 
         {/* Progress Steps */}
-        <div className="flex items-center justify-center mb-8">
-          <div className="flex items-center gap-2">
-            <div
-              className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                step >= 1
-                  ? "bg-primary-600 text-white"
-                  : "bg-gray-200 text-gray-600"
-              }`}
-            >
-              {step > 1 ? <CheckCircle2 className="w-5 h-5" /> : "1"}
-            </div>
-            <div
-              className={`w-12 h-1 ${step >= 2 ? "bg-primary-600" : "bg-gray-200"}`}
-            />
-            <div
-              className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                step >= 2
-                  ? "bg-primary-600 text-white"
-                  : "bg-gray-200 text-gray-600"
-              }`}
-            >
-              {step > 2 ? <CheckCircle2 className="w-5 h-5" /> : "2"}
-            </div>
-            <div
-              className={`w-12 h-1 ${step >= 3 ? "bg-primary-600" : "bg-gray-200"}`}
-            />
-            <div
-              className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                step >= 3
-                  ? "bg-primary-600 text-white"
-                  : "bg-gray-200 text-gray-600"
-              }`}
-            >
-              3
-            </div>
+        <div className="flex items-center justify-center space-x-4">
+          <div
+            className={`flex items-center justify-center w-10 h-10 rounded-full ${
+              step >= 1
+                ? "bg-gradient-to-br from-purple-500 to-pink-500 text-white"
+                : "bg-slate-700 text-slate-400"
+            }`}
+          >
+            1
+          </div>
+          <div className="w-16 h-1 bg-slate-700"></div>
+          <div
+            className={`flex items-center justify-center w-10 h-10 rounded-full ${
+              step >= 2
+                ? "bg-gradient-to-br from-purple-500 to-pink-500 text-white"
+                : "bg-slate-700 text-slate-400"
+            }`}
+          >
+            2
+          </div>
+          <div className="w-16 h-1 bg-slate-700"></div>
+          <div
+            className={`flex items-center justify-center w-10 h-10 rounded-full ${
+              step >= 3
+                ? "bg-gradient-to-br from-purple-500 to-pink-500 text-white"
+                : "bg-slate-700 text-slate-400"
+            }`}
+          >
+            3
           </div>
         </div>
 
+        {/* Role Info */}
+        <Alert className="bg-purple-900/20 border-purple-500">
+          <Info className="h-4 w-4 text-purple-400" />
+          <AlertDescription className="text-slate-300">
+            <strong>Roolisi: {userRole}</strong>
+            <br />
+            {userRole === "seller"
+              ? "Myyt yrityksiä. Voit luoda listauksia ja hallita kauppoja."
+              : "Välität kauppoja. Voit luoda listauksia ja hallita kauppoja."}
+          </AlertDescription>
+        </Alert>
+
+        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Step 1: Basic Info */}
+          {/* Step 1: YTJ Search */}
           {step === 1 && (
             <div className="space-y-4">
-              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-6">
-                <div className="flex items-start gap-3">
-                  <Users className="w-5 h-5 text-blue-600 mt-0.5" />
-                  <div>
-                    <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
-                      Roolisi: {userRole}
-                    </h3>
-                    <p className="text-sm text-blue-800 dark:text-blue-200">
-                      {userRole === "seller" &&
-                        "Myyt yrityksiä. Voit luoda listauksia ja hallita kauppoja."}
-                      {userRole === "broker" &&
-                        "Välität yrityskauppoja. Voit yhdistää ostajia ja myyjiä."}
-                      {userRole === "partner" &&
-                        "Tarjoat rahoituspalveluita. Voit tehdä rahoitustarjouksia."}
-                      {userRole === "admin" &&
-                        "Hallinnoit alustaa. Sinulla on täysi pääsy kaikkiin toimintoihin."}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="name">Organisaation nimi *</Label>
+              <div className="space-y-2">
+                <Label className="text-slate-300">
+                  Hae yrityksesi YTJ-rekisteristä *
+                </Label>
                 <div className="flex gap-2">
                   <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
-                    placeholder="Esim. Oy Yrityskaupat Ab"
-                    required
-                    className="flex-1"
+                    placeholder="Kirjoita yrityksen nimi..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        searchYTJ();
+                      }
+                    }}
+                    className="bg-slate-800 border-slate-700 text-white"
                   />
                   <Button
                     type="button"
-                    variant="outline"
-                    onClick={generateOrgName}
-                    disabled={aiLoading}
-                    className="whitespace-nowrap"
+                    onClick={searchYTJ}
+                    disabled={ytjLoading || searchQuery.length < 2}
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
                   >
-                    {aiLoading ? (
+                    {ytjLoading ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
-                      <Sparkles className="w-4 h-4" />
+                      <Search className="w-4 h-4" />
                     )}
                   </Button>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  AI voi ehdottaa nimeä sinulle
+                <p className="text-xs text-slate-400">
+                  Haemme yrityksen perustiedot virallisesta YTJ-rekisteristä
                 </p>
               </div>
 
-              <div>
-                <Label htmlFor="industry">Toimiala *</Label>
-                <Input
-                  id="industry"
-                  value={formData.industry}
-                  onChange={(e) =>
-                    setFormData({ ...formData, industry: e.target.value })
-                  }
-                  placeholder="Esim. Yrityskaupat, Rahoitus, Konsultointi"
-                  required
-                />
+              {/* YTJ Results */}
+              {ytjResults.length > 0 && (
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {ytjResults.map((company, index) => (
+                    <div
+                      key={index}
+                      onClick={() => selectYTJCompany(company)}
+                      className="p-4 rounded-lg bg-slate-800 border border-slate-700 hover:border-purple-500 cursor-pointer transition-colors"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="font-medium text-white">
+                            {company.name}
+                          </div>
+                          <div className="text-sm text-slate-400">
+                            Y-tunnus: {company.businessId}
+                          </div>
+                          {company.addresses?.[0] && (
+                            <div className="text-sm text-slate-400">
+                              {company.addresses[0].city}
+                            </div>
+                          )}
+                          {company.businessLines?.[0] && (
+                            <Badge
+                              variant="outline"
+                              className="mt-2 text-xs border-slate-600 text-slate-300"
+                            >
+                              {company.businessLines[0].name}
+                            </Badge>
+                          )}
+                        </div>
+                        <CheckCircle2 className="w-5 h-5 text-green-500" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Manual Entry Option */}
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-slate-700" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-slate-900 px-2 text-slate-400">
+                    Tai täytä manuaalisesti
+                  </span>
+                </div>
               </div>
 
-              <div>
-                <Label htmlFor="country">Maa</Label>
-                <Select
-                  value={formData.country}
-                  onValueChange={(value) =>
-                    setFormData({ ...formData, country: value })
+              {/* Organization Name */}
+              <div className="space-y-2">
+                <Label className="text-slate-300">Organisaation nimi *</Label>
+                <Input
+                  required
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
                   }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="FI">🇫🇮 Suomi</SelectItem>
-                    <SelectItem value="SE">🇸🇪 Ruotsi</SelectItem>
-                    <SelectItem value="NO">🇳🇴 Norja</SelectItem>
-                    <SelectItem value="DK">🇩🇰 Tanska</SelectItem>
-                    <SelectItem value="US">🇺🇸 USA</SelectItem>
-                    <SelectItem value="GB">🇬🇧 Iso-Britannia</SelectItem>
-                  </SelectContent>
-                </Select>
+                  placeholder="Esim. Yrityskauppa Oy"
+                  className="bg-slate-800 border-slate-700 text-white"
+                />
+                {ytjVerified && (
+                  <div className="flex items-center gap-2 text-sm text-green-500">
+                    <CheckCircle2 className="w-4 h-4" />
+                    YTJ-vahvistettu
+                  </div>
+                )}
               </div>
+
+              {/* Business ID */}
+              {formData.businessId && (
+                <div className="space-y-2">
+                  <Label className="text-slate-300">Y-tunnus</Label>
+                  <Input
+                    value={formData.businessId}
+                    onChange={(e) =>
+                      setFormData({ ...formData, businessId: e.target.value })
+                    }
+                    placeholder="1234567-8"
+                    className="bg-slate-800 border-slate-700 text-white"
+                  />
+                </div>
+              )}
 
               <Button
                 type="button"
                 onClick={() => setStep(2)}
-                className="w-full"
-                disabled={!formData.name || !formData.industry}
+                disabled={!formData.name}
+                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
               >
                 Jatka
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -366,66 +495,83 @@ export function OrganizationOnboarding({
           {/* Step 2: Additional Details */}
           {step === 2 && (
             <div className="space-y-4">
-              <div>
-                <Label htmlFor="website">Verkkosivusto</Label>
+              {/* Industry */}
+              <div className="space-y-2">
+                <Label className="text-slate-300">Toimiala *</Label>
                 <Input
-                  id="website"
+                  required
+                  value={formData.industry}
+                  onChange={(e) =>
+                    setFormData({ ...formData, industry: e.target.value })
+                  }
+                  placeholder="Esim. Yrityskauppa, Rahoitus, Konsultointi"
+                  className="bg-slate-800 border-slate-700 text-white"
+                />
+              </div>
+
+              {/* Country */}
+              <div className="space-y-2">
+                <Label className="text-slate-300">Maa</Label>
+                <Select
+                  value={formData.country}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, country: value })
+                  }
+                >
+                  <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="FI">🇫🇮 Suomi</SelectItem>
+                    <SelectItem value="SE">🇸🇪 Ruotsi</SelectItem>
+                    <SelectItem value="NO">🇳🇴 Norja</SelectItem>
+                    <SelectItem value="DK">🇩🇰 Tanska</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Website */}
+              <div className="space-y-2">
+                <Label className="text-slate-300">Verkkosivusto</Label>
+                <Input
                   type="url"
                   value={formData.website}
                   onChange={(e) =>
                     setFormData({ ...formData, website: e.target.value })
                   }
                   placeholder="https://example.com"
+                  className="bg-slate-800 border-slate-700 text-white"
                 />
               </div>
 
-              <div>
-                <Label htmlFor="description">Kuvaus</Label>
+              {/* Address */}
+              {formData.address && (
                 <div className="space-y-2">
-                  <Textarea
-                    id="description"
-                    value={formData.description}
+                  <Label className="text-slate-300">Osoite</Label>
+                  <Input
+                    value={formData.address}
                     onChange={(e) =>
-                      setFormData({ ...formData, description: e.target.value })
+                      setFormData({ ...formData, address: e.target.value })
                     }
-                    placeholder="Kerro organisaatiostasi lyhyesti..."
-                    rows={4}
+                    placeholder="Katuosoite, Postinumero Kaupunki"
+                    className="bg-slate-800 border-slate-700 text-white"
                   />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={generateDescription}
-                    disabled={aiLoading}
-                    className="w-full"
-                  >
-                    {aiLoading ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Luodaan kuvausta...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-4 h-4 mr-2" />
-                        AI luo kuvauksen
-                      </>
-                    )}
-                  </Button>
                 </div>
-              </div>
+              )}
 
-              <div className="flex gap-3">
+              <div className="flex gap-2">
                 <Button
                   type="button"
-                  variant="outline"
                   onClick={() => setStep(1)}
-                  className="flex-1"
+                  variant="outline"
+                  className="flex-1 border-slate-700 text-slate-300"
                 >
                   Takaisin
                 </Button>
                 <Button
                   type="button"
                   onClick={() => setStep(3)}
-                  className="flex-1"
+                  className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
                 >
                   Jatka
                   <ArrowRight className="w-4 h-4 ml-2" />
@@ -434,83 +580,79 @@ export function OrganizationOnboarding({
             </div>
           )}
 
-          {/* Step 3: Review & Confirm */}
+          {/* Step 3: Description */}
           {step === 3 && (
-            <div className="space-y-6">
-              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 space-y-4">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
-                  Tarkista tiedot
-                </h3>
-
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Organisaation nimi
-                  </p>
-                  <p className="font-medium text-gray-900 dark:text-white">
-                    {formData.name}
-                  </p>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label className="text-slate-300">Organisaation kuvaus</Label>
+                  <Button
+                    type="button"
+                    onClick={generateDescription}
+                    disabled={aiLoading || !formData.name || !formData.industry}
+                    size="sm"
+                    variant="outline"
+                    className="border-purple-500 text-purple-400 hover:bg-purple-500/10"
+                  >
+                    {aiLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    ) : (
+                      <Sparkles className="w-4 h-4 mr-2" />
+                    )}
+                    AI ehdottaa
+                  </Button>
                 </div>
-
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Toimiala
-                  </p>
-                  <p className="font-medium text-gray-900 dark:text-white">
-                    {formData.industry}
-                  </p>
-                </div>
-
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Maa</p>
-                  <p className="font-medium text-gray-900 dark:text-white">
-                    {formData.country === "FI" && "🇫🇮 Suomi"}
-                    {formData.country === "SE" && "🇸🇪 Ruotsi"}
-                    {formData.country === "NO" && "🇳🇴 Norja"}
-                    {formData.country === "DK" && "🇩🇰 Tanska"}
-                  </p>
-                </div>
-
-                {formData.website && (
-                  <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Verkkosivusto
-                    </p>
-                    <p className="font-medium text-gray-900 dark:text-white">
-                      {formData.website}
-                    </p>
-                  </div>
-                )}
-
-                {formData.description && (
-                  <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Kuvaus
-                    </p>
-                    <p className="text-gray-900 dark:text-white">
-                      {formData.description}
-                    </p>
-                  </div>
-                )}
+                <Textarea
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                  placeholder="Kerro lyhyesti organisaatiostasi..."
+                  rows={5}
+                  className="bg-slate-800 border-slate-700 text-white resize-none"
+                />
+                <p className="text-xs text-slate-400">
+                  AI voi generoida kuvauksen automaattisesti - voit muokata sitä
+                  vapaasti
+                </p>
               </div>
 
-              <div className="flex gap-3">
+              {/* Summary */}
+              <Alert className="bg-slate-800 border-slate-700">
+                <CheckCircle2 className="h-4 w-4 text-green-500" />
+                <AlertDescription className="text-slate-300">
+                  <div className="font-medium mb-2">Yhteenveto:</div>
+                  <ul className="space-y-1 text-sm">
+                    <li>• Nimi: {formData.name}</li>
+                    {formData.businessId && (
+                      <li>• Y-tunnus: {formData.businessId}</li>
+                    )}
+                    <li>• Toimiala: {formData.industry}</li>
+                    <li>• Maa: {formData.country}</li>
+                    {ytjVerified && (
+                      <li className="text-green-500">• ✅ YTJ-vahvistettu</li>
+                    )}
+                  </ul>
+                </AlertDescription>
+              </Alert>
+
+              <div className="flex gap-2">
                 <Button
                   type="button"
-                  variant="outline"
                   onClick={() => setStep(2)}
-                  className="flex-1"
-                  disabled={loading}
+                  variant="outline"
+                  className="flex-1 border-slate-700 text-slate-300"
                 >
                   Takaisin
                 </Button>
                 <Button
                   type="submit"
-                  className="flex-1 bg-gradient-to-r from-primary-600 to-purple-600"
                   disabled={loading}
+                  className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
                 >
                   {loading ? (
                     <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
                       Luodaan...
                     </>
                   ) : (
@@ -528,4 +670,3 @@ export function OrganizationOnboarding({
     </div>
   );
 }
-
