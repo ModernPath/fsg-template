@@ -323,16 +323,20 @@ export function OrganizationOnboarding({
 
       if (orgError) throw orgError;
 
-      // Link user to organization
+      // Link user to organization with admin role
+      // Note: user_organizations.role = 'admin' means organization admin (not platform admin)
       const { error: linkError } = await supabase
         .from("user_organizations")
         .insert({
           user_id: userId,
           organization_id: org.id,
-          role: userRole === "seller" ? "owner" : "admin",
+          role: "admin", // Organization admin (valid: admin, broker, seller, analyst, viewer)
         });
 
-      if (linkError) throw linkError;
+      if (linkError) {
+        console.error("Error linking user to organization:", linkError);
+        throw linkError;
+      }
 
       // Update profile
       const { error: profileError } = await supabase
