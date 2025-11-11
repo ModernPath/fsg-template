@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { createClient } from '@/utils/supabase/server';
 import { createCompanyEnrichment } from '@/lib/company-enrichment';
 
@@ -20,15 +21,19 @@ export async function POST(request: NextRequest) {
     console.log('\n🔍 [Company Enrichment API] Starting...');
 
     // 1. Authenticate
-    const supabase = await createClient();
+    const cookieStore = await cookies();
+    const supabase = await createClient(cookieStore);
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
+      console.error('❌ [Auth Error]:', authError);
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    console.log(`✅ [Auth] User authenticated: ${user.id}`);
 
     // 2. Parse request
     const { businessId, companyName, country, industry, website, locale } = await request.json();
@@ -171,7 +176,8 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const cookieStore = await cookies();
+    const supabase = await createClient(cookieStore);
     const {
       data: { user },
       error: authError,

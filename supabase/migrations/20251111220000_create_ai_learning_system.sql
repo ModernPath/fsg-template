@@ -218,12 +218,17 @@ CREATE POLICY "Users can update their own conversations"
   USING (auth.uid() = user_id);
 
 -- ai_learnings policies (users can see learnings about themselves/their companies)
+-- BizExit uses user_organizations -> organizations -> companies structure
 CREATE POLICY "Users can view learnings about themselves"
   ON ai_learnings FOR SELECT
   USING (
     auth.uid() = user_id 
     OR company_id IN (
-      SELECT company_id FROM company_users WHERE user_id = auth.uid()
+      -- BizExit: Users can see companies in their organizations
+      SELECT c.id 
+      FROM companies c
+      INNER JOIN user_organizations uo ON uo.organization_id = c.organization_id
+      WHERE uo.user_id = auth.uid()
     )
   );
 
@@ -233,7 +238,17 @@ CREATE POLICY "Users can view their context memory"
   USING (
     (scope_type = 'user' AND scope_id = auth.uid())
     OR (scope_type = 'company' AND scope_id IN (
-      SELECT company_id FROM company_users WHERE user_id = auth.uid()
+      -- BizExit: Users can access companies in their organizations
+      SELECT c.id 
+      FROM companies c
+      INNER JOIN user_organizations uo ON uo.organization_id = c.organization_id
+      WHERE uo.user_id = auth.uid()
+    ))
+    OR (scope_type = 'organization' AND scope_id IN (
+      -- BizExit: Users can access their organizations
+      SELECT organization_id 
+      FROM user_organizations
+      WHERE user_id = auth.uid()
     ))
   );
 
