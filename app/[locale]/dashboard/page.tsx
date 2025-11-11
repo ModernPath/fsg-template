@@ -20,13 +20,19 @@ export default function DashboardPage() {
 
   useEffect(() => {
     async function fetchProfile() {
+      console.log("🔍 Dashboard: Fetching profile...", {
+        hasSession: !!session,
+        userId: session?.user?.id,
+      });
+
       if (!session?.user?.id) {
+        console.warn("⚠️ Dashboard: No session or user ID");
         setLoading(false);
         return;
       }
 
       try {
-        const { data: profileData } = await supabase
+        const { data: profileData, error } = await supabase
           .from("profiles")
           .select(`
             *,
@@ -43,9 +49,23 @@ export default function DashboardPage() {
           .eq("id", session.user.id)
           .single();
 
-        setProfile(profileData);
+        console.log("📊 Dashboard: Profile query result:", {
+          hasData: !!profileData,
+          hasError: !!error,
+          error: error,
+          profile: profileData,
+        });
+
+        if (error) {
+          console.error("❌ Dashboard: Error fetching profile:", error);
+          setProfile(null);
+        } else {
+          console.log("✅ Dashboard: Profile loaded successfully");
+          setProfile(profileData);
+        }
       } catch (error) {
-        console.error("Error fetching profile:", error);
+        console.error("❌ Dashboard: Exception fetching profile:", error);
+        setProfile(null);
       } finally {
         setLoading(false);
       }

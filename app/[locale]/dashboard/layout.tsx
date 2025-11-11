@@ -18,7 +18,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  return generateLocalizedMetadata(locale, "Dashboard", {
+  return generateLocalizedMetadata(locale, "dashboard", {
     title: "Dashboard",
     description: "BizExit M&A Platform Dashboard",
     type: "website",
