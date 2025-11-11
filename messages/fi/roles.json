@@ -1,0 +1,90 @@
+{
+  "visitor": {
+    "title": "Vierailija",
+    "description": "Selaa yrityksiä rekisteröitymättä",
+    "cta": "Rekisteröidy nähdäksesi lisää"
+  },
+  "buyer": {
+    "title": "Ostaja",
+    "description": "Etsi ja osta yrityksiä",
+    "features": {
+      "recommendations": "AI-suositukset",
+      "watchlist": "Seurattavat yritykset",
+      "ndas": "NDA-sopimukset",
+      "deals": "Kauppasi",
+      "analysis": "Talousanalyysit",
+      "chat": "AI-assistentti"
+    }
+  },
+  "seller": {
+    "title": "Myyjä",
+    "description": "Myy yrityksesi parhaaseen hintaan",
+    "features": {
+      "listings": "Listaukset",
+      "interested": "Kiinnostuneet ostajat",
+      "documents": "Dokumentit",
+      "analytics": "Analytiikka",
+      "pricing": "Hinnoittelu",
+      "marketing": "Markkinointi",
+      "chat": "AI-assistentti"
+    }
+  },
+  "broker": {
+    "title": "Välittäjä",
+    "description": "Välitä yrityskauppoja",
+    "features": {
+      "pipeline": "Pipeline",
+      "clients": "Asiakkaat",
+      "matchmaking": "AI-Matchmaking",
+      "commission": "Provisiot",
+      "tasks": "Tehtävät",
+      "deadlines": "Deadlinet",
+      "chat": "AI-assistentti"
+    }
+  },
+  "partner": {
+    "title": "Kumppani",
+    "description": "Rahoitus, vakuutus, lakipalvelut",
+    "types": {
+      "bank": "Pankki",
+      "insurance": "Vakuutusyhtiö",
+      "law_firm": "Lakitoimisto",
+      "financial": "Rahoituslaitos"
+    },
+    "features": {
+      "risk": "Riskiarviointi",
+      "financing": "Rahoitusehdotukset",
+      "insurance": "Vakuutussuunnitelmat",
+      "legal": "Lakidokumentit",
+      "compliance": "Compliance",
+      "chat": "AI-assistentti"
+    }
+  },
+  "admin": {
+    "title": "Admin",
+    "description": "Hallitse alustaa",
+    "features": {
+      "users": "Käyttäjät",
+      "companies": "Yritykset",
+      "deals": "Kaupat",
+      "moderation": "Moderointi",
+      "analytics": "Analytiikka",
+      "system": "Järjestelmä",
+      "fraud": "Petostentunnistus",
+      "chat": "AI-assistentti"
+    }
+  },
+  "permissions": {
+    "view": "Katse",
+    "create": "Luo",
+    "update": "Muokkaa",
+    "delete": "Poista",
+    "manage": "Hallitse"
+  },
+  "errors": {
+    "noPermission": "Sinulla ei ole oikeutta tähän toimintoon",
+    "notAuthenticated": "Kirjaudu sisään jatkaaksesi",
+    "roleRequired": "Tämä toiminto vaatii {role} -roolin"
+  }
+}
+

@@ -1,352 +1,338 @@
-import { NextResponse } from 'next/server'
-import { GoogleGenAI, Type } from '@google/genai'
-import { createClient } from '@/utils/supabase/server'
-import { marked } from 'marked'
-import { markedHighlight } from 'marked-highlight'
-import hljs from 'highlight.js'
+import { createClient } from "@/utils/supabase/server";
+import { NextRequest, NextResponse } from "next/server";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Configure marked with syntax highlighting
-marked.use(markedHighlight({
-  langPrefix: 'hljs language-',
-  highlight(code: string, lang: string) {
-    const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-    return hljs.highlight(code, { language }).value;
+// Initialize Gemini AI
+const genAI = new GoogleGenerativeAI(
+  process.env.GOOGLE_AI_STUDIO_KEY || process.env.GEMINI_API_KEY || ""
+);
+
+/**
+ * POST /api/ai/generate-content
+ * 
+ * Generate AI content for specific purposes
+ * 
+ * Body:
+ * - type: "teaser" | "im" | "cim" | "due_diligence" | "risk_assessment" | "recommendation"
+ * - resourceType: "company" | "deal"
+ * - resourceId: string
+ * - params?: Record<string, any> (additional parameters)
+ */
+export async function POST(request: NextRequest) {
+  try {
+    const supabase = await createClient();
+    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const { type, resourceType, resourceId, params } = await request.json();
+
+    if (!type || !resourceType || !resourceId) {
+      return NextResponse.json(
+        { error: "Missing required fields: type, resourceType, resourceId" },
+        { status: 400 }
+      );
+    }
+
+    // Get user profile
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    // Check permissions based on content type
+    if (!canGenerateContent(profile?.role, type)) {
+      return NextResponse.json(
+        { error: "Forbidden: Insufficient permissions" },
+        { status: 403 }
+      );
+    }
+
+    // Fetch resource data
+    const resourceData = await fetchResourceData(
+      supabase,
+      resourceType,
+      resourceId
+    );
+
+    if (!resourceData) {
+      return NextResponse.json(
+        { error: "Resource not found" },
+        { status: 404 }
+      );
+    }
+
+    // Generate content based on type
+    const prompt = buildPromptForType(type, resourceData, params);
+    
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.0-flash-exp",
+    });
+
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    const generatedContent = response.text();
+
+    // Save generated content to database
+    const { data: savedContent, error: saveError } = await supabase
+      .from("ai_generated_content")
+      .insert({
+        user_id: user.id,
+        content_type: type,
+        content: generatedContent,
+        resource_type: resourceType,
+        resource_id: resourceId,
+        model_used: "gemini-2.0-flash-exp",
+        metadata: {
+          params,
+          resourceData: {
+            name: resourceData.name,
+            type: resourceType,
+          },
+        },
+      })
+      .select()
+      .single();
+
+    if (saveError) {
+      console.error("Failed to save generated content:", saveError);
+    }
+
+    return NextResponse.json({
+      content: generatedContent,
+      contentId: savedContent?.id,
+      type,
+      resourceType,
+      resourceId,
+    });
+  } catch (error) {
+    console.error("Content generation error:", error);
+    return NextResponse.json(
+      { error: "Failed to generate content" },
+      { status: 500 }
+    );
   }
-}));
-
-// Set marked options
-marked.setOptions({
-  gfm: true,
-  breaks: true,
-  pedantic: false
-});
-
-const API_KEY = process.env.GOOGLE_AI_STUDIO_KEY
-
-if (!API_KEY) {
-  throw new Error('GOOGLE_AI_STUDIO_KEY is not set')
 }
 
-const ai = new GoogleGenAI({ apiKey: API_KEY })
+/**
+ * Check if user role can generate specific content type
+ */
+function canGenerateContent(role: string | undefined, contentType: string): boolean {
+  const permissions: Record<string, string[]> = {
+    teaser: ["seller", "broker", "admin"],
+    im: ["seller", "broker", "admin"],
+    cim: ["seller", "broker", "admin"],
+    due_diligence: ["buyer", "broker", "partner", "admin"],
+    risk_assessment: ["buyer", "partner", "admin"],
+    recommendation: ["buyer", "seller", "broker", "admin"],
+  };
 
-export async function POST(request: Request) {
-  try {
-    console.log('\n🎭 [POST /api/ai/generate-content] Persona-based content generation request')
+  return permissions[contentType]?.includes(role || "") || false;
+}
 
-    // 1. Authentication
-    const authHeader = request.headers.get('Authorization')
-    if (!authHeader?.startsWith('Bearer ')) {
-      console.error('❌ Missing or invalid authorization header')
-      return NextResponse.json(
-        { error: 'Missing or invalid authorization header', code: 'AUTH_HEADER_MISSING' },
-        { status: 401 }
+/**
+ * Fetch resource data
+ */
+async function fetchResourceData(
+  supabase: any,
+  resourceType: string,
+  resourceId: string
+): Promise<any> {
+  if (resourceType === "company") {
+    const { data, error } = await supabase
+      .from("companies")
+      .select(
+        `
+        *,
+        company_financials(*),
+        company_assets(*)
+      `
       )
-    }
+      .eq("id", resourceId)
+      .single();
 
-    const authClient = await createClient()
-    const { data: { user }, error: authError } = await authClient.auth.getUser(authHeader.split(' ')[1])
-    
-    if (authError || !user) {
-      console.error('❌ Auth error:', authError)
-      return NextResponse.json(
-        { error: 'Unauthorized', code: 'AUTH_FAILED' },
-        { status: 401 }
+    return error ? null : data;
+  } else if (resourceType === "deal") {
+    const { data, error } = await supabase
+      .from("deals")
+      .select(
+        `
+        *,
+        companies(*),
+        buyer_profiles(*)
+      `
       )
-    }
+      .eq("id", resourceId)
+      .single();
 
-    // 2. Admin verification
-    const { data: profile } = await authClient
-      .from('profiles')
-      .select('is_admin')
-      .eq('id', user.id)
-      .single()
-
-    if (!profile?.is_admin) {
-      console.error('❌ User is not admin:', user.id)
-      return NextResponse.json(
-        { error: 'Forbidden - Admin access required', code: 'ADMIN_REQUIRED' },
-        { status: 403 }
-      )
-    }
-
-    const { 
-      personaId,
-      topic,
-      keywords = [],
-      targetAudience,
-      contentType = 'blog',
-      locale = 'en',
-      temperature = 0.7,
-      maxTokens = 8192
-    } = await request.json()
-
-    if (!personaId || !topic) {
-      console.error('❌ Missing required parameters:', { personaId: !!personaId, topic: !!topic })
-      return NextResponse.json(
-        { error: 'Persona ID and topic are required', code: 'PARAMS_MISSING' },
-        { status: 400 }
-      )
-    }
-
-    // 3. Fetch persona details
-    const { data: persona, error: personaError } = await authClient
-      .from('ai_personas')
-      .select('*')
-      .eq('id', personaId)
-      .eq('active', true)
-      .single()
-
-    if (personaError || !persona) {
-      console.error('❌ Persona not found:', { personaId, error: personaError })
-      return NextResponse.json(
-        { error: 'Persona not found or inactive', code: 'PERSONA_NOT_FOUND' },
-        { status: 404 }
-      )
-    }
-
-    console.log('🎭 Using persona:', persona.name)
-
-    // 4. Build the content generation prompt
-    const personaTraits = persona.personality_traits || {}
-    const tone = personaTraits.tone || 'professional'
-    const style = personaTraits.style || 'informative'
-    const expertise = personaTraits.expertise || 'general'
-
-    // Define content schema based on content type
-    let responseSchema
-    let contentPrompt
-
-    if (contentType === 'blog') {
-      responseSchema = {
-        type: Type.OBJECT,
-        properties: {
-          title: {
-            type: Type.STRING,
-            description: "A compelling, SEO-friendly title under 60 characters"
-          },
-          content: {
-            type: Type.STRING,
-            description: "The main blog post content in markdown format"
-          },
-          excerpt: {
-            type: Type.STRING,
-            description: "A compelling 2-3 sentence summary"
-          },
-          meta_description: {
-            type: Type.STRING,
-            description: "SEO optimized description under 160 characters"
-          },
-          tags: {
-            type: Type.ARRAY,
-            items: { type: Type.STRING },
-            description: "3-5 relevant tags"
-          },
-          image_prompt: {
-            type: Type.STRING,
-            description: "A detailed prompt for generating the featured image"
-          }
-        },
-        required: ["title", "content", "excerpt", "meta_description", "tags", "image_prompt"]
-      }
-
-      contentPrompt = `You are ${persona.name}, ${persona.description}.
-
-${persona.system_prompt}
-
-Your personality traits:
-- Tone: ${tone}
-- Style: ${style}
-- Expertise level: ${expertise}
-- Specialized topics: ${persona.topics.join(', ')}
-
-Generate a comprehensive blog post about: "${topic}"
-
-Target audience: ${targetAudience || 'General audience'}
-Keywords to incorporate naturally: ${keywords.join(', ')}
-Language: ${locale === 'fi' ? 'Finnish' : locale === 'sv' ? 'Swedish' : 'English'}
-
-Instructions:
-1. Write in your distinctive voice and style as defined above
-2. Title should be compelling and SEO-friendly (under 60 characters)
-3. Content should use proper markdown formatting with headings, lists, and emphasis
-4. Naturally incorporate the provided keywords throughout the content
-5. Include a clear introduction, body with subsections, and conclusion
-6. Excerpt should capture the essence in 2-3 sentences
-7. Meta description should be optimized for search (under 160 characters)
-8. Include 3-5 relevant tags
-9. Create a detailed image prompt that reflects the content and your persona's style
-
-Remember to maintain your unique perspective and expertise throughout the content.`
-
-    } else if (contentType === 'social') {
-      responseSchema = {
-        type: Type.OBJECT,
-        properties: {
-          posts: {
-            type: Type.ARRAY,
-            items: {
-              type: Type.OBJECT,
-              properties: {
-                platform: { type: Type.STRING },
-                content: { type: Type.STRING },
-                hashtags: {
-                  type: Type.ARRAY,
-                  items: { type: Type.STRING }
-                }
-              }
-            }
-          }
-        },
-        required: ["posts"]
-      }
-
-      contentPrompt = `You are ${persona.name}, ${persona.description}.
-
-${persona.system_prompt}
-
-Create social media posts about: "${topic}"
-
-Target audience: ${targetAudience || 'General audience'}
-Keywords to incorporate: ${keywords.join(', ')}
-
-Generate posts for:
-1. Twitter/X (280 characters max)
-2. LinkedIn (professional tone, 1300 characters max)
-3. Instagram (engaging caption, 2200 characters max)
-
-Include relevant hashtags for each platform.`
-
-    } else if (contentType === 'email') {
-      responseSchema = {
-        type: Type.OBJECT,
-        properties: {
-          subject: { type: Type.STRING },
-          preheader: { type: Type.STRING },
-          content: { type: Type.STRING },
-          cta: { type: Type.STRING }
-        },
-        required: ["subject", "preheader", "content", "cta"]
-      }
-
-      contentPrompt = `You are ${persona.name}, ${persona.description}.
-
-${persona.system_prompt}
-
-Create an email about: "${topic}"
-
-Target audience: ${targetAudience || 'General audience'}
-Keywords to incorporate: ${keywords.join(', ')}
-
-Generate:
-1. Subject line (compelling, under 50 characters)
-2. Preheader text (complements subject, under 100 characters)
-3. Email content in markdown format
-4. Clear call-to-action text`
-    }
-
-    // 5. Generate content with Gemini with retry logic
-    console.log('🤖 Generating content with Gemini...')
-    
-    let attempts = 0
-    const maxAttempts = 3
-    let lastError: Error | null = null
-
-    while (attempts < maxAttempts) {
-      try {
-        const response = await ai.models.generateContent({
-          model: 'gemini-2.5-flash-preview-05-20',
-          contents: contentPrompt,
-          config: {
-            temperature,
-            maxOutputTokens: maxTokens,
-            responseMimeType: 'application/json',
-            responseSchema: responseSchema
-          }
-        })
-
-        const text = response.text
-        if (!text) {
-          throw new Error('Empty response from Gemini API')
-        }
-
-        const generatedContent = JSON.parse(text)
-
-        // 6. Process content based on type
-        let processedContent
-        
-        if (contentType === 'blog') {
-          // Convert markdown to HTML for blog posts
-          const htmlContent = marked(generatedContent.content || '')
-          
-          // Generate slug from title
-          const slug = generatedContent.title
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/^-+|-+$/g, '')
-
-          processedContent = {
-            ...generatedContent,
-            content: htmlContent,
-            slug,
-            personaId,
-            generationPrompt: topic,
-            autoGenerated: true,
-            locale
-          }
-        } else {
-          processedContent = {
-            ...generatedContent,
-            personaId,
-            generationPrompt: topic,
-            contentType,
-            locale
-          }
-        }
-        
-        console.log('✅ Content generated successfully with persona:', persona.name)
-        
-        return NextResponse.json({
-          success: true,
-          content: processedContent,
-          persona: {
-            id: persona.id,
-            name: persona.name,
-            description: persona.description
-          }
-        })
-        
-      } catch (error) {
-        attempts++
-        lastError = error as Error
-        console.error(`❌ Generation attempt ${attempts} failed:`, error)
-        
-        if (attempts < maxAttempts) {
-          console.log(`🔄 Retrying in ${attempts * 1000}ms...`)
-          await new Promise(resolve => setTimeout(resolve, attempts * 1000))
-        }
-      }
-    }
-
-    // All attempts failed
-    console.error('❌ All generation attempts failed:', lastError)
-    return NextResponse.json(
-      { 
-        error: 'Content generation failed after multiple attempts', 
-        code: 'GENERATION_FAILED',
-        details: process.env.NODE_ENV === 'development' ? lastError?.message : undefined
-      },
-      { status: 500 }
-    )
-
-  } catch (error: Error | unknown) {
-    console.error('❌ Content generation error:', error)
-    const errorMessage = error instanceof Error ? error.message : 'Failed to generate content'
-    return NextResponse.json(
-      { 
-        error: process.env.NODE_ENV === 'development' ? errorMessage : 'Internal server error',
-        code: 'INTERNAL_ERROR'
-      },
-      { status: 500 }
-    )
+    return error ? null : data;
   }
+
+  return null;
+}
+
+/**
+ * Build prompt for content type
+ */
+function buildPromptForType(
+  type: string,
+  resourceData: any,
+  params?: Record<string, any>
+): string {
+  const prompts: Record<string, string> = {
+    teaser: `Generate a compelling 1-page **Teaser** for the following company.
+
+A teaser is a brief, anonymous marketing document designed to spark interest in a potential acquisition without revealing the company's identity.
+
+**Company Information:**
+${formatCompanyData(resourceData)}
+
+**Requirements:**
+- Keep it to 1 page (300-400 words)
+- Do NOT reveal company name or specific identifying details
+- Highlight key strengths and investment opportunity
+- Include industry overview, business model, financial highlights, growth potential
+- Use professional, engaging language
+- End with a call-to-action
+
+Generate the teaser now:`,
+
+    im: `Generate a detailed **Information Memorandum (IM)** for the following company.
+
+An IM is a comprehensive marketing document that provides detailed information about the company to qualified buyers who have signed an NDA.
+
+**Company Information:**
+${formatCompanyData(resourceData)}
+
+**Requirements:**
+- 5-10 pages worth of content
+- Include: Executive Summary, Company Overview, Products/Services, Market Analysis, Financial Performance, Management Team, Growth Opportunities, Investment Highlights
+- Use data, charts descriptions, and metrics where applicable
+- Professional, detailed, factual tone
+- Format with clear sections and headings
+
+Generate the IM now:`,
+
+    cim: `Generate a comprehensive **Confidential Information Memorandum (CIM)** for the following company.
+
+A CIM is the most detailed marketing document, providing in-depth analysis for serious buyers.
+
+**Company Information:**
+${formatCompanyData(resourceData)}
+
+**Requirements:**
+- 15-30 pages worth of content
+- Include: Detailed financials (3-5 years), operational metrics, customer analysis, competitive landscape, SWOT analysis, risk factors, growth projections, management bios
+- Use tables, financial ratios, and detailed analysis
+- Highly professional, investment-grade quality
+- Clear section structure with table of contents
+
+Generate the CIM now:`,
+
+    due_diligence: `Generate a **Due Diligence Question List** for the following ${resourceData.deal_name ? "deal" : "company"}.
+
+**${resourceData.deal_name ? "Deal" : "Company"} Information:**
+${resourceData.deal_name ? formatDealData(resourceData) : formatCompanyData(resourceData)}
+
+**Requirements:**
+- Comprehensive list of 30-50 questions
+- Cover: Financial, Legal, Operational, Commercial, HR, IT, Environmental, Regulatory areas
+- Prioritize by importance (Critical, High, Medium)
+- Be specific and actionable
+- Format as numbered list with categories
+
+Generate the due diligence questions now:`,
+
+    risk_assessment: `Generate a detailed **Risk Assessment Report** for the following ${resourceData.deal_name ? "deal" : "company"}.
+
+**${resourceData.deal_name ? "Deal" : "Company"} Information:**
+${resourceData.deal_name ? formatDealData(resourceData) : formatCompanyData(resourceData)}
+
+**Requirements:**
+- Identify 10-15 key risks across categories: Financial, Market, Operational, Legal, Regulatory
+- For each risk: describe it, assess likelihood (Low/Medium/High), assess impact (Low/Medium/High), provide mitigation strategies
+- Include overall risk score
+- Professional, analytical tone
+
+Generate the risk assessment now:`,
+
+    recommendation: `Generate an **Investment Recommendation** for the following ${resourceData.deal_name ? "deal" : "company"}.
+
+**${resourceData.deal_name ? "Deal" : "Company"} Information:**
+${resourceData.deal_name ? formatDealData(resourceData) : formatCompanyData(resourceData)}
+
+**Additional Context:**
+${JSON.stringify(params, null, 2)}
+
+**Requirements:**
+- Clear recommendation: "Strong Buy", "Buy", "Hold", "Pass"
+- Rationale for recommendation (3-5 key points)
+- Financial analysis and valuation commentary
+- Key strengths and concerns
+- Next steps
+- Professional, balanced tone
+
+Generate the recommendation now:`,
+  };
+
+  return prompts[type] || "Generate relevant content based on the provided data.";
+}
+
+/**
+ * Format company data for prompts
+ */
+function formatCompanyData(company: any): string {
+  return `
+**Name:** ${company.name}
+**Industry:** ${company.industry || "N/A"}
+**Location:** ${company.location || "N/A"}
+**Description:** ${company.description || "N/A"}
+**Founded:** ${company.founded_year || "N/A"}
+**Employees:** ${company.employee_count || "N/A"}
+**Asking Price:** ${company.asking_price ? `€${company.asking_price.toLocaleString()}` : "N/A"}
+**Revenue:** ${company.revenue ? `€${company.revenue.toLocaleString()}` : "N/A"}
+**EBITDA:** ${company.ebitda ? `€${company.ebitda.toLocaleString()}` : "N/A"}
+**EBITDA Margin:** ${company.ebitda_margin ? `${company.ebitda_margin}%` : "N/A"}
+
+${company.company_financials?.length > 0 ? `
+**Financial History:**
+${company.company_financials.map((f: any) => `
+- ${f.year}: Revenue €${f.revenue?.toLocaleString()}, EBITDA €${f.ebitda?.toLocaleString()}, Net Profit €${f.net_profit?.toLocaleString()}
+`).join("")}
+` : ""}
+
+${company.company_assets?.length > 0 ? `
+**Key Assets:**
+${company.company_assets.map((a: any) => `- ${a.asset_type}: ${a.description || "N/A"}`).join("\n")}
+` : ""}
+`;
+}
+
+/**
+ * Format deal data for prompts
+ */
+function formatDealData(deal: any): string {
+  return `
+**Deal Name:** ${deal.deal_name}
+**Stage:** ${deal.stage || "N/A"}
+**Status:** ${deal.status || "N/A"}
+**Estimated Value:** ${deal.estimated_value ? `€${deal.estimated_value.toLocaleString()}` : "N/A"}
+
+**Company Information:**
+${deal.companies ? formatCompanyData(deal.companies) : "N/A"}
+
+${deal.buyer_profiles ? `
+**Buyer:** ${deal.buyer_profiles.company_name || deal.buyer_profiles.full_name || "N/A"}
+` : ""}
+`;
 }
