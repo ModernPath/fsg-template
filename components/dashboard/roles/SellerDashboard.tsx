@@ -203,7 +203,7 @@ export function SellerDashboard({ userId, organizationId }: SellerDashboardProps
             {stats.companies === 0 ? (
               <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                 <p className="mb-4">Et ole vielä lisännyt yrityksiä</p>
-                <Button onClick={() => window.location.href = '/dashboard/companies/new'}>
+                <Button onClick={() => window.location.href = '/fi/dashboard/companies/new'}>
                   <Plus className="mr-2 h-4 w-4" />
                   Lisää ensimmäinen yritys
                 </Button>

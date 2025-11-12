@@ -26,14 +26,28 @@ export default async function NewCompanyPage({ params }: NewCompanyPageProps) {
     redirect(`/${locale}/auth/sign-in`);
   }
 
-  // Get user's organization
+  // Get user's profile and organization
   const { data: profile } = await supabase
     .from("profiles")
-    .select("organization_id, role")
+    .select(`
+      id,
+      role,
+      user_organizations(
+        organization_id,
+        role,
+        organizations(
+          id,
+          name,
+          type
+        )
+      )
+    `)
     .eq("id", user.id)
     .single();
 
-  if (!profile?.organization_id) {
+  const organizationId = profile?.user_organizations?.[0]?.organization_id;
+
+  if (!organizationId) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
@@ -41,8 +55,14 @@ export default async function NewCompanyPage({ params }: NewCompanyPageProps) {
             No Organization
           </h2>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Please contact support to set up your organization.
+            You need to set up your organization first.
           </p>
+          <a
+            href={`/${locale}/dashboard`}
+            className="mt-4 inline-block px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+          >
+            Go to Dashboard
+          </a>
         </div>
       </div>
     );
@@ -65,7 +85,11 @@ export default async function NewCompanyPage({ params }: NewCompanyPageProps) {
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-        <CompanyForm mode="create" />
+        <CompanyForm 
+          mode="create" 
+          organizationId={organizationId}
+          userId={user.id}
+        />
       </div>
     </div>
   );
