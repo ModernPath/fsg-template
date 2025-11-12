@@ -51,7 +51,7 @@ export function SellerDashboard({ userId, organizationId }: SellerDashboardProps
             .from("companies")
             .select("*", { count: "exact", head: true })
             .eq("organization_id", organizationId)
-            .eq("is_deleted", false),
+            .neq("status", "archived"),
 
           supabase
             .from("deals")

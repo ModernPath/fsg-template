@@ -60,11 +60,11 @@ export function AdminDashboard({ userId }: AdminDashboardProps) {
             supabase
               .from("companies")
               .select("*", { count: "exact", head: true })
-              .eq("is_deleted", false),
+              .neq("status", "archived"),
 
             supabase
               .from("deals")
-              .select("estimated_value, actual_value"),
+              .select("deal_value"),
 
             supabase
               .from("deals")
@@ -74,7 +74,7 @@ export function AdminDashboard({ userId }: AdminDashboardProps) {
 
         const totalRevenue = (dealsResult.data || []).reduce(
           (sum, deal) =>
-            sum + ((deal.actual_value || deal.estimated_value || 0) * 0.03), // 3% platform fee
+            sum + ((deal.deal_value || 0) * 0.03), // 3% platform fee
           0
         );
 

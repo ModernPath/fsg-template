@@ -69,14 +69,14 @@ export function BrokerDashboard({ userId, organizationId }: BrokerDashboardProps
             .from("companies")
             .select("*", { count: "exact", head: true })
             .eq("organization_id", organizationId)
-            .eq("is_deleted", false),
+            .neq("status", "archived"),
         ]);
 
         // Calculate estimated commission (assuming 3% of deal values)
         const estimatedCommission =
           (dealsResult.data || []).reduce(
             (sum, deal) =>
-              sum + ((deal.estimated_value || 0) * 0.03),
+              sum + ((deal.deal_value || 0) * 0.03),
             0
           );
 
