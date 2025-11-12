@@ -16,7 +16,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useBrokerAI } from "@/hooks/useBrokerAI";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import type { DealInfo } from "@/lib/ai/broker-agent";
 
 interface DealAnalysisProps {

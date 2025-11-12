@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { useTranslations } from "next-intl";
 import { Sparkles, TrendingUp, FileText, Users } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 interface CompanyFormData {
   name: string;
