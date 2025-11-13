@@ -159,6 +159,7 @@ export async function PUT(
       .from("companies")
       .update({
         name: body.name,
+        legal_name: body.legal_name,
         business_id: body.business_id,
         website: body.website,
         description: body.description,
@@ -166,9 +167,10 @@ export async function PUT(
         country: body.country,
         city: body.city,
         founded_year: body.founded_year,
-        employees: body.employees,
-        owner_type: body.owner_type,
-        status: body.status,
+        employees_count: body.employees, // Corrected column name
+        legal_structure: body.owner_type || "family_owned", // Corrected column name
+        asking_price: body.asking_price,
+        currency: body.currency || "EUR",
         updated_at: new Date().toISOString(),
       })
       .eq("id", companyId)
