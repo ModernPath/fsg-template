@@ -62,6 +62,7 @@ export function CompanyForm({
   const locale = params?.locale as string || 'en';
   const t = useTranslations("companies");
   const { toast } = useToast();
+  const supabase = createClient(); // Create Supabase client instance
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState<string | null>(null);
