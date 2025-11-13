@@ -138,7 +138,7 @@ export default function MaterialsPage() {
       color: "green",
     },
     {
-      type: "valuation_report",
+      type: "valuation",
       name: "Valuation Reports",
       icon: FileText,
       description: "AI-assisted valuations",
@@ -172,7 +172,7 @@ export default function MaterialsPage() {
         {materialTypes.map((type) => {
           const Icon = type.icon;
           const count =
-            materials.filter((m) => m.asset_type === type.type).length || 0;
+            materials.filter((m) => m.document_type === type.type).length || 0;
 
           return (
             <div
@@ -212,7 +212,7 @@ export default function MaterialsPage() {
           {materials && materials.length > 0 ? (
             materials.map((material: any) => {
               const typeInfo = materialTypes.find(
-                (t) => t.type === material.asset_type,
+                (t) => t.type === material.document_type,
               );
               const Icon = typeInfo?.icon || FileText;
 
@@ -223,23 +223,15 @@ export default function MaterialsPage() {
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-4">
-                      {material.companies?.logo_url ? (
-                        <img
-                          src={material.companies.logo_url}
-                          alt={material.companies.name}
-                          className="w-16 h-16 rounded object-cover"
-                        />
-                      ) : (
-                        <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center">
-                          <Icon className="w-8 h-8 text-gray-400" />
-                        </div>
-                      )}
+                      <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center">
+                        <Icon className="w-8 h-8 text-gray-400" />
+                      </div>
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                           {material.companies?.name || "Unknown Company"}
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                          {typeInfo?.name || material.asset_type}
+                          {typeInfo?.name || material.document_type}
                         </p>
                         {material.description && (
                           <p className="text-sm text-gray-600 dark:text-gray-400 max-w-2xl">
