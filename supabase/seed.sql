@@ -35,28 +35,160 @@ INSERT INTO organizations (id, name, slug, type, country, industry, active) VALU
   ('550e8400-e29b-41d4-a716-446655440005', 'European Business Brokers', 'european-brokers', 'broker', 'Germany', 'Financial Services', true);
 
 -- ============================================================================
--- 2. USERS & USER_ORGANIZATIONS
+-- 2. TEST USERS
 -- ============================================================================
 
--- Note: In real setup, users are created via Supabase Auth
--- This creates user_organizations links assuming users exist
+-- Note: In production, users are created via Supabase Auth
+-- For local development, we create test users directly
 
--- Create demo user records (would normally be in auth.users)
--- For seed purposes, we'll link to existing test users if they exist
+-- Test Admin User
+INSERT INTO auth.users (
+  id,
+  instance_id,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  raw_app_meta_data,
+  raw_user_meta_data,
+  created_at,
+  updated_at,
+  role,
+  aud
+) VALUES (
+  '11111111-1111-1111-1111-111111111111',
+  '00000000-0000-0000-0000-000000000000',
+  'admin@test.com',
+  '$2a$10$rJ9qYZ4lAHqk6VdJ8aYfBeBiHwFMp3.zG5YF5Y4x5YF5Y4x5YF5YF', -- password: test123
+  NOW(),
+  '{"provider":"email","providers":["email"],"role":"admin"}',
+  '{"full_name":"Admin User","is_admin":true}',
+  NOW(),
+  NOW(),
+  'authenticated',
+  'authenticated'
+) ON CONFLICT (id) DO NOTHING;
 
--- Link admin user to organizations (assuming test users from existing seed)
-INSERT INTO user_organizations (user_id, organization_id, role, active)
-SELECT 
-  u.id,
-  '550e8400-e29b-41d4-a716-446655440001',
-  'admin',
-  true
-FROM auth.users u
-WHERE u.email LIKE '%@lastbot.com'
-LIMIT 1;
+-- Test Broker User
+INSERT INTO auth.users (
+  id,
+  instance_id,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  raw_app_meta_data,
+  raw_user_meta_data,
+  created_at,
+  updated_at,
+  role,
+  aud
+) VALUES (
+  '22222222-2222-2222-2222-222222222222',
+  '00000000-0000-0000-0000-000000000000',
+  'broker@test.com',
+  '$2a$10$rJ9qYZ4lAHqk6VdJ8aYfBeBiHwFMp3.zG5YF5Y4x5YF5Y4x5YF5YF', -- password: test123
+  NOW(),
+  '{"provider":"email","providers":["email"],"role":"broker"}',
+  '{"full_name":"Broker User"}',
+  NOW(),
+  NOW(),
+  'authenticated',
+  'authenticated'
+) ON CONFLICT (id) DO NOTHING;
+
+-- Test Seller User
+INSERT INTO auth.users (
+  id,
+  instance_id,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  raw_app_meta_data,
+  raw_user_meta_data,
+  created_at,
+  updated_at,
+  role,
+  aud
+) VALUES (
+  '33333333-3333-3333-3333-333333333333',
+  '00000000-0000-0000-0000-000000000000',
+  'seller@test.com',
+  '$2a$10$rJ9qYZ4lAHqk6VdJ8aYfBeBiHwFMp3.zG5YF5Y4x5YF5Y4x5YF5YF', -- password: test123
+  NOW(),
+  '{"provider":"email","providers":["email"],"role":"seller"}',
+  '{"full_name":"Seller User"}',
+  NOW(),
+  NOW(),
+  'authenticated',
+  'authenticated'
+) ON CONFLICT (id) DO NOTHING;
+
+-- Test Buyer User
+INSERT INTO auth.users (
+  id,
+  instance_id,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  raw_app_meta_data,
+  raw_user_meta_data,
+  created_at,
+  updated_at,
+  role,
+  aud
+) VALUES (
+  '44444444-4444-4444-4444-444444444444',
+  '00000000-0000-0000-0000-000000000000',
+  'buyer@test.com',
+  '$2a$10$rJ9qYZ4lAHqk6VdJ8aYfBeBiHwFMp3.zG5YF5Y4x5YF5Y4x5YF5YF', -- password: test123
+  NOW(),
+  '{"provider":"email","providers":["email"],"role":"buyer"}',
+  '{"full_name":"Buyer User"}',
+  NOW(),
+  NOW(),
+  'authenticated',
+  'authenticated'
+) ON CONFLICT (id) DO NOTHING;
+
+-- Create profiles for test users (via handle_new_user trigger)
+-- Profiles will be created automatically, but we ensure they exist with correct data
+INSERT INTO profiles (id, username, full_name, email, role, email_verified, is_admin, onboarding_completed)
+VALUES 
+  ('11111111-1111-1111-1111-111111111111', 'admin', 'Admin User', 'admin@test.com', 'admin', true, true, true),
+  ('22222222-2222-2222-2222-222222222222', 'broker', 'Broker User', 'broker@test.com', 'broker', true, false, true),
+  ('33333333-3333-3333-3333-333333333333', 'seller', 'Seller User', 'seller@test.com', 'seller', true, false, true),
+  ('44444444-4444-4444-4444-444444444444', 'buyer', 'Buyer User', 'buyer@test.com', 'buyer', true, false, true)
+ON CONFLICT (id) DO UPDATE SET
+  username = EXCLUDED.username,
+  full_name = EXCLUDED.full_name,
+  email = EXCLUDED.email,
+  role = EXCLUDED.role,
+  email_verified = EXCLUDED.email_verified,
+  is_admin = EXCLUDED.is_admin,
+  onboarding_completed = EXCLUDED.onboarding_completed;
 
 -- ============================================================================
--- 3. COMPANIES
+-- 3. USER_ORGANIZATIONS
+-- ============================================================================
+
+-- Link users to organizations
+INSERT INTO user_organizations (user_id, organization_id, role, active) VALUES
+  -- Admin user - platform admin, member of BizExit Platform org
+  ('11111111-1111-1111-1111-111111111111', '550e8400-e29b-41d4-a716-446655440003', 'admin', true),
+  
+  -- Broker user - admin of Nordic M&A Partners
+  ('22222222-2222-2222-2222-222222222222', '550e8400-e29b-41d4-a716-446655440001', 'admin', true),
+  
+  -- Seller user - admin of Direct Sellers Co
+  ('33333333-3333-3333-3333-333333333333', '550e8400-e29b-41d4-a716-446655440004', 'admin', true),
+  
+  -- Buyer user - analyst role in org (buyer not allowed in user_organizations)
+  ('44444444-4444-4444-4444-444444444444', '550e8400-e29b-41d4-a716-446655440001', 'analyst', true)
+ON CONFLICT (user_id, organization_id) DO UPDATE SET
+  role = EXCLUDED.role,
+  active = EXCLUDED.active;
+
+-- ============================================================================
+-- 4. COMPANIES
 -- ============================================================================
 
 INSERT INTO companies (
@@ -244,7 +376,7 @@ INSERT INTO companies (
   );
 
 -- ============================================================================
--- 4. COMPANY_FINANCIALS
+-- 5. COMPANY_FINANCIALS
 -- ============================================================================
 
 -- Nordic SaaS Solutions - 3 years of financials
@@ -285,7 +417,7 @@ INSERT INTO company_financials (
   ('660e8400-e29b-41d4-a716-446655440003', 2024, 2900000, 720000, 'EUR', false);
 
 -- ============================================================================
--- 5. LISTINGS
+-- 6. LISTINGS
 -- ============================================================================
 
 INSERT INTO listings (
@@ -343,7 +475,7 @@ INSERT INTO listings (
   );
 
 -- ============================================================================
--- 6. LISTING_PORTALS
+-- 7. LISTING_PORTALS
 -- ============================================================================
 
 INSERT INTO listing_portals (
@@ -357,7 +489,7 @@ INSERT INTO listing_portals (
   ('770e8400-e29b-41d4-a716-446655440003', 'yritysporssi', 'YP-789', 'https://yritysporssi.fi/ilmoitukset/789', 'active', NOW(), 36, 3, true);
 
 -- ============================================================================
--- 7. DEALS
+-- 8. DEALS
 -- ============================================================================
 
 INSERT INTO deals (
@@ -409,7 +541,7 @@ INSERT INTO deals (
   );
 
 -- ============================================================================
--- 8. DEAL_STAGES
+-- 9. DEAL_STAGES
 -- ============================================================================
 
 -- Deal 1 progression
@@ -426,7 +558,7 @@ INSERT INTO deal_stages (deal_id, stage, entered_at, exited_at, duration_days) V
   ('880e8400-e29b-41d4-a716-446655440002', 'initial_review', NOW() - INTERVAL '35 days', NULL, NULL);
 
 -- ============================================================================
--- 9. DEAL_ACTIVITIES
+-- 10. DEAL_ACTIVITIES
 -- ============================================================================
 
 INSERT INTO deal_activities (deal_id, activity_type, title, description) VALUES
@@ -437,7 +569,7 @@ INSERT INTO deal_activities (deal_id, activity_type, title, description) VALUES
   ('880e8400-e29b-41d4-a716-446655440003', 'offer_submitted', 'Initial offer received', 'Buyer submitted LOI at €5.8M');
 
 -- ============================================================================
--- 10. PAYMENTS
+-- 11. PAYMENTS
 -- ============================================================================
 
 INSERT INTO payments (
@@ -479,7 +611,7 @@ INSERT INTO payments (
   );
 
 -- ============================================================================
--- 11. AUDIT_LOGS (Sample entries)
+-- 12. AUDIT_LOGS (Sample entries)
 -- ============================================================================
 
 INSERT INTO audit_logs (

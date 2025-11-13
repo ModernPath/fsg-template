@@ -4,9 +4,17 @@
 -- Description: Allow authenticated users to create organizations during onboarding
 -- ============================================================================
 
--- Drop existing restrictive policies if any
+-- Drop ALL existing policies to avoid conflicts
 DROP POLICY IF EXISTS "Users can view organizations" ON organizations;
 DROP POLICY IF EXISTS "Organization members can view" ON organizations;
+DROP POLICY IF EXISTS "Authenticated users can create organizations" ON organizations;
+DROP POLICY IF EXISTS "Users can view their organizations" ON organizations;
+DROP POLICY IF EXISTS "Organization admins can update" ON organizations;
+DROP POLICY IF EXISTS "Platform admins can manage all organizations" ON organizations;
+DROP POLICY IF EXISTS "members_can_view_their_organizations" ON organizations;
+DROP POLICY IF EXISTS "authenticated_can_create_organizations" ON organizations;
+DROP POLICY IF EXISTS "admins_can_update_organizations" ON organizations;
+DROP POLICY IF EXISTS "admins_can_delete_organizations" ON organizations;
 
 -- 1. Allow authenticated users to CREATE organizations during onboarding
 CREATE POLICY "Authenticated users can create organizations"
