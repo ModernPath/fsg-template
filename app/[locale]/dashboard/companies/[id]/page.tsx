@@ -77,16 +77,7 @@ export default function CompanyDetailPage() {
           .from("companies")
           .select(`
             *,
-            financials:company_financials(*),
-            assets:company_assets(*),
-            listings(*),
-            deals(
-              id,
-              stage,
-              status,
-              estimated_value,
-              created_at
-            )
+            financials:company_financials(*)
           `)
           .eq("id", id)
           .eq("organization_id", organizationId)

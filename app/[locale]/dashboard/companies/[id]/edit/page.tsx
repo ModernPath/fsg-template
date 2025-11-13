@@ -61,13 +61,10 @@ export default function EditCompanyPage() {
         // Fetch company with financials
         const { data: companyData, error: companyError } = await supabase
           .from("companies")
-          .select(`
-            *,
-            financials:company_financials(*)
-          `)
+          .select(`*`)
           .eq("id", id)
           .eq("organization_id", organizationId)
-          .single();
+          .maybeSingle();
 
         if (companyError || !companyData) {
           setError("Yritystä ei löytynyt");
