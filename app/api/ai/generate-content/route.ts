@@ -173,6 +173,8 @@ function canGenerateContent(role: string | undefined, contentType: string): bool
     teaser: ["seller", "broker", "admin"],
     im: ["seller", "broker", "admin"],
     cim: ["seller", "broker", "admin"],
+    pitch_deck: ["seller", "broker", "admin"],
+    valuation: ["seller", "broker", "admin"],
     due_diligence: ["buyer", "broker", "partner", "admin"],
     risk_assessment: ["buyer", "partner", "admin"],
     recommendation: ["buyer", "seller", "broker", "admin"],
@@ -281,6 +283,43 @@ ${formatCompanyData(resourceData)}
 - Clear section structure with table of contents
 
 Generate the CIM now:`,
+
+    pitch_deck: `Generate a comprehensive **Pitch Deck** presentation for the following company.
+
+A pitch deck is a visual presentation designed to showcase the company's value proposition to potential investors or buyers.
+
+**Company Information:**
+${formatCompanyData(resourceData)}
+
+**Requirements:**
+- 10-15 slide structure with clear headings
+- Include: Cover, Problem/Solution, Market Opportunity, Business Model, Traction/Metrics, Competition, Team, Financials, Investment Ask, Contact
+- Each slide should have a clear title and 3-5 bullet points
+- Use compelling, concise language
+- Include data points and metrics where available
+- Professional, investor-focused tone
+
+Generate the pitch deck slides now (format as Slide 1: [Title], content bullets, etc.):`,
+
+    valuation: `Generate a detailed **Valuation Report** for the following company.
+
+A valuation report provides a comprehensive analysis of the company's worth using multiple valuation methodologies.
+
+**Company Information:**
+${formatCompanyData(resourceData)}
+
+${params?.additionalContext ? `**Additional Context:**
+${params.additionalContext}
+
+` : ""}**Requirements:**
+- Use multiple valuation methods: DCF (Discounted Cash Flow), Comparable Companies, Precedent Transactions, Asset-Based
+- For each method: explain methodology, show calculations, provide valuation range
+- Include key assumptions and sensitivities
+- Provide weighted average valuation and final recommendation
+- Professional, analytical tone with clear explanations
+- Include summary of strengths, risks, and value drivers
+
+Generate the valuation report now:`,
 
     due_diligence: `Generate a **Due Diligence Question List** for the following ${resourceData.deal_name ? "deal" : "company"}.
 
