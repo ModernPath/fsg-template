@@ -10,11 +10,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id: companyId } = await params;
     const supabase = await createClient();
-    const companyId = params.id;
 
     // Get user context
     const {
@@ -77,21 +77,41 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const supabase = await createClient();
-    const companyId = params.id;
+    const { id: companyId } = await params;
+    
+    console.log('\n📝 [PUT /api/bizexit/companies/:id]', companyId);
 
-    // Get user context
+    // Get Authorization header
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      console.error('❌ Missing or invalid auth header');
+      return NextResponse.json(
+        { error: "Missing or invalid authorization header" },
+        { status: 401 }
+      );
+    }
+
+    const token = authHeader.split(' ')[1];
+    
+    // Create authenticated client
+    const authClient = await createClient();
     const {
       data: { user },
       error: authError,
-    } = await supabase.auth.getUser();
+    } = await authClient.auth.getUser(token);
 
     if (authError || !user) {
+      console.error('❌ Auth error:', authError);
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    console.log('✅ User authenticated:', user.id);
+
+    // Use service role client for database queries
+    const supabase = await createClient(undefined, true);
 
     // Get existing company
     const { data: existingCompany } = await supabase
@@ -175,21 +195,41 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const supabase = await createClient();
-    const companyId = params.id;
+    const { id: companyId } = await params;
+    
+    console.log('\n🗑️ [DELETE /api/bizexit/companies/:id]', companyId);
 
-    // Get user context
+    // Get Authorization header
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      console.error('❌ Missing or invalid auth header');
+      return NextResponse.json(
+        { error: "Missing or invalid authorization header" },
+        { status: 401 }
+      );
+    }
+
+    const token = authHeader.split(' ')[1];
+    
+    // Create authenticated client
+    const authClient = await createClient();
     const {
       data: { user },
       error: authError,
-    } = await supabase.auth.getUser();
+    } = await authClient.auth.getUser(token);
 
     if (authError || !user) {
+      console.error('❌ Auth error:', authError);
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    console.log('✅ User authenticated:', user.id);
+
+    // Use service role client for database queries
+    const supabase = await createClient(undefined, true);
 
     // Get existing company
     const { data: existingCompany } = await supabase

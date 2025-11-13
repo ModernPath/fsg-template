@@ -108,12 +108,11 @@ export function CompanyForm({
           : "/api/bizexit/companies";
       const method = mode === "edit" ? "PUT" : "POST";
 
-      // Get auth token
-      const supabase = createClient();
+      // Get auth token (use existing supabase instance from component)
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
-        throw new Error("You must be logged in to create a company");
+        throw new Error("Kirjaudu sisään tallentaaksesi yrityksen");
       }
 
       const response = await fetch(url, {
