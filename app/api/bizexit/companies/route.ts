@@ -247,12 +247,12 @@ export async function POST(request: NextRequest) {
         .from("company_financials")
         .insert({
           company_id: company.id,
-          year: new Date().getFullYear(),
+          fiscal_year: new Date().getFullYear(),
           revenue: body.financials.revenue,
           ebitda: body.financials.ebitda,
-          net_profit: body.financials.net_profit,
-          assets: body.financials.assets,
-          liabilities: body.financials.liabilities,
+          net_income: body.financials.net_profit,
+          total_assets: body.financials.assets,
+          total_liabilities: body.financials.liabilities,
         });
 
       if (financialsError) {

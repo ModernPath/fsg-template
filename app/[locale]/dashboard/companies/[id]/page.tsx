@@ -1,12 +1,15 @@
+"use client";
+
 /**
  * Company Detail Page
  * View company information and related data
  */
 
-import { createClient } from "@/utils/supabase/server";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { DeleteCompanyButton } from "@/components/companies/DeleteCompanyButton";
 import Link from "next/link";
 import {
@@ -17,94 +20,131 @@ import {
   Calendar,
   Users,
   Globe,
+  Loader2,
 } from "lucide-react";
-import { redirect } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 
-interface Props {
-  params: Promise<{
-    locale: string;
-    id: string;
-  }>;
-}
+export default function CompanyDetailPage() {
+  const params = useParams();
+  const router = useRouter();
+  const locale = (params?.locale as string) || "en";
+  const id = params?.id as string;
+  const supabase = createClient();
+  const t = useTranslations("companies");
+  
+  const [loading, setLoading] = useState(true);
+  const [company, setCompany] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [canEdit, setCanEdit] = useState(false);
+  const [canDelete, setCanDelete] = useState(false);
 
-export default async function CompanyDetailPage({ params }: Props) {
-  const { locale, id } = await params;
-  const supabase = await createClient();
-  const t = await getTranslations("companies");
+  useEffect(() => {
+    async function fetchCompany() {
+      try {
+        setLoading(true);
+        setError(null);
 
-  // Get user context
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+        // Get user
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          router.push(`/${locale}/auth/sign-in`);
+          return;
+        }
 
-  if (!user) {
-    redirect(`/${locale}/login`);
+        // Get profile and organization
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select(`
+            id,
+            role,
+            user_organizations!inner(
+              organization_id,
+              role
+            )
+          `)
+          .eq("id", user.id)
+          .single();
+
+        const organizationId = profile?.user_organizations?.[0]?.organization_id;
+
+        if (!organizationId) {
+          router.push(`/${locale}/dashboard`);
+          return;
+        }
+
+        // Fetch company
+        const { data: companyData, error: companyError } = await supabase
+          .from("companies")
+          .select(`
+            *,
+            financials:company_financials(*),
+            assets:company_assets(*),
+            listings(*),
+            deals(
+              id,
+              stage,
+              status,
+              estimated_value,
+              created_at
+            )
+          `)
+          .eq("id", id)
+          .eq("organization_id", organizationId)
+          .single();
+
+        if (companyError || !companyData) {
+          setError("Yritystä ei löytynyt");
+          return;
+        }
+
+        setCompany(companyData);
+
+        // Set permissions
+        const userRole = profile.role.toLowerCase();
+        setCanEdit(["seller", "broker", "admin", "partner"].includes(userRole));
+        setCanDelete(["admin", "broker"].includes(userRole));
+
+      } catch (err: any) {
+        console.error("Error fetching company:", err);
+        setError(err.message || "Virhe yrityksen lataamisessa");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchCompany();
+  }, [id, locale, router, supabase]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
+      </div>
+    );
   }
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select(`
-      id,
-      role,
-      user_organizations!inner(
-        organization_id,
-        role
-      )
-    `)
-    .eq("id", user.id)
-    .single();
-
-  const organizationId = profile?.user_organizations?.[0]?.organization_id;
-
-  if (!organizationId) {
-    redirect(`/${locale}/dashboard`);
-  }
-
-  // Fetch company with all related data
-  const { data: company, error } = await supabase
-    .from("companies")
-    .select(
-      `
-      *,
-      financials:company_financials(*),
-      assets:company_assets(*),
-      listings(*),
-      deals(
-        id,
-        stage,
-        status,
-        estimated_value,
-        created_at
-      )
-    `,
-    )
-    .eq("id", id)
-    .eq("organization_id", organizationId)
-    .single();
 
   if (error || !company) {
-    redirect(`/${locale}/dashboard/companies`);
+    return (
+      <div className="space-y-6">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+          <p className="text-red-800 dark:text-red-200">
+            {error || "Yritystä ei löytynyt"}
+          </p>
+        </div>
+        <Link href={`/${locale}/dashboard/companies`}>
+          <Button variant="outline">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Takaisin yrityksiin
+          </Button>
+        </Link>
+      </div>
+    );
   }
 
-  // Get latest financials
   const latestFinancials = company.financials?.[0];
-
-  // Can edit/delete based on role
-  const canEdit = ["seller", "broker", "admin", "partner"].includes(
-    profile.role.toLowerCase(),
-  );
-  const canDelete = ["admin", "broker"].includes(profile.role.toLowerCase());
 
   return (
     <div className="space-y-6">
-      {/* Breadcrumbs */}
-      <Breadcrumbs
-        items={[
-          { label: t("title"), href: `/${locale}/dashboard/companies` },
-          { label: company.name },
-        ]}
-      />
 
       {/* Header */}
       <div className="flex items-center justify-between">
