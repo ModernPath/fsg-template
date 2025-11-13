@@ -43,8 +43,15 @@ export default async function PaymentsPage() {
 
   const organizationId = profile?.user_organizations?.[0]?.organization_id;
 
+  console.log('💰 [Payments] User:', user.id);
+  console.log('💰 [Payments] Organization:', organizationId);
+
   if (!organizationId) {
-    return null;
+    return (
+      <div className="p-12 text-center">
+        <p className="text-red-600">No organization found. Please contact support.</p>
+      </div>
+    );
   }
 
   // Fetch payments
@@ -62,8 +69,9 @@ export default async function PaymentsPage() {
     .eq("organization_id", organizationId)
     .order("created_at", { ascending: false });
 
+  console.log('💰 [Payments] Found:', payments?.length || 0, 'payments');
   if (error) {
-    console.error("Error fetching payments:", error);
+    console.error("💰 [Payments] Error:", error);
   }
 
   const stats = {

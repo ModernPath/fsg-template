@@ -36,8 +36,15 @@ export default async function DealsPage() {
 
   const organizationId = profile?.user_organizations?.[0]?.organization_id;
 
+  console.log('🤝 [Deals] User:', user.id);
+  console.log('🤝 [Deals] Organization:', organizationId);
+
   if (!organizationId) {
-    return null;
+    return (
+      <div className="p-12 text-center">
+        <p className="text-red-600">No organization found. Please contact support.</p>
+      </div>
+    );
   }
 
   // Fetch all deals with related data
@@ -59,9 +66,10 @@ export default async function DealsPage() {
     .eq("organization_id", organizationId)
     .order("created_at", { ascending: false });
 
+  console.log('🤝 [Deals] Found:', deals?.length || 0, 'deals');
   if (error) {
-    console.error("Error fetching deals:", error);
-    return <div>Error loading deals</div>;
+    console.error("🤝 [Deals] Error:", error);
+    return <div className="p-12 text-center text-red-600">Error loading deals: {error.message}</div>;
   }
 
   // Define deal stages

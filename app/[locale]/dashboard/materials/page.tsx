@@ -43,8 +43,15 @@ export default async function MaterialsPage() {
 
   const organizationId = profile?.user_organizations?.[0]?.organization_id;
 
+  console.log('📄 [Materials] User:', user.id);
+  console.log('📄 [Materials] Organization:', organizationId);
+
   if (!organizationId) {
-    return null;
+    return (
+      <div className="p-12 text-center">
+        <p className="text-red-600">No organization found. Please contact support.</p>
+      </div>
+    );
   }
 
   // Fetch materials (stored as company_assets with specific types)
@@ -60,8 +67,9 @@ export default async function MaterialsPage() {
     .in("asset_type", ["teaser", "im", "pitch_deck", "valuation_report"])
     .order("created_at", { ascending: false });
 
+  console.log('📄 [Materials] Found:', materials?.length || 0, 'materials');
   if (error) {
-    console.error("Error fetching materials:", error);
+    console.error("📄 [Materials] Error:", error);
   }
 
   const materialTypes = [
