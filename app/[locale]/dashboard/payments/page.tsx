@@ -1,9 +1,13 @@
+"use client";
+
 /**
  * Payments Page
  * Manage payments, invoices, and commissions
  */
 
-import { createClient } from "@/utils/supabase/server";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -13,80 +17,119 @@ import {
   Clock,
   AlertCircle,
   Download,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
 
-export default async function PaymentsPage() {
-  const supabase = await createClient();
+export default function PaymentsPage() {
+  const params = useParams();
+  const locale = (params?.locale as string) || "en";
+  const supabase = createClient();
 
-  // Get user context
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const [loading, setLoading] = useState(true);
+  const [payments, setPayments] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!user) {
-    return null;
-  }
+  useEffect(() => {
+    async function fetchPayments() {
+      try {
+        setLoading(true);
+        setError(null);
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select(`
-      id,
-      role,
-      user_organizations!inner(
-        organization_id,
-        role
-      )
-    `)
-    .eq("id", user.id)
-    .single();
+        // Get user
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          setError("Please log in");
+          return;
+        }
 
-  const organizationId = profile?.user_organizations?.[0]?.organization_id;
+        console.log('💰 [Payments] User:', user.id);
 
-  console.log('💰 [Payments] User:', user.id);
-  console.log('💰 [Payments] Organization:', organizationId);
+        // Get profile and organization
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select(`
+            id,
+            role,
+            user_organizations!inner(
+              organization_id,
+              role
+            )
+          `)
+          .eq("id", user.id)
+          .single();
 
-  if (!organizationId) {
+        const organizationId = profile?.user_organizations?.[0]?.organization_id;
+        console.log('💰 [Payments] Organization:', organizationId);
+
+        if (!organizationId) {
+          setError("No organization found");
+          return;
+        }
+
+        // Fetch payments
+        const { data: paymentsData, error: paymentsError } = await supabase
+          .from("payments")
+          .select(`
+            *,
+            deals(
+              id,
+              companies(id, name)
+            )
+          `)
+          .eq("organization_id", organizationId)
+          .order("created_at", { ascending: false });
+
+        console.log('💰 [Payments] Found:', paymentsData?.length || 0, 'payments');
+        console.log('💰 [Payments] Data:', paymentsData);
+
+        if (paymentsError) {
+          console.error("💰 [Payments] Error:", paymentsError);
+          setError(paymentsError.message);
+          return;
+        }
+
+        setPayments(paymentsData || []);
+      } catch (err: any) {
+        console.error("💰 [Payments] Unexpected error:", err);
+        setError(err.message || "Failed to load payments");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchPayments();
+  }, [supabase]);
+
+  if (loading) {
     return (
-      <div className="p-12 text-center">
-        <p className="text-red-600">No organization found. Please contact support.</p>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
       </div>
     );
   }
 
-  // Fetch payments
-  const { data: payments, error } = await supabase
-    .from("payments")
-    .select(
-      `
-      *,
-      deals(
-        id,
-        companies(id, name)
-      )
-    `,
-    )
-    .eq("organization_id", organizationId)
-    .order("created_at", { ascending: false });
-
-  console.log('💰 [Payments] Found:', payments?.length || 0, 'payments');
   if (error) {
-    console.error("💰 [Payments] Error:", error);
+    return (
+      <div className="p-12 text-center">
+        <p className="text-red-600">Error: {error}</p>
+      </div>
+    );
   }
 
   const stats = {
-    total: payments?.reduce((sum, p) => sum + Number(p.amount), 0) || 0,
+    total: payments.reduce((sum, p) => sum + Number(p.amount), 0) || 0,
     paid:
       payments
-        ?.filter((p) => p.status === "paid")
+        .filter((p) => p.status === "paid" || p.status === "succeeded")
         .reduce((sum, p) => sum + Number(p.amount), 0) || 0,
     pending:
       payments
-        ?.filter((p) => p.status === "pending")
+        .filter((p) => p.status === "pending")
         .reduce((sum, p) => sum + Number(p.amount), 0) || 0,
     overdue:
       payments
-        ?.filter((p) => p.status === "overdue")
+        .filter((p) => p.status === "overdue")
         .reduce((sum, p) => sum + Number(p.amount), 0) || 0,
   };
 
@@ -102,7 +145,7 @@ export default async function PaymentsPage() {
             Manage payments, invoices, and commissions
           </p>
         </div>
-        <Link href="/dashboard/payments/new">
+        <Link href={`/${locale}/dashboard/payments/new`}>
           <Button>
             <Plus className="mr-2 h-4 w-4" />
             Create Invoice
@@ -227,10 +270,10 @@ export default async function PaymentsPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <Badge
                         variant={
-                          payment.status === "paid" ? "default" : "secondary"
+                          payment.status === "paid" || payment.status === "succeeded" ? "default" : "secondary"
                         }
                         className={
-                          payment.status === "paid"
+                          payment.status === "paid" || payment.status === "succeeded"
                             ? "bg-green-100 text-green-800"
                             : payment.status === "overdue"
                               ? "bg-red-100 text-red-800"
@@ -245,7 +288,7 @@ export default async function PaymentsPage() {
                         <Button variant="ghost" size="sm">
                           <Download className="w-4 h-4" />
                         </Button>
-                        <Link href={`/dashboard/payments/${payment.id}`}>
+                        <Link href={`/${locale}/dashboard/payments/${payment.id}`}>
                           <Button variant="outline" size="sm">
                             View
                           </Button>
@@ -276,4 +319,3 @@ export default async function PaymentsPage() {
     </div>
   );
 }
-
