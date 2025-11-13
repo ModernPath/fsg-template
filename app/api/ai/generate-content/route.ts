@@ -34,12 +34,12 @@ export async function POST(request: NextRequest) {
 
     // 2. Create auth client and verify token
     console.log('🔑 Creating auth client...');
-    const supabase = await createClient();
+    const authClient = await createClient();
     
     const {
       data: { user },
       error: authError,
-    } = await supabase.auth.getUser(authHeader.split(' ')[1]);
+    } = await authClient.auth.getUser(authHeader.split(' ')[1]);
 
     if (authError || !user) {
       console.error('❌ Auth error:', authError);
@@ -50,6 +50,10 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('✅ User authenticated:', user.id);
+
+    // 3. Create service role client for database operations
+    console.log('🔑 Creating service role client...');
+    const supabase = await createClient(undefined, true);
 
     const { type, resourceType, resourceId, params, context } = await request.json();
 
@@ -72,19 +76,32 @@ export async function POST(request: NextRequest) {
     }
 
     // Get user profile
-    const { data: profile } = await supabase
+    console.log('👤 Fetching profile for user:', user.id);
+    const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("role")
       .eq("id", user.id)
       .single();
 
+    console.log('👤 Profile data:', profile);
+    console.log('👤 Profile error:', profileError);
+    console.log('👤 User role:', profile?.role);
+    console.log('📝 Content type:', type);
+
     // Check permissions based on content type
     if (!canGenerateContent(profile?.role, type)) {
+      console.error('❌ Permission denied:', {
+        role: profile?.role,
+        type,
+        hasPermission: canGenerateContent(profile?.role, type)
+      });
       return NextResponse.json(
-        { error: "Forbidden: Insufficient permissions" },
+        { error: `Forbidden: Insufficient permissions (role: ${profile?.role}, type: ${type})` },
         { status: 403 }
       );
     }
+
+    console.log('✅ Permission granted for role:', profile?.role);
 
     let resourceData = null;
     let prompt = "";
