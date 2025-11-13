@@ -67,7 +67,7 @@ export default function MaterialsPage() {
           return;
         }
 
-        // Fetch materials (stored as company_assets with specific types)
+        // Fetch materials (stored as company_assets with specific document types)
         const { data: materialsData, error: materialsError } = await supabase
           .from("company_assets")
           .select(`
@@ -75,7 +75,7 @@ export default function MaterialsPage() {
             companies(id, name)
           `)
           .eq("companies.organization_id", organizationId)
-          .in("asset_type", ["teaser", "im", "pitch_deck", "valuation_report"])
+          .in("document_type", ["teaser", "im", "pitch_deck", "valuation"])
           .order("created_at", { ascending: false });
 
         console.log('📄 [Materials] Found:', materialsData?.length || 0, 'materials');
