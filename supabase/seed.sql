@@ -51,6 +51,7 @@ INSERT INTO auth.users (
   confirmation_token,
   recovery_token,
   email_change_token_new,
+  email_change,
   raw_app_meta_data,
   raw_user_meta_data,
   created_at,
@@ -63,6 +64,7 @@ INSERT INTO auth.users (
   'admin@test.com',
   '$2a$10$SQDZNhWVEm/FaVJQsj/aLOtleFHBqWZgAVvxGvlHo4L8ew6xMpSiW', -- password: test123 (correct bcrypt hash)
   NOW(),
+  '',
   '',
   '',
   '',
@@ -84,6 +86,7 @@ INSERT INTO auth.users (
   confirmation_token,
   recovery_token,
   email_change_token_new,
+  email_change,
   raw_app_meta_data,
   raw_user_meta_data,
   created_at,
@@ -96,6 +99,7 @@ INSERT INTO auth.users (
   'broker@test.com',
   '$2a$10$SQDZNhWVEm/FaVJQsj/aLOtleFHBqWZgAVvxGvlHo4L8ew6xMpSiW', -- password: test123
   NOW(),
+  '',
   '',
   '',
   '',
@@ -117,6 +121,7 @@ INSERT INTO auth.users (
   confirmation_token,
   recovery_token,
   email_change_token_new,
+  email_change,
   raw_app_meta_data,
   raw_user_meta_data,
   created_at,
@@ -129,6 +134,7 @@ INSERT INTO auth.users (
   'seller@test.com',
   '$2a$10$SQDZNhWVEm/FaVJQsj/aLOtleFHBqWZgAVvxGvlHo4L8ew6xMpSiW', -- password: test123
   NOW(),
+  '',
   '',
   '',
   '',
@@ -150,6 +156,7 @@ INSERT INTO auth.users (
   confirmation_token,
   recovery_token,
   email_change_token_new,
+  email_change,
   raw_app_meta_data,
   raw_user_meta_data,
   created_at,
@@ -162,6 +169,7 @@ INSERT INTO auth.users (
   'buyer@test.com',
   '$2a$10$SQDZNhWVEm/FaVJQsj/aLOtleFHBqWZgAVvxGvlHo4L8ew6xMpSiW', -- password: test123
   NOW(),
+  '',
   '',
   '',
   '',
