@@ -20,19 +20,36 @@ const genAI = new GoogleGenerativeAI(
  */
 export async function POST(request: NextRequest) {
   try {
+    console.log('\n📝 [POST /api/ai/generate-content]');
+    
+    // 1. Get and verify Authorization header
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      console.error('❌ Missing or invalid auth header');
+      return NextResponse.json(
+        { error: "Missing or invalid authorization header" },
+        { status: 401 }
+      );
+    }
+
+    // 2. Create auth client and verify token
+    console.log('🔑 Creating auth client...');
     const supabase = await createClient();
     
     const {
       data: { user },
       error: authError,
-    } = await supabase.auth.getUser();
+    } = await supabase.auth.getUser(authHeader.split(' ')[1]);
 
     if (authError || !user) {
+      console.error('❌ Auth error:', authError);
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
       );
     }
+
+    console.log('✅ User authenticated:', user.id);
 
     const { type, resourceType, resourceId, params, context } = await request.json();
 

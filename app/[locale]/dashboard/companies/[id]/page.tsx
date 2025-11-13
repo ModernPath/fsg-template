@@ -44,11 +44,20 @@ export default async function CompanyDetailPage({ params }: Props) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("organization_id, role")
+    .select(`
+      id,
+      role,
+      user_organizations!inner(
+        organization_id,
+        role
+      )
+    `)
     .eq("id", user.id)
     .single();
 
-  if (!profile?.organization_id) {
+  const organizationId = profile?.user_organizations?.[0]?.organization_id;
+
+  if (!organizationId) {
     redirect(`/${locale}/dashboard`);
   }
 
@@ -71,7 +80,7 @@ export default async function CompanyDetailPage({ params }: Props) {
     `,
     )
     .eq("id", id)
-    .eq("organization_id", profile.organization_id)
+    .eq("organization_id", organizationId)
     .single();
 
   if (error || !company) {

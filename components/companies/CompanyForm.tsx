@@ -7,6 +7,7 @@
 
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,8 +20,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTranslations } from "next-intl";
-import { Sparkles, TrendingUp, FileText, Users } from "lucide-react";
+import { Sparkles, TrendingUp, FileText, Users, Search, Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { Card } from "@/components/ui/card";
 
 interface CompanyFormData {
   name: string;
@@ -43,12 +45,16 @@ interface CompanyFormData {
 interface CompanyFormProps {
   initialData?: CompanyFormData;
   companyId?: string;
+  organizationId?: string;
+  userId?: string;
   mode?: "create" | "edit";
 }
 
 export function CompanyForm({
   initialData,
   companyId,
+  organizationId,
+  userId,
   mode = "create",
 }: CompanyFormProps) {
   const router = useRouter();
@@ -59,6 +65,12 @@ export function CompanyForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState<string | null>(null);
+  
+  // YTJ Search State
+  const [ytjSearchQuery, setYtjSearchQuery] = useState("");
+  const [ytjSearching, setYtjSearching] = useState(false);
+  const [ytjResults, setYtjResults] = useState<any[]>([]);
+  const [showYtjResults, setShowYtjResults] = useState(false);
 
   const [formData, setFormData] = useState({
     name: initialData?.name || "",
@@ -84,18 +96,33 @@ export function CompanyForm({
     setError(null);
 
     try {
+      // Validate required data
+      if (!organizationId && mode === "create") {
+        throw new Error("Organization ID is required");
+      }
+
       const url =
         mode === "edit" && companyId
           ? `/api/bizexit/companies/${companyId}`
           : "/api/bizexit/companies";
       const method = mode === "edit" ? "PUT" : "POST";
 
+      // Get auth token
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        throw new Error("You must be logged in to create a company");
+      }
+
       const response = await fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({
+          organization_id: organizationId,
           name: formData.name,
           legal_name: formData.legal_name || null,
           business_id: formData.business_id || null,
@@ -215,6 +242,83 @@ export function CompanyForm({
     } finally {
       setAiLoading(null);
     }
+  };
+
+  /**
+   * Search companies from YTJ (Finnish Business Registry)
+   */
+  const handleYtjSearch = async () => {
+    if (!ytjSearchQuery || ytjSearchQuery.length < 3) {
+      toast({
+        title: "Liian lyhyt hakusana",
+        description: "Hakusanan tulee olla vähintään 3 merkkiä pitkä",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setYtjSearching(true);
+    setYtjResults([]);
+
+    try {
+      const response = await fetch(
+        `/api/companies/ytj-search?query=${encodeURIComponent(ytjSearchQuery)}&limit=10`
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "YTJ haku epäonnistui");
+      }
+
+      const data = await response.json();
+
+      if (data.success && data.data && data.data.length > 0) {
+        setYtjResults(data.data);
+        setShowYtjResults(true);
+        toast({
+          title: "Yrityksiä löytyi",
+          description: `Löydettiin ${data.data.length} yritystä`,
+        });
+      } else {
+        toast({
+          title: "Ei tuloksia",
+          description: "Yritystä ei löytynyt annetulla hakusanalla",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("YTJ search error:", error);
+      toast({
+        title: "Haku epäonnistui",
+        description: error instanceof Error ? error.message : "Tuntematon virhe",
+        variant: "destructive",
+      });
+    } finally {
+      setYtjSearching(false);
+    }
+  };
+
+  /**
+   * Fill form with selected YTJ company data
+   */
+  const handleSelectYtjCompany = (company: any) => {
+    setFormData({
+      ...formData,
+      name: company.name || formData.name,
+      legal_name: company.name || formData.legal_name,
+      business_id: company.businessId || formData.business_id,
+      website: company.website || formData.website,
+      city: company.city || formData.city,
+      industry: company.mainBusinessLine || formData.industry,
+    });
+
+    setShowYtjResults(false);
+    setYtjSearchQuery("");
+
+    toast({
+      title: "Tiedot täytetty",
+      description: `${company.name} tiedot on lisätty lomakkeeseen`,
+    });
   };
 
   const handleSuggestValuation = async () => {
@@ -355,6 +459,109 @@ export function CompanyForm({
         <div className="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-lg p-4">
           <p className="text-red-800 dark:text-red-200">{error}</p>
         </div>
+      )}
+
+      {/* YTJ Search - Only show in create mode */}
+      {mode === "create" && (
+        <Card className="p-6 bg-primary-50 dark:bg-primary-900/20 border-primary-200 dark:border-primary-800">
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <Search className="h-5 w-5" />
+                Hae yritys YTJ:stä
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                Hae yritys nimellä tai Y-tunnuksella ja täytä tiedot automaattisesti
+              </p>
+            </div>
+
+            <div className="flex gap-2">
+              <Input
+                placeholder="Yrityksen nimi tai Y-tunnus (esim. 1234567-8)"
+                value={ytjSearchQuery}
+                onChange={(e) => setYtjSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleYtjSearch();
+                  }
+                }}
+                disabled={ytjSearching}
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                onClick={handleYtjSearch}
+                disabled={ytjSearching || ytjSearchQuery.length < 3}
+                variant="outline"
+              >
+                {ytjSearching ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Haetaan...
+                  </>
+                ) : (
+                  <>
+                    <Search className="mr-2 h-4 w-4" />
+                    Hae
+                  </>
+                )}
+              </Button>
+            </div>
+
+            {/* YTJ Search Results */}
+            {showYtjResults && ytjResults.length > 0 && (
+              <div className="space-y-2 max-h-80 overflow-y-auto">
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Löytyi {ytjResults.length} yritystä:
+                </p>
+                {ytjResults.map((company, index) => (
+                  <div
+                    key={index}
+                    onClick={() => handleSelectYtjCompany(company)}
+                    className="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/20 cursor-pointer transition-colors"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900 dark:text-white">
+                          {company.name}
+                        </h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Y-tunnus: {company.businessId}
+                        </p>
+                        {company.city && (
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Kaupunki: {company.city}
+                          </p>
+                        )}
+                        {company.mainBusinessLine && (
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Toimiala: {company.mainBusinessLine}
+                          </p>
+                        )}
+                      </div>
+                      <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                        {company.status}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setShowYtjResults(false);
+                    setYtjResults([]);
+                  }}
+                  className="w-full"
+                >
+                  Sulje hakutulokset
+                </Button>
+              </div>
+            )}
+          </div>
+        </Card>
       )}
 
       {/* Basic Information */}
@@ -680,7 +887,7 @@ export function CompanyForm({
         <Button type="submit" disabled={loading}>
           {loading
             ? "Saving..."
-            : company
+            : mode === "edit"
               ? "Update Company"
               : "Create Company"}
         </Button>

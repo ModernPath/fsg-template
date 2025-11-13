@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { createClient } from "@/utils/supabase/client";
 import type { UserRole } from "@/types/roles";
 
 interface AIMessage {
@@ -54,10 +55,19 @@ export function useAI(): UseAIReturn {
       setMessages((prev) => [...prev, userMessage]);
 
       try {
+        // Get current session for auth token
+        const supabase = createClient();
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) {
+          throw new Error("Kirjaudu sisään käyttääksesi AI-chatia");
+        }
+
         const response = await fetch("/api/ai/chat", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${session.access_token}`,
           },
           body: JSON.stringify({
             message,
@@ -67,7 +77,8 @@ export function useAI(): UseAIReturn {
         });
 
         if (!response.ok) {
-          throw new Error("Failed to get AI response");
+          const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
+          throw new Error(errorData.error || `AI request failed with status ${response.status}`);
         }
 
         const result = await response.json();
@@ -109,10 +120,19 @@ export function useAI(): UseAIReturn {
       setError(null);
 
       try {
+        // Get current session for auth token
+        const supabase = createClient();
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) {
+          throw new Error("Kirjaudu sisään käyttääksesi AI-palveluja");
+        }
+
         const response = await fetch("/api/ai/generate-content", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${session.access_token}`,
           },
           body: JSON.stringify({
             type,

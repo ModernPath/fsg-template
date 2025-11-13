@@ -1,64 +1,75 @@
-/**
- * Companies List Page
- * View and manage all companies in the organization
- */
+"use client";
 
-import { createClient } from "@/utils/supabase/server";
-import { CompaniesTable } from "@/components/companies/CompaniesTable";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 
-export default async function CompaniesPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ status?: string; page?: string }>;
-}) {
-  const supabase = await createClient();
-  const params = await searchParams;
+export default function CompaniesPage() {
+  const router = useRouter();
+  const params = useParams();
+  const locale = (params?.locale as string) || 'fi';
+  const supabase = createClient();
+  
+  const [companies, setCompanies] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Get user context
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  useEffect(() => {
+    async function loadCompanies() {
+      try {
+        // Get current user
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (!user) {
+          router.push(`/${locale}/auth/sign-in`);
+          return;
+        }
 
-  if (!user) {
-    return null;
-  }
+        // Get user's organization
+        const { data: userOrg, error: orgError } = await supabase
+          .from("user_organizations")
+          .select("organization_id")
+          .eq("user_id", user.id)
+          .eq("active", true)
+          .single();
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("organization_id, role")
-    .eq("id", user.id)
-    .single();
+        if (orgError || !userOrg) {
+          setError("Sinulla ei ole organisaatiota");
+          setLoading(false);
+          return;
+        }
 
-  if (!profile?.organization_id) {
-    return null;
-  }
+        // Get companies
+        const { data: companiesData, error: companiesError } = await supabase
+          .from("companies")
+          .select("*")
+          .eq("organization_id", userOrg.organization_id)
+          .order("created_at", { ascending: false });
 
-  // Parse query params
-  const status = params.status || "all";
-  const page = parseInt(params.page || "1");
-  const limit = 20;
-  const offset = (page - 1) * limit;
+        if (companiesError) {
+          setError(companiesError.message);
+        } else {
+          setCompanies(companiesData || []);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Virhe ladattaessa yrityksiä");
+      } finally {
+        setLoading(false);
+      }
+    }
 
-  // Build query
-  let query = supabase
-    .from("companies")
-    .select("*, listings(count), deals(count)", { count: "exact" })
-    .eq("organization_id", profile.organization_id)
-    .order("created_at", { ascending: false })
-    .range(offset, offset + limit - 1);
+    loadCompanies();
+  }, [supabase, router, locale]);
 
-  if (status !== "all") {
-    query = query.eq("status", status);
-  }
-
-  const { data: companies, error, count } = await query;
-
-  if (error) {
-    console.error("Error fetching companies:", error);
-    return <div>Error loading companies</div>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600"></div>
+      </div>
+    );
   }
 
   return (
@@ -67,29 +78,86 @@ export default async function CompaniesPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Companies
+            Yritykset
           </h1>
           <p className="mt-1 text-gray-600 dark:text-gray-400">
-            Manage your company listings and deals
+            Hallitse yrityksiä ja kauppoja
           </p>
         </div>
-        <Link href="/dashboard/companies/new">
+        <Link href={`/${locale}/dashboard/companies/new`}>
           <Button>
             <Plus className="mr-2 h-4 w-4" />
-            Add Company
+            Lisää yritys
           </Button>
         </Link>
       </div>
 
-      {/* Companies Table */}
-      <CompaniesTable
-        companies={companies || []}
-        totalCount={count || 0}
-        currentPage={page}
-        limit={limit}
-        statusFilter={status}
-      />
+      {/* Error Message */}
+      {error && (
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+          <p className="text-red-800 dark:text-red-200">
+            Virhe: {error}
+          </p>
+        </div>
+      )}
+
+      {/* Companies List */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="p-6">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            Löydettiin {companies.length} yritystä
+          </p>
+          
+          {companies.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500 dark:text-gray-400 mb-4">
+                Ei yrityksiä
+              </p>
+              <Link href={`/${locale}/dashboard/companies/new`}>
+                <Button>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Lisää ensimmäinen yritys
+                </Button>
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {companies.map((company) => (
+                <div
+                  key={company.id}
+                  className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-primary-500 transition-colors"
+                >
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                    {company.name}
+                  </h3>
+                  {company.industry && (
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      {company.industry}
+                    </p>
+                  )}
+                  {company.location && (
+                    <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">
+                      📍 {company.location}
+                    </p>
+                  )}
+                  <div className="mt-4 flex gap-2">
+                    <Link href={`/${locale}/dashboard/companies/${company.id}`}>
+                      <Button variant="outline" size="sm">
+                        Näytä tiedot
+                      </Button>
+                    </Link>
+                    <Link href={`/${locale}/dashboard/companies/${company.id}/edit`}>
+                      <Button variant="ghost" size="sm">
+                        Muokkaa
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
-

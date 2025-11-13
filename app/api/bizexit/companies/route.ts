@@ -9,26 +9,47 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    console.log('\n📝 [GET /api/bizexit/companies]');
+    
+    // Get Authorization header (optional for GET, but recommended)
+    const authHeader = request.headers.get('Authorization');
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
+    
+    const authClient = await createClient();
 
     // Get user context
     const {
       data: { user },
       error: authError,
-    } = await supabase.auth.getUser();
+    } = token ? await authClient.auth.getUser(token) : await authClient.auth.getUser();
 
     if (authError || !user) {
+      console.error('❌ Auth error:', authError);
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get user's organization
+    console.log('✅ User authenticated:', user.id);
+
+    // Use service role client for database queries
+    const supabase = await createClient(undefined, true);
+
+    // Get user's profile and organization via user_organizations
     const { data: profile } = await supabase
       .from("profiles")
-      .select("organization_id, role")
+      .select(`
+        id,
+        role,
+        user_organizations!inner(
+          organization_id,
+          role
+        )
+      `)
       .eq("id", user.id)
       .single();
 
-    if (!profile?.organization_id) {
+    const organizationId = profile?.user_organizations?.[0]?.organization_id;
+
+    if (!organizationId) {
       return NextResponse.json(
         { error: "Organization not found" },
         { status: 404 },
@@ -52,7 +73,7 @@ export async function GET(request: NextRequest) {
       `,
         { count: "exact" },
       )
-      .eq("organization_id", profile.organization_id)
+      .eq("organization_id", organizationId)
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
@@ -94,26 +115,63 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    console.log('\n📝 [POST /api/bizexit/companies]');
+    
+    // Get Authorization header
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      console.error('❌ Missing or invalid auth header');
+      return NextResponse.json(
+        { error: "Missing or invalid authorization header" },
+        { status: 401 }
+      );
+    }
 
-    // Get user context
+    const token = authHeader.split(' ')[1];
+    
+    // Use regular client to verify the token
+    const authClient = await createClient();
     const {
       data: { user },
       error: authError,
-    } = await supabase.auth.getUser();
+    } = await authClient.auth.getUser(token);
 
     if (authError || !user) {
+      console.error('❌ Auth error:', authError);
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get user's organization
-    const { data: profile } = await supabase
+    console.log('✅ User authenticated:', user.id);
+
+    // Use service role client for database queries to avoid JWT issues
+    const supabase = await createClient(undefined, true);
+
+    // Get user's profile and organization via user_organizations
+    const { data: profile, error: profileError } = await supabase
       .from("profiles")
-      .select("organization_id, role")
+      .select(`
+        id,
+        role,
+        user_organizations!inner(
+          organization_id,
+          role
+        )
+      `)
       .eq("id", user.id)
       .single();
 
-    if (!profile?.organization_id) {
+    console.log('📊 Profile query result:', {
+      profile: profile,
+      error: profileError,
+      user_organizations: profile?.user_organizations
+    });
+
+    const organizationId = profile?.user_organizations?.[0]?.organization_id;
+
+    console.log('🏢 Extracted Organization ID:', organizationId);
+
+    if (!organizationId) {
+      console.error('❌ No organization found for user');
       return NextResponse.json(
         { error: "Organization not found" },
         { status: 404 },
@@ -126,6 +184,7 @@ export async function POST(request: NextRequest) {
         profile.role.toLowerCase(),
       )
     ) {
+      console.error('❌ Insufficient permissions:', profile.role);
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -140,11 +199,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log('\n📝 Creating company:', {
+      name: body.name,
+      organization_id: organizationId,
+      user_id: user.id,
+    });
+
     // Create company
     const { data: company, error } = await supabase
       .from("companies")
       .insert({
-        organization_id: profile.organization_id,
+        organization_id: organizationId,
         name: body.name,
         business_id: body.business_id,
         website: body.website,
@@ -153,21 +218,28 @@ export async function POST(request: NextRequest) {
         country: body.country || "Finland",
         city: body.city,
         founded_year: body.founded_year,
-        employees: body.employees,
-        owner_type: body.owner_type || "family_owned",
+        employees_count: body.employees,
+        legal_structure: body.owner_type || "family_owned",
         status: "active",
-        created_by: user.id,
       })
       .select()
       .single();
 
     if (error) {
-      console.error("Error creating company:", error);
+      console.error("❌ Error creating company:", {
+        error,
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code,
+      });
       return NextResponse.json(
-        { error: "Failed to create company" },
+        { error: `Failed to create company: ${error.message}` },
         { status: 500 },
       );
     }
+
+    console.log('✅ Company created successfully:', company.id);
 
     // If financial data is provided, create financials record
     if (body.financials) {

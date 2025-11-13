@@ -3,9 +3,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Initialize Gemini AI
-const genAI = new GoogleGenerativeAI(
-  process.env.GOOGLE_AI_STUDIO_KEY || process.env.GEMINI_API_KEY || ""
-);
+const GEMINI_API_KEY = process.env.GOOGLE_AI_STUDIO_KEY || process.env.GEMINI_API_KEY;
+
+if (!GEMINI_API_KEY) {
+  console.error("⚠️ Gemini API key not configured! Set GEMINI_API_KEY or GOOGLE_AI_STUDIO_KEY in .env.local");
+}
+
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY || "");
 
 /**
  * POST /api/ai/chat
@@ -23,19 +27,44 @@ const genAI = new GoogleGenerativeAI(
  */
 export async function POST(request: NextRequest) {
   try {
+    console.log('\n📝 [POST /api/ai/chat]');
+    
+    // Check if Gemini API key is configured
+    if (!GEMINI_API_KEY) {
+      return NextResponse.json(
+        { error: "Gemini API-avain puuttuu. Lisää GEMINI_API_KEY tai GOOGLE_AI_STUDIO_KEY .env.local-tiedostoon." },
+        { status: 500 }
+      );
+    }
+
+    // 1. Get and verify Authorization header
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      console.error('❌ Missing or invalid auth header');
+      return NextResponse.json(
+        { error: "Kirjaudu sisään käyttääksesi AI-chatia" },
+        { status: 401 }
+      );
+    }
+
+    // 2. Create auth client and verify token
+    console.log('🔑 Creating auth client...');
     const supabase = await createClient();
     
     const {
       data: { user },
       error: authError,
-    } = await supabase.auth.getUser();
+    } = await supabase.auth.getUser(authHeader.split(' ')[1]);
 
     if (authError || !user) {
+      console.error('❌ Auth error:', authError);
       return NextResponse.json(
-        { error: "Unauthorized" },
+        { error: "Kirjaudu sisään käyttääksesi AI-chatia" },
         { status: 401 }
       );
     }
+
+    console.log('✅ User authenticated:', user.id);
 
     const { message, context, conversationId } = await request.json();
 

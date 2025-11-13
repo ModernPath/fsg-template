@@ -47,14 +47,21 @@ export async function GET(
       );
     }
 
-    // Verify user has access to this company
+    // Verify user has access to this company via user_organizations
     const { data: profile } = await supabase
       .from("profiles")
-      .select("organization_id")
+      .select(`
+        id,
+        user_organizations!inner(
+          organization_id
+        )
+      `)
       .eq("id", user.id)
       .single();
 
-    if (profile?.organization_id !== company.organization_id) {
+    const userOrgId = profile?.user_organizations?.[0]?.organization_id;
+
+    if (!userOrgId || userOrgId !== company.organization_id) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -100,15 +107,28 @@ export async function PUT(
       );
     }
 
-    // Verify user has access
+    // Verify user has access via user_organizations
     const { data: profile } = await supabase
       .from("profiles")
-      .select("organization_id, role")
+      .select(`
+        id,
+        role,
+        user_organizations!inner(
+          organization_id
+        )
+      `)
       .eq("id", user.id)
       .single();
 
-    if (profile?.organization_id !== existingCompany.organization_id) {
+    const userOrgId = profile?.user_organizations?.[0]?.organization_id;
+
+    if (!userOrgId || userOrgId !== existingCompany.organization_id) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    // Check permissions
+    if (!["seller", "broker", "admin", "partner"].includes(profile.role.toLowerCase())) {
+      return NextResponse.json({ error: "Insufficient permissions" }, { status: 403 });
     }
 
     // Parse request body
@@ -185,14 +205,22 @@ export async function DELETE(
       );
     }
 
-    // Verify user has access and is admin
+    // Verify user has access and is admin via user_organizations
     const { data: profile } = await supabase
       .from("profiles")
-      .select("organization_id, role")
+      .select(`
+        id,
+        role,
+        user_organizations!inner(
+          organization_id
+        )
+      `)
       .eq("id", user.id)
       .single();
 
-    if (profile?.organization_id !== existingCompany.organization_id) {
+    const userOrgId = profile?.user_organizations?.[0]?.organization_id;
+
+    if (!userOrgId || userOrgId !== existingCompany.organization_id) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

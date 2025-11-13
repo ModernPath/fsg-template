@@ -24,9 +24,18 @@ export default async function SettingsPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("*, organization:organizations(*)")
+    .select(`
+      *,
+      user_organizations!inner(
+        organization_id,
+        role,
+        organizations(*)
+      )
+    `)
     .eq("id", user.id)
     .single();
+
+  const organization = profile?.user_organizations?.[0]?.organizations;
 
   return (
     <div className="space-y-6">
@@ -77,7 +86,7 @@ export default async function SettingsPage() {
                 <Label htmlFor="org_name">Organization Name</Label>
                 <Input
                   id="org_name"
-                  defaultValue={profile?.organization?.name}
+                  defaultValue={organization?.name}
                   placeholder="Acme M&A Partners"
                 />
               </div>
@@ -87,7 +96,7 @@ export default async function SettingsPage() {
                 <Input
                   id="org_website"
                   type="url"
-                  defaultValue={profile?.organization?.website}
+                  defaultValue={organization?.website}
                   placeholder="https://example.com"
                 />
               </div>
@@ -96,7 +105,7 @@ export default async function SettingsPage() {
                 <Label htmlFor="org_country">Country</Label>
                 <Input
                   id="org_country"
-                  defaultValue={profile?.organization?.country}
+                  defaultValue={organization?.country}
                   placeholder="Finland"
                 />
               </div>
@@ -105,7 +114,7 @@ export default async function SettingsPage() {
                 <Label htmlFor="org_industry">Industry</Label>
                 <Input
                   id="org_industry"
-                  defaultValue={profile?.organization?.industry}
+                  defaultValue={organization?.industry}
                   placeholder="M&A Advisory"
                 />
               </div>
