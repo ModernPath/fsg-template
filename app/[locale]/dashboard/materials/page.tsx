@@ -1,9 +1,13 @@
+"use client";
+
 /**
  * Materials Page
  * AI-generated sale materials (Teasers, IMs, Pitch Decks)
  */
 
-import { createClient } from "@/utils/supabase/server";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -13,63 +17,102 @@ import {
   Download,
   Eye,
   Sparkles,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
 
-export default async function MaterialsPage() {
-  const supabase = await createClient();
+export default function MaterialsPage() {
+  const params = useParams();
+  const locale = (params?.locale as string) || "en";
+  const supabase = createClient();
 
-  // Get user context
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const [loading, setLoading] = useState(true);
+  const [materials, setMaterials] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!user) {
-    return null;
-  }
+  useEffect(() => {
+    async function fetchMaterials() {
+      try {
+        setLoading(true);
+        setError(null);
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select(`
-      id,
-      role,
-      user_organizations!inner(
-        organization_id,
-        role
-      )
-    `)
-    .eq("id", user.id)
-    .single();
+        // Get user
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          setError("Please log in");
+          return;
+        }
 
-  const organizationId = profile?.user_organizations?.[0]?.organization_id;
+        console.log('📄 [Materials] User:', user.id);
 
-  console.log('📄 [Materials] User:', user.id);
-  console.log('📄 [Materials] Organization:', organizationId);
+        // Get profile and organization
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select(`
+            id,
+            role,
+            user_organizations!inner(
+              organization_id,
+              role
+            )
+          `)
+          .eq("id", user.id)
+          .single();
 
-  if (!organizationId) {
+        const organizationId = profile?.user_organizations?.[0]?.organization_id;
+        console.log('📄 [Materials] Organization:', organizationId);
+
+        if (!organizationId) {
+          setError("No organization found");
+          return;
+        }
+
+        // Fetch materials (stored as company_assets with specific types)
+        const { data: materialsData, error: materialsError } = await supabase
+          .from("company_assets")
+          .select(`
+            *,
+            companies(id, name, logo_url)
+          `)
+          .eq("companies.organization_id", organizationId)
+          .in("asset_type", ["teaser", "im", "pitch_deck", "valuation_report"])
+          .order("created_at", { ascending: false });
+
+        console.log('📄 [Materials] Found:', materialsData?.length || 0, 'materials');
+        console.log('📄 [Materials] Data:', materialsData);
+
+        if (materialsError) {
+          console.error("📄 [Materials] Error:", materialsError);
+          setError(materialsError.message);
+          return;
+        }
+
+        setMaterials(materialsData || []);
+      } catch (err: any) {
+        console.error("📄 [Materials] Unexpected error:", err);
+        setError(err.message || "Failed to load materials");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchMaterials();
+  }, [supabase]);
+
+  if (loading) {
     return (
-      <div className="p-12 text-center">
-        <p className="text-red-600">No organization found. Please contact support.</p>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
       </div>
     );
   }
 
-  // Fetch materials (stored as company_assets with specific types)
-  const { data: materials, error } = await supabase
-    .from("company_assets")
-    .select(
-      `
-      *,
-      companies(id, name, logo_url)
-    `,
-    )
-    .eq("companies.organization_id", organizationId)
-    .in("asset_type", ["teaser", "im", "pitch_deck", "valuation_report"])
-    .order("created_at", { ascending: false });
-
-  console.log('📄 [Materials] Found:', materials?.length || 0, 'materials');
   if (error) {
-    console.error("📄 [Materials] Error:", error);
+    return (
+      <div className="p-12 text-center">
+        <p className="text-red-600">Error: {error}</p>
+      </div>
+    );
   }
 
   const materialTypes = [
@@ -116,7 +159,7 @@ export default async function MaterialsPage() {
             AI-generated sale materials for your companies
           </p>
         </div>
-        <Link href="/dashboard/materials/generate">
+        <Link href={`/${locale}/dashboard/materials/generate`}>
           <Button>
             <Sparkles className="mr-2 h-4 w-4" />
             Generate Materials
@@ -129,7 +172,7 @@ export default async function MaterialsPage() {
         {materialTypes.map((type) => {
           const Icon = type.icon;
           const count =
-            materials?.filter((m) => m.asset_type === type.type).length || 0;
+            materials.filter((m) => m.asset_type === type.type).length || 0;
 
           return (
             <div
@@ -245,7 +288,7 @@ export default async function MaterialsPage() {
               <p className="text-gray-600 dark:text-gray-400 mb-6">
                 Generate your first AI-powered sale material
               </p>
-              <Link href="/dashboard/materials/generate">
+              <Link href={`/${locale}/dashboard/materials/generate`}>
                 <Button>
                   <Sparkles className="mr-2 h-4 w-4" />
                   Generate Materials
@@ -258,4 +301,3 @@ export default async function MaterialsPage() {
     </div>
   );
 }
-
