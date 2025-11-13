@@ -13,6 +13,9 @@ import type {
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_STUDIO_KEY || '')
 
+// Export genAI for other modules
+export { genAI }
+
 // Models for different use cases
 const MODELS = {
   fast: 'gemini-2.0-flash-exp',      // Quick responses, chat
