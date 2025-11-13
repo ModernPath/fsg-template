@@ -377,25 +377,26 @@ function formatCompanyData(company: any): string {
   return `
 **Name:** ${company.name}
 **Industry:** ${company.industry || "N/A"}
-**Location:** ${company.location || "N/A"}
+**Location:** ${company.city ? `${company.city}, ${company.country}` : company.country || "N/A"}
 **Description:** ${company.description || "N/A"}
 **Founded:** ${company.founded_year || "N/A"}
-**Employees:** ${company.employee_count || "N/A"}
-**Asking Price:** ${company.asking_price ? `€${company.asking_price.toLocaleString()}` : "N/A"}
-**Revenue:** ${company.revenue ? `€${company.revenue.toLocaleString()}` : "N/A"}
-**EBITDA:** ${company.ebitda ? `€${company.ebitda.toLocaleString()}` : "N/A"}
-**EBITDA Margin:** ${company.ebitda_margin ? `${company.ebitda_margin}%` : "N/A"}
+**Employees:** ${company.employees_count || "N/A"}
+**Legal Structure:** ${company.legal_structure || "N/A"}
+**Business ID:** ${company.business_id || "N/A"}
+**Asking Price:** ${company.asking_price ? `${company.currency || "EUR"} ${company.asking_price.toLocaleString()}` : "N/A"}
+**Annual Revenue:** ${company.annual_revenue ? `${company.currency || "EUR"} ${company.annual_revenue.toLocaleString()}` : "N/A"}
+**Annual EBITDA:** ${company.annual_ebitda ? `${company.currency || "EUR"} ${company.annual_ebitda.toLocaleString()}` : "N/A"}
 
 ${company.company_financials?.length > 0 ? `
 **Financial History:**
 ${company.company_financials.map((f: any) => `
-- ${f.year}: Revenue €${f.revenue?.toLocaleString()}, EBITDA €${f.ebitda?.toLocaleString()}, Net Profit €${f.net_profit?.toLocaleString()}
+- Year ${f.fiscal_year}: Revenue ${company.currency || "EUR"} ${f.revenue?.toLocaleString() || "N/A"}, EBITDA ${company.currency || "EUR"} ${f.ebitda?.toLocaleString() || "N/A"}, Net Income ${company.currency || "EUR"} ${f.net_income?.toLocaleString() || "N/A"}
 `).join("")}
 ` : ""}
 
 ${company.company_assets?.length > 0 ? `
-**Key Assets:**
-${company.company_assets.map((a: any) => `- ${a.asset_type}: ${a.description || "N/A"}`).join("\n")}
+**Key Documents/Assets:**
+${company.company_assets.map((a: any) => `- ${a.document_type || a.type}: ${a.name || a.description || "N/A"}`).join("\n")}
 ` : ""}
 `;
 }
