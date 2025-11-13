@@ -72,7 +72,7 @@ export default function MaterialsPage() {
           .from("company_assets")
           .select(`
             *,
-            companies(id, name, logo_url)
+            companies(id, name)
           `)
           .eq("companies.organization_id", organizationId)
           .in("asset_type", ["teaser", "im", "pitch_deck", "valuation_report"])

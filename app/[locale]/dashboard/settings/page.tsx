@@ -3,39 +3,103 @@
  * Organization and user settings
  */
 
-import { createClient } from "@/utils/supabase/server";
+"use client";
+
+import { useEffect, useState } from "react";
+import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building2, User, Bell, Shield, CreditCard } from "lucide-react";
+import { Building2, User, Bell, Shield, CreditCard, Loader2 } from "lucide-react";
 
-export default async function SettingsPage() {
-  const supabase = await createClient();
+export default function SettingsPage() {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
+  const [organization, setOrganization] = useState<any>(null);
 
-  // Get user context
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  useEffect(() => {
+    async function loadData() {
+      try {
+        setLoading(true);
+        const supabase = createClient();
 
-  if (!user) {
-    return null;
+        // Get user
+        const {
+          data: { user: userData },
+          error: userError,
+        } = await supabase.auth.getUser();
+
+        if (userError) throw userError;
+        if (!userData) {
+          setError("No user found");
+          return;
+        }
+
+        console.log("⚙️ [Settings] User:", userData.id);
+        setUser(userData);
+
+        // Get profile with organization
+        const { data: profileData, error: profileError } = await supabase
+          .from("profiles")
+          .select(`
+            *,
+            user_organizations!inner(
+              organization_id,
+              role,
+              organizations(*)
+            )
+          `)
+          .eq("id", userData.id)
+          .single();
+
+        if (profileError) {
+          console.error("⚙️ [Settings] Error fetching profile:", profileError);
+          throw profileError;
+        }
+
+        console.log("⚙️ [Settings] Profile:", profileData);
+
+        setProfile(profileData);
+        setOrganization(profileData?.user_organizations?.[0]?.organizations);
+
+        console.log("⚙️ [Settings] Organization:", profileData?.user_organizations?.[0]?.organizations);
+      } catch (err: any) {
+        console.error("⚙️ [Settings] Error:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-12">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+      </div>
+    );
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select(`
-      *,
-      user_organizations!inner(
-        organization_id,
-        role,
-        organizations(*)
-      )
-    `)
-    .eq("id", user.id)
-    .single();
+  if (error) {
+    return (
+      <div className="p-6 text-center">
+        <p className="text-red-600">Error: {error}</p>
+      </div>
+    );
+  }
 
-  const organization = profile?.user_organizations?.[0]?.organizations;
+  if (!user || !profile) {
+    return (
+      <div className="p-6 text-center">
+        <p className="text-gray-600">No user data found</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -372,4 +436,3 @@ export default async function SettingsPage() {
     </div>
   );
 }
-
