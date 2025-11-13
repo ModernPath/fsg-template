@@ -30,11 +30,20 @@ export default async function MaterialsPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("organization_id, role")
+    .select(`
+      id,
+      role,
+      user_organizations!inner(
+        organization_id,
+        role
+      )
+    `)
     .eq("id", user.id)
     .single();
 
-  if (!profile?.organization_id) {
+  const organizationId = profile?.user_organizations?.[0]?.organization_id;
+
+  if (!organizationId) {
     return null;
   }
 
@@ -47,7 +56,7 @@ export default async function MaterialsPage() {
       companies(id, name, logo_url)
     `,
     )
-    .eq("companies.organization_id", profile.organization_id)
+    .eq("companies.organization_id", organizationId)
     .in("asset_type", ["teaser", "im", "pitch_deck", "valuation_report"])
     .order("created_at", { ascending: false });
 

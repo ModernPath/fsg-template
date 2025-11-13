@@ -30,11 +30,20 @@ export default async function PaymentsPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("organization_id, role")
+    .select(`
+      id,
+      role,
+      user_organizations!inner(
+        organization_id,
+        role
+      )
+    `)
     .eq("id", user.id)
     .single();
 
-  if (!profile?.organization_id) {
+  const organizationId = profile?.user_organizations?.[0]?.organization_id;
+
+  if (!organizationId) {
     return null;
   }
 
@@ -50,7 +59,7 @@ export default async function PaymentsPage() {
       )
     `,
     )
-    .eq("organization_id", profile.organization_id)
+    .eq("organization_id", organizationId)
     .order("created_at", { ascending: false });
 
   if (error) {
