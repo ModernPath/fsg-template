@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Login</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Arial; max-width: 400px; margin: 50px auto; padding: 20px; }
+        input, button { display: block; width: 100%; padding: 12px; margin: 10px 0; font-size: 16px; box-sizing: border-box; }
+        button { background: #4CAF50; color: white; border: none; cursor: pointer; }
+        .error { color: red; margin-top: 10px; }
+        .success { color: green; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h2>🔐 Simple Login</h2>
+    
+    <input type="email" id="email" placeholder="Email" value="newseller@test.com">
+    <input type="password" id="password" placeholder="Password" value="test123">
+    <button onclick="login()">Login</button>
+    
+    <div id="message"></div>
+    
+    <script>
+        const { createClient } = supabase;
+        
+        const supabaseClient = createClient(
+            'http://127.0.0.1:54321',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0'
+        );
+        
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const messageDiv = document.getElementById('message');
+            
+            messageDiv.innerHTML = '⏳ Logging in...';
+            
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) {
+                    messageDiv.className = 'error';
+                    messageDiv.innerHTML = `❌ Error: ${error.message}<br>Code: ${error.status}`;
+                    console.error('Login error:', error);
+                } else {
+                    messageDiv.className = 'success';
+                    messageDiv.innerHTML = `✅ Success!<br>User: ${data.user.email}<br>Redirecting...`;
+                    console.log('Login success:', data);
+                    
+                    // Redirect to dashboard after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = 'http://localhost:3000/fi/dashboard';
+                    }, 2000);
+                }
+            } catch (err) {
+                messageDiv.className = 'error';
+                messageDiv.innerHTML = `❌ Exception: ${err.message}`;
+                console.error('Exception:', err);
+            }
+        }
+        
+        // Also show current auth state
+        supabaseClient.auth.onAuthStateChange((event, session) => {
+            console.log('Auth state changed:', event, session);
+        });
+    </script>
+</body>
+</html>
+
