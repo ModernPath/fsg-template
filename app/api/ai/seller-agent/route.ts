@@ -26,20 +26,37 @@ export const dynamic = "force-dynamic";
  */
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient();
+    // Get Authorization header
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      console.error('❌ Missing or invalid auth header');
+      return NextResponse.json(
+        { error: "Missing or invalid authorization header" },
+        { status: 401 }
+      );
+    }
 
-    // Check authentication
+    const token = authHeader.split(' ')[1];
+    
+    // Create authenticated client
+    const authClient = await createClient();
     const {
       data: { user },
       error: authError,
-    } = await supabase.auth.getUser();
+    } = await authClient.auth.getUser(token);
 
     if (authError || !user) {
+      console.error('❌ Auth error:', authError);
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    console.log('✅ User authenticated:', user.id);
+
     const body = await request.json();
     const { action, ...params } = body;
+
+    // Use service role client for database queries
+    const supabase = await createClient(undefined, true);
 
     // Verify user is a seller, broker, or admin
     const { data: profile } = await supabase

@@ -210,9 +210,18 @@ export function CompanyForm({
 
     setAiLoading("optimize");
     try {
+      // Get session token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error("Kirjaudu sisään käyttääksesi AI-ominaisuuksia");
+      }
+
       const response = await fetch("/api/ai/seller-agent", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session.access_token}`
+        },
         body: JSON.stringify({
           action: "optimize",
           company: getCompanyDataForAI(),
@@ -333,9 +342,18 @@ export function CompanyForm({
 
     setAiLoading("valuation");
     try {
+      // Get session token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error("Kirjaudu sisään käyttääksesi AI-ominaisuuksia");
+      }
+
       const response = await fetch("/api/ai/seller-agent", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session.access_token}`
+        },
         body: JSON.stringify({
           action: "valuation",
           company: getCompanyDataForAI(),
@@ -379,9 +397,18 @@ export function CompanyForm({
 
     setAiLoading("teaser");
     try {
+      // Get session token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error("Kirjaudu sisään käyttääksesi AI-ominaisuuksia");
+      }
+
       const response = await fetch("/api/ai/seller-agent", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session.access_token}`
+        },
         body: JSON.stringify({
           action: "teaser",
           company: getCompanyDataForAI(),
@@ -422,9 +449,18 @@ export function CompanyForm({
 
     setAiLoading("buyers");
     try {
+      // Get session token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error("Kirjaudu sisään käyttääksesi AI-ominaisuuksia");
+      }
+
       const response = await fetch("/api/ai/seller-agent", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session.access_token}`
+        },
         body: JSON.stringify({
           action: "buyers",
           company: getCompanyDataForAI(),
