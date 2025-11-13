@@ -1,6 +1,6 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/app/i18n/navigation';
 import { staticLocales as locales, Locale } from '@/app/i18n/config';
@@ -137,6 +137,8 @@ function AdminSidebar({ links, pathname }: { links: Array<{ href: string; label:
 
 export default function Navigation() {
   const pathname = usePathname();
+  const params = useParams();
+  const locale = (params?.locale as string) || 'en';
   const t = useTranslations('Navigation');
   const { session, loading, isAdmin, error } = useAuth();
   const [enabledLocales, setEnabledLocales] = useState<string[]>(locales);
@@ -224,23 +226,23 @@ export default function Navigation() {
 
   // Define admin links - only show if user is admin and auth is complete without errors
   const adminLinks = (!loading && isAdmin && !error) ? [
-    { href: '/admin/analytics', label: t('admin.analytics') },
+    { href: `/${locale}/admin/analytics`, label: t('admin.analytics') },
     { 
-      href: '/admin/cms', 
+      href: `/${locale}/admin/cms`, 
       label: t('admin.cms'),
       icon: FileText,
       children: [
-        { href: '/admin/content-calendar', label: t('admin.contentCalendar') },
-        { href: '/admin/blog', label: t('admin.blog') },
-        { href: '/admin/seo', label: t('admin.seo') },
-        { href: '/admin/media', label: t('admin.media') }
+        { href: `/${locale}/admin/content-calendar`, label: t('admin.contentCalendar') },
+        { href: `/${locale}/admin/blog`, label: t('admin.blog') },
+        { href: `/${locale}/admin/seo`, label: t('admin.seo') },
+        { href: `/${locale}/admin/media`, label: t('admin.media') }
       ]
     },
-    { href: '/admin/users', label: t('admin.users') },
-    { href: '/admin/contacts', label: t('admin.contacts') },
-    { href: '/admin/calendar', label: t('admin.calendar') },
-    { href: '/admin/landing-pages', label: t('admin.landingPages') },
-    { href: '/admin/translations', label: t('admin.translations') }
+    { href: `/${locale}/admin/users`, label: t('admin.users') },
+    { href: `/${locale}/admin/contacts`, label: t('admin.contacts') },
+    { href: `/${locale}/admin/calendar`, label: t('admin.calendar') },
+    { href: `/${locale}/admin/landing-pages`, label: t('admin.landingPages') },
+    { href: `/${locale}/admin/translations`, label: t('admin.translations') }
   ] : [];
 
   // Define public links without locale prefix (Link component will add it)
@@ -317,7 +319,7 @@ export default function Navigation() {
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <Link
-                href={(!loading && isAdmin && isAdminPath) ? '/admin/blog' : '/'}
+                href={(!loading && isAdmin && isAdminPath) ? `/${locale}/admin` : `/${locale}`}
                 className="flex items-center py-2"
               >
                 <Image

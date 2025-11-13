@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { createClient } from '@/utils/supabase/client';
@@ -10,6 +11,8 @@ import { Session, AuthChangeEvent, Provider } from '@supabase/supabase-js';
 
 export default function RegisterForm() {
   const [isMounted, setIsMounted] = useState(false);
+  const params = useParams();
+  const locale = (params?.locale as string) || 'en';
   const supabase = createClient();
   const t = useTranslations('Auth');
   const { session, isAdmin } = useAuth();
@@ -19,7 +22,7 @@ export default function RegisterForm() {
 
     // Redirect if already signed in
     if (session) {
-      window.location.href = isAdmin ? '/admin/blog' : '/';
+      window.location.href = isAdmin ? `/${locale}/admin` : `/${locale}/dashboard`;
       return;
     }
 
@@ -34,7 +37,7 @@ export default function RegisterForm() {
           .single();
 
         // Redirect based on admin status
-        window.location.href = profile?.is_admin ? '/admin/blog' : '/';
+        window.location.href = profile?.is_admin ? `/${locale}/admin` : `/${locale}/dashboard`;
       }
     });
 

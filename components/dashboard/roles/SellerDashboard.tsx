@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,10 @@ interface SellerDashboardProps {
  */
 export function SellerDashboard({ userId, organizationId }: SellerDashboardProps) {
   const supabase = createClient();
+  const router = useRouter();
+  const params = useParams();
+  const locale = (params?.locale as string) || 'en';
+  
   const [stats, setStats] = useState({
     companies: 0,
     listings: 0,
@@ -203,7 +208,7 @@ export function SellerDashboard({ userId, organizationId }: SellerDashboardProps
             {stats.companies === 0 ? (
               <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                 <p className="mb-4">Et ole vielä lisännyt yrityksiä</p>
-                <Button onClick={() => window.location.href = '/fi/dashboard/companies/new'}>
+                <Button onClick={() => router.push(`/${locale}/dashboard/companies/new`)}>
                   <Plus className="mr-2 h-4 w-4" />
                   Lisää ensimmäinen yritys
                 </Button>

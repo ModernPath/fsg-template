@@ -1,5 +1,5 @@
 import { setRequestLocale } from 'next-intl/server';
-import { createSharedPathnamesNavigation } from 'next-intl/navigation';
+import { createNavigation } from 'next-intl/navigation';
 import { Locale, locales, defaultLocale } from './config'; // Assuming locales are in config
 
 /**
@@ -32,4 +32,4 @@ export async function setupMetadataLocale(locale: Locale) {
 
 // Navigation utilities re-exported for server components
 export const { Link, redirect, usePathname, useRouter } = 
-  createSharedPathnamesNavigation({ locales, localePrefix: 'as-needed' }); // Use localePrefix as per common next-intl setup 
+  createNavigation({ locales }); // Next.js 16 compatible API 

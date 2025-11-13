@@ -6,7 +6,7 @@
  */
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -52,6 +52,8 @@ export function CompanyForm({
   mode = "create",
 }: CompanyFormProps) {
   const router = useRouter();
+  const params = useParams();
+  const locale = params?.locale as string || 'en';
   const t = useTranslations("companies");
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -130,7 +132,7 @@ export function CompanyForm({
       }
 
       const data = await response.json();
-      router.push(`/dashboard/companies/${data.company.id}`);
+      router.push(`/${locale}/dashboard/companies/${data.company.id}`);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");

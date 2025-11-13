@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -36,6 +37,9 @@ interface AdminDashboardProps {
  */
 export function AdminDashboard({ userId }: AdminDashboardProps) {
   const supabase = createClient();
+  const params = useParams();
+  const locale = (params?.locale as string) || 'en';
+  
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalCompanies: 0,
@@ -255,19 +259,19 @@ export function AdminDashboard({ userId }: AdminDashboardProps) {
           Hallintatyökalut
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <Link href="/admin/users" className="w-full">
+          <Link href={`/${locale}/admin/users`} className="w-full">
             <Button className="w-full justify-start" variant="outline">
               <Users className="mr-2 h-4 w-4" />
               Käyttäjät
             </Button>
           </Link>
-          <Link href="/admin/companies" className="w-full">
+          <Link href={`/${locale}/admin/companies`} className="w-full">
             <Button className="w-full justify-start" variant="outline">
               <Building2 className="mr-2 h-4 w-4" />
               Yritykset
             </Button>
           </Link>
-          <Link href="/admin/deals" className="w-full">
+          <Link href={`/${locale}/admin/deals`} className="w-full">
             <Button className="w-full justify-start" variant="outline">
               <TrendingUp className="mr-2 h-4 w-4" />
               Kaupat

@@ -19,7 +19,7 @@ export default function SignInPage() {
   const params = useParams()
   const searchParams = useSearchParams()
   const locale = params.locale as string
-  const nextUrl = searchParams.get('next') || `/${locale}/admin/blog`
+  const nextUrl = searchParams.get('next') || `/${locale}/dashboard`
 
   useEffect(() => {
     // Add debug logging
