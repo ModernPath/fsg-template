@@ -29,9 +29,9 @@ CREATE TABLE IF NOT EXISTS organizations (
   CONSTRAINT valid_type CHECK (type IN ('broker', 'seller', 'platform'))
 );
 
-CREATE INDEX idx_organizations_slug ON organizations(slug);
-CREATE INDEX idx_organizations_active ON organizations(active);
-CREATE INDEX idx_organizations_type ON organizations(type);
+CREATE INDEX IF NOT EXISTS idx_organizations_slug ON organizations(slug);
+CREATE INDEX IF NOT EXISTS idx_organizations_active ON organizations(active);
+CREATE INDEX IF NOT EXISTS idx_organizations_type ON organizations(type);
 
 COMMENT ON TABLE organizations IS 'Multi-tenant organizations (brokers, sellers, platform)';
 
@@ -51,9 +51,9 @@ CREATE TABLE IF NOT EXISTS user_organizations (
   CONSTRAINT valid_role CHECK (role IN ('admin', 'broker', 'seller', 'analyst', 'viewer'))
 );
 
-CREATE INDEX idx_user_organizations_user ON user_organizations(user_id);
-CREATE INDEX idx_user_organizations_org ON user_organizations(organization_id);
-CREATE INDEX idx_user_organizations_role ON user_organizations(role);
+CREATE INDEX IF NOT EXISTS idx_user_organizations_user ON user_organizations(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_organizations_org ON user_organizations(organization_id);
+CREATE INDEX IF NOT EXISTS idx_user_organizations_role ON user_organizations(role);
 
 COMMENT ON TABLE user_organizations IS 'Links users to organizations with roles';
 
@@ -140,12 +140,12 @@ CREATE TABLE IF NOT EXISTS companies (
   )
 );
 
-CREATE INDEX idx_companies_org ON companies(organization_id);
-CREATE INDEX idx_companies_status ON companies(status);
-CREATE INDEX idx_companies_industry ON companies(industry);
-CREATE INDEX idx_companies_country ON companies(country);
-CREATE INDEX idx_companies_featured ON companies(featured) WHERE featured = true;
-CREATE INDEX idx_companies_embedding ON companies USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100);
+CREATE INDEX IF NOT EXISTS idx_companies_org ON companies(organization_id);
+CREATE INDEX IF NOT EXISTS idx_companies_status ON companies(status);
+CREATE INDEX IF NOT EXISTS idx_companies_industry ON companies(industry);
+CREATE INDEX IF NOT EXISTS idx_companies_country ON companies(country);
+CREATE INDEX IF NOT EXISTS idx_companies_featured ON companies(featured) WHERE featured = true;
+CREATE INDEX IF NOT EXISTS idx_companies_embedding ON companies USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100);
 
 COMMENT ON TABLE companies IS 'Companies/businesses being sold';
 
@@ -207,8 +207,8 @@ CREATE TABLE IF NOT EXISTS company_financials (
   CONSTRAINT valid_fiscal_year CHECK (fiscal_year >= 1900 AND fiscal_year <= 2100)
 );
 
-CREATE INDEX idx_company_financials_company ON company_financials(company_id);
-CREATE INDEX idx_company_financials_year ON company_financials(fiscal_year DESC);
+CREATE INDEX IF NOT EXISTS idx_company_financials_company ON company_financials(company_id);
+CREATE INDEX IF NOT EXISTS idx_company_financials_year ON company_financials(fiscal_year DESC);
 
 COMMENT ON TABLE company_financials IS 'Detailed financial statements per year';
 
@@ -242,9 +242,9 @@ CREATE TABLE IF NOT EXISTS document_types (
   CONSTRAINT valid_access_level CHECK (access_level IN ('public', 'teaser', 'nda_signed', 'due_diligence', 'private'))
 );
 
-CREATE INDEX idx_document_types_code ON document_types(code);
-CREATE INDEX idx_document_types_category ON document_types(category);
-CREATE INDEX idx_document_types_active ON document_types(active);
+CREATE INDEX IF NOT EXISTS idx_document_types_code ON document_types(code);
+CREATE INDEX IF NOT EXISTS idx_document_types_category ON document_types(category);
+CREATE INDEX IF NOT EXISTS idx_document_types_active ON document_types(active);
 
 COMMENT ON TABLE document_types IS 'System-wide document type definitions';
 
@@ -258,7 +258,8 @@ INSERT INTO document_types (code, name, description, category, requires_ai_gener
   ('nda', 'Non-Disclosure Agreement', 'NDA template', 'legal', false, false, 'private', 6),
   ('loi', 'Letter of Intent', 'LOI template', 'legal', false, true, 'private', 7),
   ('dd_checklist', 'Due Diligence Checklist', 'DD document list', 'due_diligence', true, true, 'due_diligence', 8),
-  ('faq', 'Frequently Asked Questions', 'Common Q&A', 'marketing', true, true, 'nda_signed', 9);
+  ('faq', 'Frequently Asked Questions', 'Common Q&A', 'marketing', true, true, 'nda_signed', 9)
+ON CONFLICT (code) DO NOTHING;
 
 -- ============================================================================
 -- 7. COMPANY_ASSETS (Documents, images, videos)
@@ -310,11 +311,11 @@ CREATE TABLE IF NOT EXISTS company_assets (
   CONSTRAINT positive_file_size CHECK (file_size > 0)
 );
 
-CREATE INDEX idx_company_assets_company ON company_assets(company_id);
-CREATE INDEX idx_company_assets_type ON company_assets(type);
-CREATE INDEX idx_company_assets_document_type ON company_assets(document_type);
-CREATE INDEX idx_company_assets_access ON company_assets(access_level);
-CREATE INDEX idx_company_assets_version ON company_assets(parent_asset_id, version);
+CREATE INDEX IF NOT EXISTS idx_company_assets_company ON company_assets(company_id);
+CREATE INDEX IF NOT EXISTS idx_company_assets_type ON company_assets(type);
+CREATE INDEX IF NOT EXISTS idx_company_assets_document_type ON company_assets(document_type);
+CREATE INDEX IF NOT EXISTS idx_company_assets_access ON company_assets(access_level);
+CREATE INDEX IF NOT EXISTS idx_company_assets_version ON company_assets(parent_asset_id, version);
 
 COMMENT ON TABLE company_assets IS 'All documents and media files for companies';
 
