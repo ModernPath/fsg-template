@@ -32,7 +32,7 @@ export async function POST(
       .from("profiles")
       .select(`
         id,
-        user_organizations!inner(
+        user_organizations(
           organization_id
         )
       `)

@@ -37,13 +37,14 @@ export default function DealsPage() {
 
         console.log('🤝 [Deals] User:', user.id);
 
-        // Get profile and organization
+        // Get profile and organization (LEFT JOIN for admins without org)
         const { data: profile } = await supabase
           .from("profiles")
           .select(`
             id,
             role,
-            user_organizations!inner(
+            is_admin,
+            user_organizations(
               organization_id,
               role
             )
@@ -52,15 +53,17 @@ export default function DealsPage() {
           .single();
 
         const organizationId = profile?.user_organizations?.[0]?.organization_id;
-        console.log('🤝 [Deals] Organization:', organizationId);
+        const isAdmin = profile?.is_admin || false;
+        console.log('🤝 [Deals] Organization:', organizationId, 'Admin:', isAdmin);
 
-        if (!organizationId) {
+        // If no organization and not admin, show error
+        if (!organizationId && !isAdmin) {
           setError("No organization found");
           return;
         }
 
-        // Fetch all deals with related data
-        const { data: dealsData, error: dealsError } = await supabase
+        // Build query
+        let query = supabase
           .from("deals")
           .select(`
             *,
@@ -72,8 +75,15 @@ export default function DealsPage() {
               entered_at,
               notes
             )
-          `)
-          .eq("organization_id", organizationId)
+          `);
+
+        // Filter by organization if not admin
+        if (organizationId) {
+          query = query.eq("organization_id", organizationId);
+        }
+        // Admins without org see all deals (or we could show none)
+
+        const { data: dealsData, error: dealsError } = await query
           .order("created_at", { ascending: false });
 
         console.log('🤝 [Deals] Found:', dealsData?.length || 0, 'deals');

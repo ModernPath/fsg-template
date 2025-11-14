@@ -52,7 +52,7 @@ export async function GET(
       .from("profiles")
       .select(`
         id,
-        user_organizations!inner(
+        user_organizations(
           organization_id
         )
       `)
@@ -133,7 +133,7 @@ export async function PUT(
       .select(`
         id,
         role,
-        user_organizations!inner(
+        user_organizations(
           organization_id
         )
       `)
@@ -253,7 +253,7 @@ export async function DELETE(
       .select(`
         id,
         role,
-        user_organizations!inner(
+        user_organizations(
           organization_id
         )
       `)

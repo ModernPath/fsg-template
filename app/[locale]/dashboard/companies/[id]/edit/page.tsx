@@ -43,7 +43,7 @@ export default function EditCompanyPage() {
           .select(`
             id,
             role,
-            user_organizations!inner(
+            user_organizations(
               organization_id,
               role
             )

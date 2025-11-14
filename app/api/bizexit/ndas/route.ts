@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
       .select(`
         id,
         role,
-        user_organizations!inner(
+        user_organizations(
           organization_id,
           role
         )
@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
       .select(`
         id,
         role,
-        user_organizations!inner(
+        user_organizations(
           organization_id,
           role
         )

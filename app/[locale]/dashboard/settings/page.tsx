@@ -41,12 +41,12 @@ export default function SettingsPage() {
         console.log("⚙️ [Settings] User:", userData.id);
         setUser(userData);
 
-        // Get profile with organization
+        // Get profile with organization (LEFT JOIN for admins without org)
         const { data: profileData, error: profileError } = await supabase
           .from("profiles")
           .select(`
             *,
-            user_organizations!inner(
+            user_organizations(
               organization_id,
               role,
               organizations(*)
@@ -63,7 +63,7 @@ export default function SettingsPage() {
         console.log("⚙️ [Settings] Profile:", profileData);
 
         setProfile(profileData);
-        setOrganization(profileData?.user_organizations?.[0]?.organizations);
+        setOrganization(profileData?.user_organizations?.[0]?.organizations || null);
 
         console.log("⚙️ [Settings] Organization:", profileData?.user_organizations?.[0]?.organizations);
       } catch (err: any) {

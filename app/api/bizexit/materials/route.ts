@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
       .from("profiles")
       .select(`
         id,
-        user_organizations!inner(
+        user_organizations(
           organization_id
         )
       `)
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
       .select(`
         id,
         role,
-        user_organizations!inner(
+        user_organizations(
           organization_id,
           role
         )

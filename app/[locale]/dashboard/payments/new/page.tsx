@@ -56,7 +56,7 @@ export default function NewPaymentPage() {
           .from("profiles")
           .select(`
             id,
-            user_organizations!inner(
+            user_organizations(
               organization_id
             )
           `)

@@ -39,7 +39,8 @@ export async function GET(request: NextRequest) {
       .select(`
         id,
         role,
-        user_organizations!inner(
+        is_admin,
+        user_organizations(
           organization_id,
           role
         )
@@ -48,8 +49,10 @@ export async function GET(request: NextRequest) {
       .single();
 
     const organizationId = profile?.user_organizations?.[0]?.organization_id;
+    const isAdmin = profile?.is_admin || false;
 
-    if (!organizationId) {
+    // If no organization and not admin, return error
+    if (!organizationId && !isAdmin) {
       return NextResponse.json(
         { error: "Organization not found" },
         { status: 404 },
@@ -73,9 +76,14 @@ export async function GET(request: NextRequest) {
       `,
         { count: "exact" },
       )
-      .eq("organization_id", organizationId)
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
+
+    // Filter by organization if user has one
+    if (organizationId) {
+      query = query.eq("organization_id", organizationId);
+    }
+    // Admins without org see all companies
 
     // Apply filters
     if (status) {
@@ -152,7 +160,7 @@ export async function POST(request: NextRequest) {
       .select(`
         id,
         role,
-        user_organizations!inner(
+        user_organizations(
           organization_id,
           role
         )
