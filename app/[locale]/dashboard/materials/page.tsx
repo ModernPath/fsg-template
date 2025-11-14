@@ -1,294 +1,362 @@
-"use client";
-
 /**
- * Materials Page
- * AI-generated sale materials (Teasers, IMs, Pitch Decks)
+ * Materials Dashboard Page
+ * 
+ * Shows all generated materials for the organization's companies
+ * Allows initiating new material generation
  */
 
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  Plus,
-  FileText,
-  Presentation,
-  Download,
-  Eye,
-  Sparkles,
-  Loader2,
-} from "lucide-react";
+import { Plus, FileText, Download, ExternalLink, Clock, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 
-export default function MaterialsPage() {
-  const params = useParams();
-  const locale = (params?.locale as string) || "en";
-  const supabase = createClient();
+interface Material {
+  id: string;
+  name: string;
+  type: string;
+  created_at: string;
+  gamma_presentation_url: string | null;
+  storage_path: string | null;
+  company: {
+    id: string;
+    name: string;
+  };
+}
 
-  const [loading, setLoading] = useState(true);
-  const [materials, setMaterials] = useState<any[]>([]);
-  const [error, setError] = useState<string | null>(null);
+interface GenerationJob {
+  id: string;
+  status: string;
+  progress_percentage: number;
+  current_step: string;
+  company: {
+    id: string;
+    name: string;
+  };
+  generate_teaser: boolean;
+  generate_im: boolean;
+  generate_pitch_deck: boolean;
+  created_at: string;
+}
 
-  useEffect(() => {
-    async function fetchMaterials() {
-      try {
-        setLoading(true);
-        setError(null);
+export default async function MaterialsPage() {
+  const supabase = await createClient();
 
-        // Get user
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-          setError("Please log in");
-          return;
-        }
+  // Get user
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
 
-        console.log('📄 [Materials] User:', user.id);
+  if (authError || !user) {
+    redirect("/login");
+  }
 
-        // Get profile and organization
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select(`
-            id,
-            role,
-            user_organizations!inner(
-              organization_id,
-              role
-            )
-          `)
-          .eq("id", user.id)
-          .single();
+  // Get user's organization
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select(`
+      id,
+      role,
+      user_organizations!inner(
+        organization_id,
+        role
+      )
+    `)
+    .eq("id", user.id)
+    .single();
 
-        const organizationId = profile?.user_organizations?.[0]?.organization_id;
-        console.log('📄 [Materials] Organization:', organizationId);
+  const organizationId = profile?.user_organizations?.[0]?.organization_id;
 
-        if (!organizationId) {
-          setError("No organization found");
-          return;
-        }
+  if (!organizationId) {
+    return (
+      <div className="container mx-auto py-10">
+        <Card>
+          <CardHeader>
+            <CardTitle>No Organization</CardTitle>
+            <CardDescription>
+              You must be part of an organization to access materials
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
 
-        // Fetch materials (stored as company_assets with specific document types)
-        const { data: materialsData, error: materialsError } = await supabase
-          .from("company_assets")
-          .select(`
-            *,
-            companies(id, name)
-          `)
-          .eq("companies.organization_id", organizationId)
-          .in("document_type", ["teaser", "im", "pitch_deck", "valuation"])
-          .order("created_at", { ascending: false });
+  // Get all materials for organization
+  const { data: materials } = await supabase
+    .from("company_assets")
+    .select(`
+      id,
+      name,
+      type,
+      created_at,
+      gamma_presentation_url,
+      storage_path,
+      companies!inner(
+        id,
+        name,
+        organization_id
+      )
+    `)
+    .eq("companies.organization_id", organizationId)
+    .in("type", ["teaser", "im", "pitch_deck", "information_memorandum"])
+    .order("created_at", { ascending: false });
 
-        console.log('📄 [Materials] Found:', materialsData?.length || 0, 'materials');
-        console.log('📄 [Materials] Data:', materialsData);
+  // Get active generation jobs
+  const { data: activeJobs } = await supabase
+    .from("material_generation_jobs")
+    .select(`
+      id,
+      status,
+      progress_percentage,
+      current_step,
+      generate_teaser,
+      generate_im,
+      generate_pitch_deck,
+      created_at,
+      companies!inner(
+        id,
+        name,
+        organization_id
+      )
+    `)
+    .eq("companies.organization_id", organizationId)
+    .in("status", [
+      "initiated",
+      "collecting_data",
+      "awaiting_uploads",
+      "processing_uploads",
+      "questionnaire_pending",
+      "questionnaire_in_progress",
+      "consolidating",
+      "generating_teaser",
+      "generating_im",
+      "generating_pitch_deck",
+    ])
+    .order("created_at", { ascending: false });
 
-        if (materialsError) {
-          console.error("📄 [Materials] Error:", materialsError);
-          setError(materialsError.message);
-          return;
-        }
+  // Get companies for new generation
+  const { data: companies } = await supabase
+    .from("companies")
+    .select("id, name, industry")
+    .eq("organization_id", organizationId)
+    .order("name");
 
-        setMaterials(materialsData || []);
-      } catch (err: any) {
-        console.error("📄 [Materials] Unexpected error:", err);
-        setError(err.message || "Failed to load materials");
-      } finally {
-        setLoading(false);
-      }
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "initiated":
+      case "collecting_data":
+        return <Badge variant="secondary" className="flex items-center gap-1">
+          <Loader2 className="w-3 h-3 animate-spin" />
+          Collecting Data
+        </Badge>;
+      case "awaiting_uploads":
+        return <Badge variant="outline" className="flex items-center gap-1">
+          <Clock className="w-3 h-3" />
+          Awaiting Uploads
+        </Badge>;
+      case "processing_uploads":
+        return <Badge variant="secondary" className="flex items-center gap-1">
+          <Loader2 className="w-3 h-3 animate-spin" />
+          Processing
+        </Badge>;
+      case "questionnaire_pending":
+      case "questionnaire_in_progress":
+        return <Badge variant="outline" className="flex items-center gap-1">
+          <Clock className="w-3 h-3" />
+          Questionnaire Pending
+        </Badge>;
+      case "consolidating":
+      case "generating_teaser":
+      case "generating_im":
+      case "generating_pitch_deck":
+        return <Badge variant="secondary" className="flex items-center gap-1">
+          <Loader2 className="w-3 h-3 animate-spin" />
+          Generating
+        </Badge>;
+      case "completed":
+        return <Badge variant="default" className="flex items-center gap-1 bg-green-600">
+          <CheckCircle2 className="w-3 h-3" />
+          Completed
+        </Badge>;
+      case "failed":
+        return <Badge variant="destructive" className="flex items-center gap-1">
+          <AlertCircle className="w-3 h-3" />
+          Failed
+        </Badge>;
+      case "cancelled":
+        return <Badge variant="outline">Cancelled</Badge>;
+      default:
+        return <Badge variant="secondary">{status}</Badge>;
     }
+  };
 
-    fetchMaterials();
-  }, [supabase]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-12 text-center">
-        <p className="text-red-600">Error: {error}</p>
-      </div>
-    );
-  }
-
-  const materialTypes = [
-    {
-      type: "teaser",
-      name: "Teasers",
-      icon: FileText,
-      description: "2-page executive summaries",
-      color: "blue",
-    },
-    {
-      type: "im",
-      name: "Information Memorandums",
-      icon: FileText,
-      description: "20-50 page detailed documents",
-      color: "purple",
-    },
-    {
-      type: "pitch_deck",
-      name: "Pitch Decks",
-      icon: Presentation,
-      description: "Investor presentations",
-      color: "green",
-    },
-    {
-      type: "valuation",
-      name: "Valuation Reports",
-      icon: FileText,
-      description: "AI-assisted valuations",
-      color: "orange",
-    },
-  ];
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case "teaser":
+        return <FileText className="w-5 h-5 text-blue-500" />;
+      case "im":
+      case "information_memorandum":
+        return <FileText className="w-5 h-5 text-purple-500" />;
+      case "pitch_deck":
+        return <FileText className="w-5 h-5 text-orange-500" />;
+      default:
+        return <FileText className="w-5 h-5 text-gray-500" />;
+    }
+  };
 
   return (
-    <div className="space-y-6">
+    <div className="container mx-auto py-10 space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-            <Sparkles className="w-8 h-8 text-yellow-500" />
-            AI Materials
-          </h1>
-          <p className="mt-1 text-gray-600 dark:text-gray-400">
-            AI-generated sale materials for your companies
+          <h1 className="text-3xl font-bold tracking-tight">Business Materials</h1>
+          <p className="text-muted-foreground mt-2">
+            AI-generated teasers, information memorandums, and pitch decks
           </p>
         </div>
-        <Link href={`/${locale}/dashboard/materials/generate`}>
-          <Button>
-            <Sparkles className="mr-2 h-4 w-4" />
-            Generate Materials
+        {companies && companies.length > 0 && (
+          <Button asChild>
+            <Link href="/dashboard/materials/new">
+              <Plus className="w-4 h-4 mr-2" />
+              Generate New Materials
+            </Link>
           </Button>
-        </Link>
+        )}
       </div>
 
-      {/* Material Types Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {materialTypes.map((type) => {
-          const Icon = type.icon;
-          const count =
-            materials.filter((m) => m.document_type === type.type).length || 0;
-
-          return (
-            <div
-              key={type.type}
-              className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div
-                  className={`w-12 h-12 bg-${type.color}-100 dark:bg-${type.color}-900/20 rounded-lg flex items-center justify-center`}
-                >
-                  <Icon
-                    className={`w-6 h-6 text-${type.color}-600 dark:text-${type.color}-400`}
-                  />
-                </div>
-                <Badge variant="secondary">{count}</Badge>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
-                {type.name}
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {type.description}
-              </p>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Materials List */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-            Recent Materials
-          </h2>
-        </div>
-
-        <div className="divide-y divide-gray-200 dark:divide-gray-700">
-          {materials && materials.length > 0 ? (
-            materials.map((material: any) => {
-              const typeInfo = materialTypes.find(
-                (t) => t.type === material.document_type,
-              );
-              const Icon = typeInfo?.icon || FileText;
-
-              return (
-                <div
-                  key={material.id}
-                  className="p-6 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
-                >
+      {/* Active Generation Jobs */}
+      {activeJobs && activeJobs.length > 0 && (
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold">Active Generations</h2>
+          <div className="grid gap-4">
+            {activeJobs.map((job: any) => (
+              <Card key={job.id}>
+                <CardHeader>
                   <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-4">
-                      <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center">
-                        <Icon className="w-8 h-8 text-gray-400" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                          {material.companies?.name || "Unknown Company"}
-                        </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                          {typeInfo?.name || material.document_type}
-                        </p>
-                        {material.description && (
-                          <p className="text-sm text-gray-600 dark:text-gray-400 max-w-2xl">
-                            {material.description}
-                          </p>
-                        )}
-                        <div className="flex items-center gap-4 mt-2 text-sm text-gray-500 dark:text-gray-400">
-                          <span>
-                            Created{" "}
-                            {new Date(
-                              material.created_at,
-                            ).toLocaleDateString()}
-                          </span>
-                          {material.file_size && (
-                            <span>
-                              {(material.file_size / 1024 / 1024).toFixed(2)}{" "}
-                              MB
-                            </span>
-                          )}
-                        </div>
-                      </div>
+                    <div>
+                      <CardTitle className="text-lg">{job.companies.name}</CardTitle>
+                      <CardDescription>{job.current_step}</CardDescription>
                     </div>
-
-                    <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="sm">
-                        <Eye className="w-4 h-4 mr-2" />
-                        Preview
-                      </Button>
-                      {material.file_url && (
-                        <Button variant="outline" size="sm">
-                          <Download className="w-4 h-4 mr-2" />
-                          Download
-                        </Button>
-                      )}
+                    {getStatusBadge(job.status)}
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span>Progress</span>
+                      <span className="font-medium">{job.progress_percentage}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-blue-600 h-2 rounded-full transition-all"
+                        style={{ width: `${job.progress_percentage}%` }}
+                      />
                     </div>
                   </div>
-                </div>
-              );
-            })
-          ) : (
-            <div className="p-12 text-center">
-              <Sparkles className="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                No materials yet
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Generate your first AI-powered sale material
-              </p>
-              <Link href={`/${locale}/dashboard/materials/generate`}>
-                <Button>
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  Generate Materials
-                </Button>
-              </Link>
-            </div>
-          )}
+
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <span>Generating:</span>
+                    {job.generate_teaser && <Badge variant="outline">Teaser</Badge>}
+                    {job.generate_im && <Badge variant="outline">IM</Badge>}
+                    {job.generate_pitch_deck && <Badge variant="outline">Pitch Deck</Badge>}
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" asChild>
+                      <Link href={`/dashboard/materials/job/${job.id}`}>
+                        View Details
+                      </Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
+      )}
+
+      {/* Generated Materials */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold">Generated Materials</h2>
+        
+        {materials && materials.length > 0 ? (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {materials.map((material: any) => (
+              <Card key={material.id} className="hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    {getTypeIcon(material.type)}
+                    <Badge variant="outline" className="capitalize">
+                      {material.type.replace("_", " ")}
+                    </Badge>
+                  </div>
+                  <CardTitle className="text-lg mt-4">{material.name}</CardTitle>
+                  <CardDescription>{material.companies.name}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="text-sm text-muted-foreground">
+                    Created {new Date(material.created_at).toLocaleDateString()}
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    {material.gamma_presentation_url && (
+                      <Button size="sm" variant="outline" asChild>
+                        <a
+                          href={material.gamma_presentation_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1"
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                          View
+                        </a>
+                      </Button>
+                    )}
+                    {material.storage_path && (
+                      <Button size="sm" variant="outline">
+                        <Download className="w-3 h-3 mr-1" />
+                        Download
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <Card>
+            <CardHeader>
+              <CardTitle>No Materials Yet</CardTitle>
+              <CardDescription>
+                {companies && companies.length > 0 
+                  ? "Generate your first business materials to get started"
+                  : "Add a company first to generate materials"
+                }
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {companies && companies.length > 0 ? (
+                <Button asChild>
+                  <Link href="/dashboard/materials/new">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Generate Materials
+                  </Link>
+                </Button>
+              ) : (
+                <Button asChild>
+                  <Link href="/dashboard/companies/new">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Company
+                  </Link>
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

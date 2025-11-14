@@ -48,7 +48,7 @@ export function DealForm({
 
   const [formData, setFormData] = useState({
     company_id: initialData?.company_id || "",
-    buyer_id: initialData?.buyer_id || "",
+    buyer_id: initialData?.buyer_id || undefined,
     estimated_value: initialData?.estimated_value || "",
     stage: initialData?.stage || "lead",
     notes: initialData?.notes || "",
@@ -148,16 +148,15 @@ export function DealForm({
           <div>
             <Label htmlFor="buyer_id">Buyer (Optional)</Label>
             <Select
-              value={formData.buyer_id}
+              value={formData.buyer_id || undefined}
               onValueChange={(value) =>
                 setFormData({ ...formData, buyer_id: value })
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select a buyer" />
+                <SelectValue placeholder="Select a buyer (optional)" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">No buyer selected</SelectItem>
                 {buyers.map((buyer) => (
                   <SelectItem key={buyer.id} value={buyer.id}>
                     {buyer.full_name || buyer.email}

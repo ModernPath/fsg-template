@@ -39,7 +39,7 @@ export default async function NDAsPage() {
       *,
       deals(
         id,
-        companies(id, name, logo_url)
+        companies(id, name)
       ),
       signer:profiles!ndas_signer_id_fkey(
         id,
@@ -161,9 +161,9 @@ export default async function NDAsPage() {
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        {nda.deals?.companies?.logo_url ? (
+                        {false && nda.deals?.companies ? (
                           <img
-                            src={nda.deals.companies.logo_url}
+                            src=""
                             alt={nda.deals.companies.name}
                             className="w-10 h-10 rounded object-cover"
                           />

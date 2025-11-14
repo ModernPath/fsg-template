@@ -16,7 +16,6 @@ interface DealHeaderProps {
     current_stage: string;
     companies: {
       name: string;
-      logo_url?: string;
     };
   };
   locale: string;
@@ -66,9 +65,9 @@ export function DealHeader({ deal, locale }: DealHeaderProps) {
 
           {/* Company Logo & Info */}
           <div className="flex items-start gap-3">
-            {deal.companies.logo_url ? (
+            {false && deal.companies ? (
               <img
-                src={deal.companies.logo_url}
+                src=""
                 alt={deal.companies.name}
                 className="w-12 h-12 rounded object-cover"
               />

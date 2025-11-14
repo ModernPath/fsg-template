@@ -171,9 +171,9 @@ export default function CompanyDetailPage() {
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
         <div className="flex items-start gap-6">
           {/* Logo */}
-          {company.logo_url ? (
+          {false && company ? (
             <img
-              src={company.logo_url}
+              src=""
               alt={company.name}
               className="w-24 h-24 rounded-lg object-cover"
             />

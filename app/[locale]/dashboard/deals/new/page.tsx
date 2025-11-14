@@ -58,7 +58,7 @@ export default async function NewDealPage({
   // Get companies for selection
   const { data: companies } = await supabase
     .from("companies")
-    .select("id, name")
+    .select("id, name, industry")
     .eq("organization_id", profile.organization_id)
     .eq("status", "active")
     .order("name");

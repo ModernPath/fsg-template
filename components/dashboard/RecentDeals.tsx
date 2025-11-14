@@ -20,7 +20,6 @@ interface Deal {
   companies: {
     id: string;
     name: string;
-    logo_url: string | null;
   } | null;
   buyers: {
     id: string;

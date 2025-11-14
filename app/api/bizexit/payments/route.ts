@@ -21,14 +21,21 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get user's organization
+    // Get user's organization via user_organizations
     const { data: profile } = await supabase
       .from("profiles")
-      .select("organization_id")
+      .select(`
+        id,
+        user_organizations!inner(
+          organization_id
+        )
+      `)
       .eq("id", user.id)
       .single();
 
-    if (!profile?.organization_id) {
+    const organizationId = profile?.user_organizations?.[0]?.organization_id;
+
+    if (!organizationId) {
       return NextResponse.json(
         { error: "Organization not found" },
         { status: 404 },
@@ -52,7 +59,7 @@ export async function GET(request: NextRequest) {
         )
       `,
       )
-      .eq("organization_id", profile.organization_id)
+      .eq("organization_id", organizationId)
       .order("created_at", { ascending: false });
 
     // Apply filters
@@ -97,14 +104,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get user's organization
+    // Get user's organization via user_organizations
     const { data: profile } = await supabase
       .from("profiles")
-      .select("organization_id, role")
+      .select(`
+        id,
+        role,
+        user_organizations!inner(
+          organization_id,
+          role
+        )
+      `)
       .eq("id", user.id)
       .single();
 
-    if (!profile?.organization_id) {
+    const organizationId = profile?.user_organizations?.[0]?.organization_id;
+
+    if (!organizationId) {
       return NextResponse.json(
         { error: "Organization not found" },
         { status: 404 },
@@ -134,7 +150,7 @@ export async function POST(request: NextRequest) {
       .eq("id", body.deal_id)
       .single();
 
-    if (!deal || deal.organization_id !== profile.organization_id) {
+    if (!deal || deal.organization_id !== organizationId) {
       return NextResponse.json({ error: "Invalid deal" }, { status: 400 });
     }
 
@@ -142,7 +158,7 @@ export async function POST(request: NextRequest) {
     const { count } = await supabase
       .from("payments")
       .select("*", { count: "exact", head: true })
-      .eq("organization_id", profile.organization_id);
+      .eq("organization_id", organizationId);
 
     const invoiceNumber = `INV-${new Date().getFullYear()}-${String((count || 0) + 1).padStart(4, "0")}`;
 
@@ -150,7 +166,7 @@ export async function POST(request: NextRequest) {
     const { data: payment, error } = await supabase
       .from("payments")
       .insert({
-        organization_id: profile.organization_id,
+        organization_id: organizationId,
         deal_id: body.deal_id,
         invoice_number: invoiceNumber,
         amount: body.amount,
@@ -187,4 +203,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

@@ -17,7 +17,6 @@ interface DealCardProps {
       id: string;
       name: string;
       industry: string;
-      logo_url?: string;
     };
     buyer?: {
       id: string;
@@ -59,9 +58,9 @@ export function DealCard({ deal }: DealCardProps) {
       <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow cursor-pointer">
         {/* Company Name */}
         <div className="flex items-start gap-3 mb-3">
-          {deal.companies.logo_url ? (
+          {false && deal.companies ? (
             <img
-              src={deal.companies.logo_url}
+              src=""
               alt={deal.companies.name}
               className="w-10 h-10 rounded object-cover"
             />

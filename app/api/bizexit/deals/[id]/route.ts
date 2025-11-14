@@ -49,14 +49,21 @@ export async function GET(
       return NextResponse.json({ error: "Deal not found" }, { status: 404 });
     }
 
-    // Verify user has access to this deal
+    // Verify user has access to this deal via user_organizations
     const { data: profile } = await supabase
       .from("profiles")
-      .select("organization_id")
+      .select(`
+        id,
+        user_organizations!inner(
+          organization_id
+        )
+      `)
       .eq("id", user.id)
       .single();
 
-    if (profile?.organization_id !== deal.organization_id) {
+    const organizationId = profile?.user_organizations?.[0]?.organization_id;
+
+    if (!organizationId || organizationId !== deal.organization_id) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -99,14 +106,23 @@ export async function PUT(
       return NextResponse.json({ error: "Deal not found" }, { status: 404 });
     }
 
-    // Verify user has access
+    // Verify user has access via user_organizations
     const { data: profile } = await supabase
       .from("profiles")
-      .select("organization_id, role")
+      .select(`
+        id,
+        role,
+        user_organizations!inner(
+          organization_id,
+          role
+        )
+      `)
       .eq("id", user.id)
       .single();
 
-    if (profile?.organization_id !== existingDeal.organization_id) {
+    const organizationId = profile?.user_organizations?.[0]?.organization_id;
+
+    if (!organizationId || organizationId !== existingDeal.organization_id) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -198,14 +214,23 @@ export async function DELETE(
       return NextResponse.json({ error: "Deal not found" }, { status: 404 });
     }
 
-    // Verify user has access and is admin/broker
+    // Verify user has access and is admin/broker via user_organizations
     const { data: profile } = await supabase
       .from("profiles")
-      .select("organization_id, role")
+      .select(`
+        id,
+        role,
+        user_organizations!inner(
+          organization_id,
+          role
+        )
+      `)
       .eq("id", user.id)
       .single();
 
-    if (profile?.organization_id !== existingDeal.organization_id) {
+    const organizationId = profile?.user_organizations?.[0]?.organization_id;
+
+    if (!organizationId || organizationId !== existingDeal.organization_id) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -250,4 +275,3 @@ export async function DELETE(
     );
   }
 }
-

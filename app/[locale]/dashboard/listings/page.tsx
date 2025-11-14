@@ -37,7 +37,7 @@ export default async function ListingsPage() {
     .select(
       `
       *,
-      companies(id, name, industry, logo_url),
+      companies(id, name, industry),
       listing_portals(
         id,
         portal_name,
@@ -86,9 +86,9 @@ export default async function ListingsPage() {
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-start gap-4">
-                  {listing.companies.logo_url ? (
+                  {false && listing.companies ? (
                     <img
-                      src={listing.companies.logo_url}
+                      src=""
                       alt={listing.companies.name}
                       className="w-16 h-16 rounded object-cover"
                     />

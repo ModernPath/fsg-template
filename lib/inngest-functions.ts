@@ -3,6 +3,31 @@ import { createClient } from '@/utils/supabase/server';
 import { GoogleGenAI, Type } from '@google/genai';
 import { marked } from 'marked';
 
+// Import materials generation functions
+import {
+  materialsGenerateInitiated,
+  materialsCollectPublicData,
+  materialsRequireUploads,
+  materialsProcessUploads,
+  materialsGenerateQuestionnaire,
+  materialsQuestionnaireCompleted,
+  materialsConsolidateData,
+  materialsStartGeneration,
+  materialsGenerateTeaser,
+  materialsGenerateIM,
+  materialsGeneratePitchDeck,
+  materialsGenerationComplete,
+  materialsGenerationCancelled,
+} from './inngest/materials-generation';
+
+// Import materials notification functions
+import {
+  notifyDocumentsRequired,
+  notifyQuestionnaireReady,
+  notifyGenerationComplete,
+  notifyGenerationFailed,
+} from './inngest/materials-notifications';
+
 export const helloWorld = inngest.createFunction(
   { id: 'hello-world' },
   { event: 'test/hello.world' },
@@ -885,4 +910,26 @@ export const generateContentBulk = inngest.createFunction(
 
     return results;
   }
-); 
+);
+
+// Export materials generation functions
+export {
+  materialsGenerateInitiated,
+  materialsCollectPublicData,
+  materialsRequireUploads,
+  materialsProcessUploads,
+  materialsGenerateQuestionnaire,
+  materialsQuestionnaireCompleted,
+  materialsConsolidateData,
+  materialsStartGeneration,
+  materialsGenerateTeaser,
+  materialsGenerateIM,
+  materialsGeneratePitchDeck,
+  materialsGenerationComplete,
+  materialsGenerationCancelled,
+  // Notification functions
+  notifyDocumentsRequired,
+  notifyQuestionnaireReady,
+  notifyGenerationComplete,
+  notifyGenerationFailed,
+}; 

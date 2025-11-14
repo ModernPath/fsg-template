@@ -33,7 +33,7 @@ export async function GET(
         *,
         deals(
           id,
-          companies(id, name, logo_url)
+          companies(id, name)
         ),
         signer:profiles!ndas_signer_id_fkey(full_name, email),
         witness:profiles!ndas_witness_id_fkey(full_name, email)

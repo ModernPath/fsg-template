@@ -33,7 +33,7 @@ export async function GET(
         *,
         deals(
           id,
-          companies(id, name, logo_url)
+          companies(id, name)
         )
       `,
       )
@@ -47,14 +47,21 @@ export async function GET(
       );
     }
 
-    // Verify user has access
+    // Verify user has access via user_organizations
     const { data: profile } = await supabase
       .from("profiles")
-      .select("organization_id")
+      .select(`
+        id,
+        user_organizations!inner(
+          organization_id
+        )
+      `)
       .eq("id", user.id)
       .single();
 
-    if (profile?.organization_id !== payment.organization_id) {
+    const organizationId = profile?.user_organizations?.[0]?.organization_id;
+
+    if (!organizationId || organizationId !== payment.organization_id) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -89,7 +96,7 @@ export async function PUT(
     // Get existing payment
     const { data: existingPayment } = await supabase
       .from("payments")
-      .select("organization_id, deal_id, status")
+      .select("organization_id, status, deal_id")
       .eq("id", paymentId)
       .single();
 
@@ -100,14 +107,23 @@ export async function PUT(
       );
     }
 
-    // Verify user has access
+    // Verify user has access via user_organizations
     const { data: profile } = await supabase
       .from("profiles")
-      .select("organization_id, role")
+      .select(`
+        id,
+        role,
+        user_organizations!inner(
+          organization_id,
+          role
+        )
+      `)
       .eq("id", user.id)
       .single();
 
-    if (profile?.organization_id !== existingPayment.organization_id) {
+    const organizationId = profile?.user_organizations?.[0]?.organization_id;
+
+    if (!organizationId || organizationId !== existingPayment.organization_id) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -177,4 +193,3 @@ export async function PUT(
     );
   }
 }
-

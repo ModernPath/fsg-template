@@ -18,7 +18,6 @@ interface Deal {
     id: string;
     name: string;
     industry: string;
-    logo_url?: string;
   };
   buyer?: {
     id: string;

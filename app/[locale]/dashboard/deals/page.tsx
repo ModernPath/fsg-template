@@ -64,7 +64,7 @@ export default function DealsPage() {
           .from("deals")
           .select(`
             *,
-            companies(id, name, industry, logo_url),
+            companies(id, name, industry),
             buyer:profiles!deals_buyer_id_fkey(id, full_name, email),
             deal_stages(
               id,

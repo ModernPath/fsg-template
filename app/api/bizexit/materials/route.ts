@@ -21,14 +21,21 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get user's organization
+    // Get user's organization via user_organizations
     const { data: profile } = await supabase
       .from("profiles")
-      .select("organization_id")
+      .select(`
+        id,
+        user_organizations!inner(
+          organization_id
+        )
+      `)
       .eq("id", user.id)
       .single();
 
-    if (!profile?.organization_id) {
+    const organizationId = profile?.user_organizations?.[0]?.organization_id;
+
+    if (!organizationId) {
       return NextResponse.json(
         { error: "Organization not found" },
         { status: 404 },
@@ -46,10 +53,10 @@ export async function GET(request: NextRequest) {
       .select(
         `
         *,
-        companies(id, name, logo_url, industry)
+        companies(id, name, industry)
       `,
       )
-      .eq("companies.organization_id", profile.organization_id)
+      .eq("companies.organization_id", organizationId)
       .in("asset_type", ["teaser", "im", "pitch_deck", "valuation_report"])
       .order("created_at", { ascending: false });
 
@@ -95,18 +102,32 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get user's organization
+    // Get user's organization via user_organizations
     const { data: profile } = await supabase
       .from("profiles")
-      .select("organization_id")
+      .select(`
+        id,
+        role,
+        user_organizations!inner(
+          organization_id,
+          role
+        )
+      `)
       .eq("id", user.id)
       .single();
 
-    if (!profile?.organization_id) {
+    const organizationId = profile?.user_organizations?.[0]?.organization_id;
+
+    if (!organizationId) {
       return NextResponse.json(
         { error: "Organization not found" },
         { status: 404 },
       );
+    }
+
+    // Check permissions (broker, seller, admin can create materials)
+    if (!["seller", "broker", "admin", "partner"].includes(profile.role.toLowerCase())) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Parse request body
@@ -127,7 +148,7 @@ export async function POST(request: NextRequest) {
       .eq("id", body.company_id)
       .single();
 
-    if (!company || company.organization_id !== profile.organization_id) {
+    if (!company || company.organization_id !== organizationId) {
       return NextResponse.json({ error: "Invalid company" }, { status: 400 });
     }
 
@@ -146,9 +167,14 @@ export async function POST(request: NextRequest) {
       .insert({
         company_id: body.company_id,
         asset_type: body.asset_type,
+        name: body.name || `${body.asset_type}_${Date.now()}`,
         description: body.description,
-        file_url: body.file_url,
-        file_size: body.file_size,
+        type: body.asset_type, // For backwards compatibility
+        mime_type: body.mime_type || 'application/pdf',
+        file_size: body.file_size || 0,
+        storage_path: body.storage_path || body.file_url || '',
+        generated: true,
+        generation_model: 'gemini-2.0-flash-exp',
         metadata: {
           generated_by: "ai",
           generated_at: new Date().toISOString(),
@@ -161,7 +187,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error("Error creating material:", error);
       return NextResponse.json(
-        { error: "Failed to create material" },
+        { error: "Failed to create material", details: error.message },
         { status: 500 },
       );
     }
@@ -175,4 +201,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

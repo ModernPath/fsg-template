@@ -21,14 +21,23 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get user's organization
+    // Get user's organization via user_organizations
     const { data: profile } = await supabase
       .from("profiles")
-      .select("organization_id, role")
+      .select(`
+        id,
+        role,
+        user_organizations!inner(
+          organization_id,
+          role
+        )
+      `)
       .eq("id", user.id)
       .single();
 
-    if (!profile?.organization_id) {
+    const organizationId = profile?.user_organizations?.[0]?.organization_id;
+
+    if (!organizationId) {
       return NextResponse.json(
         { error: "Organization not found" },
         { status: 404 },
@@ -48,13 +57,13 @@ export async function GET(request: NextRequest) {
         *,
         deals(
           id,
-          companies(id, name, logo_url)
+          companies(id, name)
         ),
         signer:profiles!ndas_signer_id_fkey(full_name, email),
         witness:profiles!ndas_witness_id_fkey(full_name, email)
       `,
       )
-      .eq("organization_id", profile.organization_id)
+      .eq("organization_id", organizationId)
       .order("created_at", { ascending: false });
 
     // Apply filters
@@ -99,14 +108,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get user's organization
+    // Get user's organization via user_organizations
     const { data: profile } = await supabase
       .from("profiles")
-      .select("organization_id, role")
+      .select(`
+        id,
+        role,
+        user_organizations!inner(
+          organization_id,
+          role
+        )
+      `)
       .eq("id", user.id)
       .single();
 
-    if (!profile?.organization_id) {
+    const organizationId = profile?.user_organizations?.[0]?.organization_id;
+
+    if (!organizationId) {
       return NextResponse.json(
         { error: "Organization not found" },
         { status: 404 },
@@ -138,7 +156,7 @@ export async function POST(request: NextRequest) {
       .eq("id", body.deal_id)
       .single();
 
-    if (!deal || deal.organization_id !== profile.organization_id) {
+    if (!deal || deal.organization_id !== organizationId) {
       return NextResponse.json({ error: "Invalid deal" }, { status: 400 });
     }
 
@@ -146,7 +164,7 @@ export async function POST(request: NextRequest) {
     const { data: nda, error } = await supabase
       .from("ndas")
       .insert({
-        organization_id: profile.organization_id,
+        organization_id: organizationId,
         deal_id: body.deal_id,
         signer_id: body.signer_id,
         witness_id: user.id,
@@ -182,4 +200,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

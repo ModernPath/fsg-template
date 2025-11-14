@@ -34,7 +34,7 @@ export default function NewPaymentPage() {
   const [organizationId, setOrganizationId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    deal_id: "",
+    deal_id: undefined as string | undefined,
     amount: "",
     currency: "EUR",
     type: "commission",
@@ -157,14 +157,13 @@ export default function NewPaymentPage() {
               Related Deal <span className="text-gray-500">(Optional)</span>
             </Label>
             <Select
-              value={formData.deal_id}
+              value={formData.deal_id || undefined}
               onValueChange={(value) => handleChange("deal_id", value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select a deal (optional)" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">No deal</SelectItem>
                 {deals.map((deal) => (
                   <SelectItem key={deal.id} value={deal.id}>
                     {deal.companies?.name || `Deal ${deal.id.slice(0, 8)}`}
