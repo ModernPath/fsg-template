@@ -27,7 +27,10 @@ export default async function BuyersPage() {
     .eq("id", user.id)
     .single();
 
-  if (!profile?.organization_id) {
+  const organizationId = profile?.user_organizations?.[0]?.organization_id;
+    const isAdmin = profile?.is_admin || false;
+
+    if (!organizationId && !isAdmin) {
     return null;
   }
 
