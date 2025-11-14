@@ -23,16 +23,32 @@ export default async function NDAsPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("organization_id, role")
+    .select(`
+      role,
+      is_admin,
+      user_organizations(organization_id)
+    `)
     .eq("id", user.id)
     .single();
 
-  if (!profile?.organization_id) {
-    return null;
+  const organizationId = profile?.user_organizations?.[0]?.organization_id;
+  const isAdmin = profile?.is_admin || false;
+
+  // Admins without org can see all, others need org
+  if (!organizationId && !isAdmin) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <p className="text-gray-600 dark:text-gray-400">
+            No organization found. Please complete onboarding.
+          </p>
+        </div>
+      </div>
+    );
   }
 
-  // Fetch NDAs with related data
-  const { data: ndas, error } = await supabase
+  // Build query
+  let ndasQuery = supabase
     .from("ndas")
     .select(
       `
@@ -53,8 +69,15 @@ export default async function NDAsPage() {
       )
     `,
     )
-    .eq("organization_id", profile.organization_id)
     .order("created_at", { ascending: false });
+
+  // Filter by organization if user has one
+  if (organizationId) {
+    ndasQuery = ndasQuery.eq("organization_id", organizationId);
+  }
+
+  // Fetch NDAs with related data
+  const { data: ndas, error } = await ndasQuery;
 
   if (error) {
     console.error("Error fetching NDAs:", error);

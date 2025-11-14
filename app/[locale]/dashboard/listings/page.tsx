@@ -23,16 +23,19 @@ export default async function ListingsPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("organization_id, role")
+    .select("role, is_admin, user_organizations(organization_id)")
     .eq("id", user.id)
     .single();
 
-  if (!profile?.organization_id) {
+  const organizationId = profile?.user_organizations?.[0]?.organization_id;
+  const isAdmin = profile?.is_admin || false;
+
+  if (!organizationId && !isAdmin) {
     return null;
   }
 
-  // Fetch listings with company and portal data
-  const { data: listings, error } = await supabase
+  // Build query
+  let listingsQuery = supabase
     .from("listings")
     .select(
       `
@@ -48,8 +51,15 @@ export default async function ListingsPage() {
       )
     `,
     )
-    .eq("organization_id", profile.organization_id)
     .order("created_at", { ascending: false });
+
+  // Filter by organization if user has one
+  if (organizationId) {
+    listingsQuery = listingsQuery.eq("organization_id", organizationId);
+  }
+
+  // Fetch listings with company and portal data
+  const { data: listings, error } = await listingsQuery;
 
   if (error) {
     console.error("Error fetching listings:", error);

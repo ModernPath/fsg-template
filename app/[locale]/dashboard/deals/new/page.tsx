@@ -36,7 +36,7 @@ export default async function NewDealPage({
   // Get user's organization
   const { data: profile } = await supabase
     .from("profiles")
-    .select("organization_id, role")
+    .select("role, is_admin, user_organizations(organization_id)")
     .eq("id", user.id)
     .single();
 
