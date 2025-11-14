@@ -254,9 +254,18 @@ export function OrganizationOnboarding({
 
     setAiLoading(true);
     try {
+      // Get session token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error("No session found");
+      }
+
       const response = await fetch("/api/ai/generate-content", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session.access_token}`
+        },
         body: JSON.stringify({
           type: "organization_description",
           context: {
@@ -351,11 +360,10 @@ export function OrganizationOnboarding({
 
       console.log("✅ User linked to organization");
 
-      // Update profile with organization and mark onboarding complete
+      // Mark onboarding complete (no organization_id in profiles table)
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
-          organization_id: orgId,
           onboarding_completed: true,
         })
         .eq("id", userId);
