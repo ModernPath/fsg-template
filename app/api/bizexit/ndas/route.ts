@@ -49,22 +49,30 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get("status");
     const dealId = searchParams.get("deal_id");
 
-    // Build query
+    // Build query - NDAs link via company, not directly via organization
     let query = supabase
       .from("ndas")
       .select(
         `
         *,
+        companies!inner(
+          id,
+          name,
+          organization_id
+        ),
         deals(
           id,
-          companies(id, name)
+          name
         ),
-        signer:profiles!ndas_signer_id_fkey(full_name, email),
-        witness:profiles!ndas_witness_id_fkey(full_name, email)
+        buyer:profiles!ndas_buyer_id_fkey(full_name, email)
       `,
       )
-      .eq("organization_id", organizationId)
       .order("created_at", { ascending: false });
+
+    // Filter by organization via companies join
+    if (organizationId) {
+      query = query.eq("companies.organization_id", organizationId);
+    }
 
     // Apply filters
     if (status) {

@@ -34,13 +34,18 @@ export default async function ListingsPage() {
     return null;
   }
 
-  // Build query
+  // Build query - Listings link via company, not directly via organization
   let listingsQuery = supabase
     .from("listings")
     .select(
       `
       *,
-      companies(id, name, industry),
+      companies!inner(
+        id,
+        name,
+        industry,
+        organization_id
+      ),
       listing_portals(
         id,
         portal_name,
@@ -53,9 +58,9 @@ export default async function ListingsPage() {
     )
     .order("created_at", { ascending: false });
 
-  // Filter by organization if user has one
+  // Filter by organization if user has one (via companies join)
   if (organizationId) {
-    listingsQuery = listingsQuery.eq("organization_id", organizationId);
+    listingsQuery = listingsQuery.eq("companies.organization_id", organizationId);
   }
 
   // Fetch listings with company and portal data

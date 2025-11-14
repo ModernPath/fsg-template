@@ -47,22 +47,22 @@ export default async function NDAsPage() {
     );
   }
 
-  // Build query
+  // Build query - NDAs link via company, not directly via organization
   let ndasQuery = supabase
     .from("ndas")
     .select(
       `
       *,
+      companies!inner(
+        id,
+        name,
+        organization_id
+      ),
       deals(
         id,
-        companies(id, name)
+        name
       ),
-      signer:profiles!ndas_signer_id_fkey(
-        id,
-        full_name,
-        email
-      ),
-      witness:profiles!ndas_witness_id_fkey(
+      buyer:profiles!ndas_buyer_id_fkey(
         id,
         full_name,
         email
@@ -71,9 +71,9 @@ export default async function NDAsPage() {
     )
     .order("created_at", { ascending: false });
 
-  // Filter by organization if user has one
+  // Filter by organization if user has one (via companies join)
   if (organizationId) {
-    ndasQuery = ndasQuery.eq("organization_id", organizationId);
+    ndasQuery = ndasQuery.eq("companies.organization_id", organizationId);
   }
 
   // Fetch NDAs with related data
@@ -184,29 +184,21 @@ export default async function NDAsPage() {
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        {false && nda.deals?.companies ? (
-                          <img
-                            src=""
-                            alt={nda.deals.companies.name}
-                            className="w-10 h-10 rounded object-cover"
-                          />
-                        ) : (
-                          <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded" />
-                        )}
+                        <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded" />
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900 dark:text-white">
-                            {nda.deals?.companies?.name || "N/A"}
+                            {nda.companies?.name || "N/A"}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900 dark:text-white">
-                        {nda.signer?.full_name || nda.signer?.email || "N/A"}
+                        {nda.buyer?.full_name || nda.buyer?.email || "N/A"}
                       </div>
-                      {nda.signer?.email && (
+                      {nda.buyer?.email && (
                         <div className="text-sm text-gray-500 dark:text-gray-400">
-                          {nda.signer.email}
+                          {nda.buyer.email}
                         </div>
                       )}
                     </td>
