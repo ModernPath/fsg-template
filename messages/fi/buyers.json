@@ -1,0 +1,39 @@
+{
+  "title": "Ostajat",
+  "subtitle": "Hallinnoi ostajaprofiilit ja seuraa heidän toimintaansa",
+  "addBuyer": "Lisää ostaja",
+  "verified": "Vahvistettu",
+  "activeDeals": "Aktiiviset kaupat",
+  "ndasSigned": "Allekirjoitetut NDA:t",
+  "viewProfile": "Näytä profiili",
+  "contactBuyer": "Ota yhteyttä",
+  "empty": {
+    "title": "Ei vielä ostajia",
+    "description": "Aloita ostajien lisääminen seurataksesi heidän toimintaansa"
+  },
+  "error": {
+    "loading": "Virhe ostajien lataamisessa",
+    "notFound": "Ostajaa ei löytynyt"
+  },
+  "stats": {
+    "totalBuyers": "Ostajat yhteensä",
+    "activeBuyers": "Aktiiviset ostajat",
+    "verifiedBuyers": "Vahvistetut ostajat"
+  },
+  "filters": {
+    "all": "Kaikki",
+    "active": "Aktiiviset",
+    "verified": "Vahvistetut",
+    "withNDA": "NDA allekirjoitettu"
+  },
+  "buyer": {
+    "name": "Nimi",
+    "email": "Sähköposti",
+    "phone": "Puhelin",
+    "company": "Yritys",
+    "deals": "Kaupat",
+    "ndas": "NDA:t",
+    "status": "Tila"
+  }
+}
+

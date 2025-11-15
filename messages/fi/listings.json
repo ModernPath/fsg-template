@@ -1,0 +1,68 @@
+{
+  "title": "Listaukset",
+  "subtitle": "Hallinnoi listauksiasi ja portaalisyndikaatiota",
+  "createListing": "Luo listaus",
+  "published": "Julkaistu",
+  "draft": "Luonnos",
+  "viewDetails": "Näytä tiedot",
+  "editListing": "Muokkaa listausta",
+  "deleteListing": "Poista listaus",
+  "portalSyndication": "Portaalisyndikaatio",
+  "views": "katselukertaa",
+  "leads": "liidiä",
+  "status": {
+    "published": "Julkaistu",
+    "draft": "Luonnos",
+    "archived": "Arkistoitu",
+    "pending": "Odottaa"
+  },
+  "portal": {
+    "status": "Tila",
+    "active": "Aktiivinen",
+    "inactive": "Ei aktiivinen",
+    "pending": "Odottaa",
+    "failed": "Epäonnistui"
+  },
+  "empty": {
+    "title": "Ei vielä listauksia",
+    "description": "Luo ensimmäinen listauksesi aloittaaksesi syndikaation"
+  },
+  "error": {
+    "loading": "Virhe listausten lataamisessa",
+    "creating": "Listauksen luominen epäonnistui",
+    "updating": "Listauksen päivittäminen epäonnistui",
+    "deleting": "Listauksen poistaminen epäonnistui",
+    "notFound": "Listausta ei löytynyt"
+  },
+  "form": {
+    "title": "Otsikko",
+    "description": "Kuvaus",
+    "shortDescription": "Lyhyt kuvaus",
+    "price": "Hinta",
+    "priceDisplay": "Hinta näyttö",
+    "featured": "Korostettu",
+    "publish": "Julkaise",
+    "save": "Tallenna",
+    "cancel": "Peruuta"
+  },
+  "stats": {
+    "totalViews": "Katselukerrat yhteensä",
+    "totalLeads": "Liidit yhteensä",
+    "activeListings": "Aktiiviset listaukset",
+    "publishedListings": "Julkaistut listaukset"
+  },
+  "actions": {
+    "publish": "Julkaise",
+    "unpublish": "Poista julkaisu",
+    "archive": "Arkistoi",
+    "duplicate": "Kopioi",
+    "delete": "Poista"
+  },
+  "confirmDelete": {
+    "title": "Vahvista poisto",
+    "description": "Haluatko varmasti poistaa tämän listauksen? Tätä toimintoa ei voi perua.",
+    "confirm": "Poista listaus",
+    "cancel": "Peruuta"
+  }
+}
+

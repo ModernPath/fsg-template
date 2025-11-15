@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { getTranslations } from "next-intl/server";
 
 interface ListingsPageProps {
   params: Promise<{
@@ -17,6 +18,7 @@ interface ListingsPageProps {
 
 export default async function ListingsPage({ params }: ListingsPageProps) {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "listings" });
   const supabase = await createClient();
 
   // Get user context
@@ -75,7 +77,7 @@ export default async function ListingsPage({ params }: ListingsPageProps) {
 
   if (error) {
     console.error("Error fetching listings:", error);
-    return <div>Error loading listings</div>;
+    return <div>{t("error.loading")}</div>;
   }
 
   return (
@@ -84,16 +86,16 @@ export default async function ListingsPage({ params }: ListingsPageProps) {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Listings
+            {t("title")}
           </h1>
           <p className="mt-1 text-gray-600 dark:text-gray-400">
-            Manage your listings and portal syndication
+            {t("subtitle")}
           </p>
         </div>
         <Link href={`/${locale}/dashboard/listings/new`}>
           <Button>
             <Plus className="mr-2 h-4 w-4" />
-            Create Listing
+            {t("createListing")}
           </Button>
         </Link>
       </div>
@@ -130,7 +132,7 @@ export default async function ListingsPage({ params }: ListingsPageProps) {
                           listing.published ? "default" : "secondary"
                         }
                       >
-                        {listing.published ? "Published" : "Draft"}
+                        {listing.published ? t("published") : t("draft")}
                       </Badge>
                       {listing.price_display && (
                         <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -141,7 +143,7 @@ export default async function ListingsPage({ params }: ListingsPageProps) {
                   </div>
                 </div>
                 <Link href={`/${locale}/dashboard/listings/${listing.id}`}>
-                  <Button variant="outline">View Details</Button>
+                  <Button variant="outline">{t("viewDetails")}</Button>
                 </Link>
               </div>
 
@@ -150,7 +152,7 @@ export default async function ListingsPage({ params }: ListingsPageProps) {
                 listing.listing_portals.length > 0 && (
                   <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                     <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                      Portal Syndication
+                      {t("portalSyndication")}
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {listing.listing_portals.map((portal: any) => (
@@ -176,10 +178,10 @@ export default async function ListingsPage({ params }: ListingsPageProps) {
                             </div>
                             <div className="flex items-center gap-4 mt-1 text-sm text-gray-600 dark:text-gray-400">
                               <span>
-                                {portal.views_count || 0} views
+                                {portal.views_count || 0} {t("views")}
                               </span>
                               <span>
-                                {portal.leads_count || 0} leads
+                                {portal.leads_count || 0} {t("leads")}
                               </span>
                             </div>
                           </div>
@@ -196,15 +198,15 @@ export default async function ListingsPage({ params }: ListingsPageProps) {
         ) : (
           <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-              No listings yet
+              {t("empty.title")}
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Create your first listing to start syndication
+              {t("empty.description")}
             </p>
             <Link href={`/${locale}/dashboard/listings/new`}>
               <Button>
                 <Plus className="mr-2 h-4 w-4" />
-                Create Listing
+                {t("createListing")}
               </Button>
             </Link>
           </div>

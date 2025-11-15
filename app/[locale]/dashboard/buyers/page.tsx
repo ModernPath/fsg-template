@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Mail, Phone, FileSignature } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { getTranslations } from "next-intl/server";
 
 interface BuyersPageProps {
   params: Promise<{
@@ -17,6 +18,7 @@ interface BuyersPageProps {
 
 export default async function BuyersPage({ params }: BuyersPageProps) {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "buyers" });
   const supabase = await createClient();
 
   // Get user context
@@ -65,7 +67,7 @@ export default async function BuyersPage({ params }: BuyersPageProps) {
 
   if (error) {
     console.error("Error fetching buyers:", error);
-    return <div>Error loading buyers</div>;
+    return <div>{t("error.loading")}</div>;
   }
 
   return (
@@ -74,16 +76,16 @@ export default async function BuyersPage({ params }: BuyersPageProps) {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Buyers
+            {t("title")}
           </h1>
           <p className="mt-1 text-gray-600 dark:text-gray-400">
-            Manage buyer profiles and track their activity
+            {t("subtitle")}
           </p>
         </div>
         <Link href={`/${locale}/dashboard/buyers/new`}>
           <Button>
             <Plus className="mr-2 h-4 w-4" />
-            Add Buyer
+            {t("addBuyer")}
           </Button>
         </Link>
       </div>
@@ -120,7 +122,7 @@ export default async function BuyersPage({ params }: BuyersPageProps) {
                     </div>
                     {buyer.email_verified && (
                       <Badge variant="default" className="bg-green-100 text-green-800">
-                        Verified
+                        {t("verified")}
                       </Badge>
                     )}
                   </div>
@@ -149,7 +151,7 @@ export default async function BuyersPage({ params }: BuyersPageProps) {
                       {activeDeals}
                     </div>
                     <div className="text-xs text-gray-600 dark:text-gray-400">
-                      Active Deals
+                      {t("activeDeals")}
                     </div>
                   </div>
                   <div>
@@ -158,7 +160,7 @@ export default async function BuyersPage({ params }: BuyersPageProps) {
                       {signedNDAs}
                     </div>
                     <div className="text-xs text-gray-600 dark:text-gray-400">
-                      NDAs Signed
+                      {t("ndasSigned")}
                     </div>
                   </div>
                 </div>
@@ -170,7 +172,7 @@ export default async function BuyersPage({ params }: BuyersPageProps) {
                     className="flex-1"
                   >
                     <Button variant="outline" className="w-full">
-                      View Profile
+                      {t("viewProfile")}
                     </Button>
                   </Link>
                   <Button
@@ -189,15 +191,15 @@ export default async function BuyersPage({ params }: BuyersPageProps) {
         ) : (
           <div className="col-span-full text-center py-12 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-              No buyers yet
+              {t("empty.title")}
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Start adding buyers to track their activity
+              {t("empty.description")}
             </p>
             <Link href={`/${locale}/dashboard/buyers/new`}>
               <Button>
                 <Plus className="mr-2 h-4 w-4" />
-                Add Buyer
+                {t("addBuyer")}
               </Button>
             </Link>
           </div>
