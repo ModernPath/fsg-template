@@ -269,9 +269,28 @@ export const companyEnrichmentJob = inngest.createFunction(
       }, genAI);
     });
 
+    console.log('✅ [BATCH 1/2] Base modules completed!');
+    
     // ==========================================================================
-    // STEP 19-26: M&A EXTENSION MODULES (Modules 10-17)
+    // ⏳ RATE LIMIT DELAY: 60 seconds between batches
     // ==========================================================================
+    // Gemini API Free Tier: 10 requests per minute
+    // Batch 1 (Modules 1-9): ~9 requests
+    // Batch 2 (Modules 10-17): ~8 requests
+    // Total: ~17 requests → Split into 2 batches with 60s delay
+    
+    console.log('⏳ [RATE LIMIT] Waiting 60 seconds to avoid rate limit...');
+    console.log('💡 [TIP] Upgrade to Gemini API paid tier for instant processing!');
+    console.log('   Free tier: 10 req/min | Paid tier: 1000 req/min (~$3/month)');
+    
+    await step.sleep('rate-limit-delay', 60000); // 60 seconds
+    
+    console.log('✅ [RATE LIMIT] Delay complete, continuing with M&A modules...');
+
+    // ==========================================================================
+    // STEP 19-26: M&A EXTENSION MODULES (Modules 10-17) - BATCH 2
+    // ==========================================================================
+    console.log('⚡ [BATCH 2/2] Processing M&A enrichment modules...');
     
     // Module 10: M&A History
     const maHistory = await step.run('enrich-ma-history', async () => {
@@ -363,6 +382,8 @@ export const companyEnrichmentJob = inngest.createFunction(
         valuationData: valuationData,
       }, genAI);
     });
+
+    console.log('✅ [BATCH 2/2] M&A modules completed!');
 
     // ==========================================================================
     // STEP 20: Save enriched data
