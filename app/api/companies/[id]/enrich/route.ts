@@ -16,6 +16,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
+import { cookies } from 'next/headers';
 import { inngest } from '@/lib/inngest-client';
 
 export async function POST(
@@ -28,8 +29,9 @@ export async function POST(
     
     console.log(`\n🚀 [POST /api/companies/${companyId}/enrich] Starting...`);
 
-    // 1. Authenticate user
-    const supabase = await createClient();
+    // 1. Authenticate user (with cookies for session)
+    const cookieStore = await cookies();
+    const supabase = await createClient(cookieStore);
     const {
       data: { user },
       error: authError,
