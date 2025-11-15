@@ -40,7 +40,7 @@ export async function POST(
     });
     
     console.log('🔐 Step 3: Creating Supabase client...');
-    // Create Supabase client using request.cookies (same as middleware)
+    // Create Supabase client using request.cookies (EXACTLY like middleware!)
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -51,6 +51,13 @@ export async function POST(
           },
           set() {},
           remove() {},
+        },
+        auth: {
+          storageKey: "sb-session",
+          autoRefreshToken: true,
+          persistSession: true,
+          detectSessionInUrl: true,
+          flowType: "pkce",
         },
       },
     );
