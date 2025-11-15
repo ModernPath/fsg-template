@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Company Enrichment Trigger Page
  * 
@@ -6,98 +8,109 @@
  * Route: /[locale]/companies/[id]/enrich
  */
 
-import { getTranslations } from 'next-intl/server';
-import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
+import { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { createClient } from '@/utils/supabase/client';
 import EnrichmentClient from './enrichment-client';
 
-interface PageProps {
-  params: Promise<{
-    locale: string;
-    id: string;
-  }>;
-}
+export default function CompanyEnrichPage() {
+  const router = useRouter();
+  const params = useParams();
+  const locale = (params?.locale as string) || 'fi';
+  const id = params?.id as string;
+  
+  const supabase = createClient();
+  const [loading, setLoading] = useState(true);
+  const [companyName, setCompanyName] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
-export default async function CompanyEnrichPage({ params }: PageProps) {
-  const { id, locale } = await params;
-  const cookieStore = await cookies();
-  const supabase = await createClient(cookieStore);
+  useEffect(() => {
+    async function checkAccess() {
+      try {
+        console.log('🔐 Client-side auth check starting...');
+        
+        // Check authentication
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-  // Check authentication
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
+        console.log('🔐 Auth result:', {
+          hasUser: !!user,
+          userId: user?.id,
+          authError: authError?.message,
+        });
 
-  console.log('🔐 Enrich Page Auth Debug:', {
-    hasUser: !!user,
-    userId: user?.id,
-    authError: authError?.message,
-    path: `/fi/dashboard/companies/${id}/enrich`
-  });
+        if (!user || authError) {
+          console.error('❌ No user, redirecting to sign-in');
+          router.push(`/${locale}/auth/sign-in`);
+          return;
+        }
 
-  if (!user || authError) {
-    console.error('❌ No user or auth error, redirecting to sign-in');
-    redirect(`/${locale}/auth/sign-in`);
-    return null;
+        console.log('✅ User authenticated:', user.email);
+
+        // Get user's organization
+        const { data: userOrg } = await supabase
+          .from('user_organizations')
+          .select('organization_id')
+          .eq('user_id', user.id)
+          .eq('active', true)
+          .single();
+
+        // Verify company exists and user has access
+        const { data: company, error: companyError } = await supabase
+          .from('companies')
+          .select('id, name, organization_id')
+          .eq('id', id)
+          .single();
+
+        console.log('🏢 Company check:', {
+          companyId: id,
+          companyName: company?.name,
+          companyError: companyError?.message,
+          userOrg: userOrg?.organization_id,
+          companyOrg: company?.organization_id,
+        });
+
+        if (companyError || !company) {
+          console.error('❌ Company not found');
+          router.push(`/${locale}/dashboard/companies`);
+          return;
+        }
+
+        // Check access
+        if (userOrg && company.organization_id !== userOrg.organization_id) {
+          console.error('❌ Access denied');
+          router.push(`/${locale}/dashboard/companies`);
+          return;
+        }
+
+        console.log('✅ Access granted to company:', company.name);
+        setCompanyName(company.name);
+        setLoading(false);
+      } catch (err) {
+        console.error('❌ Error in access check:', err);
+        setError(err instanceof Error ? err.message : 'Unknown error');
+        setLoading(false);
+      }
+    }
+
+    checkAccess();
+  }, [id, locale, router, supabase]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600"></div>
+      </div>
+    );
   }
-
-  console.log('✅ User authenticated:', user.email);
-
-  // Get user's profile and organization
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select(`
-      id,
-      user_organizations(
-        organization_id,
-        role,
-        active
-      )
-    `)
-    .eq('id', user.id)
-    .single();
-
-  const userOrgs = profile?.user_organizations?.[0];
-
-  // Verify company exists and user has access
-  const { data: company, error } = await supabase
-    .from('companies')
-    .select('id, name, organization_id')
-    .eq('id', id)
-    .single();
-
-  console.log('🏢 Company Access Debug:', {
-    companyId: id,
-    companyName: company?.name,
-    companyError: error?.message,
-    userOrg: userOrgs?.organization_id,
-    companyOrg: company?.organization_id,
-    hasAccess: userOrgs?.organization_id === company?.organization_id
-  });
 
   if (error) {
-    console.error('❌ Company fetch error:', error);
-    redirect(`/${locale}/dashboard/companies`);
-    return null;
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-red-600">Error: {error}</div>
+      </div>
+    );
   }
 
-  if (!company) {
-    console.error('❌ Company not found');
-    redirect(`/${locale}/dashboard/companies`);
-    return null;
-  }
-
-  // Check if user has access to this company's organization
-  if (userOrgs && company.organization_id !== userOrgs.organization_id) {
-    console.error('❌ User does not have access to this company');
-    redirect(`/${locale}/dashboard/companies`);
-    return null;
-  }
-
-  console.log('✅ Access granted to company:', company.name);
-
-  return <EnrichmentClient companyId={id} companyName={company.name} locale={locale} />;
+  return <EnrichmentClient companyId={id} companyName={companyName} locale={locale} />;
 }
 
