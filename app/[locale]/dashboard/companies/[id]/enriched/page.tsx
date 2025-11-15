@@ -17,14 +17,15 @@ import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     locale: string;
     id: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const t = await getTranslations({ locale: params.locale, namespace: 'companies.enriched' });
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'enriched' });
   
   return {
     title: t('pageTitle'),
@@ -33,9 +34,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function CompanyEnrichedDataPage({ params }: PageProps) {
-  const { id, locale } = params;
+  const { id, locale } = await params;
   const supabase = await createClient();
-  const t = await getTranslations({ locale, namespace: 'companies.enriched' });
+  const t = await getTranslations({ locale, namespace: 'enriched' });
 
   // Verify authentication
   const {
@@ -72,7 +73,7 @@ export default async function CompanyEnrichedDataPage({ params }: PageProps) {
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-4">
-            <Link href={`/${locale}/companies/${id}`}>
+            <Link href={`/${locale}/dashboard/companies/${id}`}>
               <Button variant="ghost" size="icon">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
@@ -84,7 +85,7 @@ export default async function CompanyEnrichedDataPage({ params }: PageProps) {
           </div>
         </div>
         <div className="flex gap-2">
-          <Link href={`/${locale}/companies/${id}/enrich`}>
+          <Link href={`/${locale}/dashboard/companies/${id}/enrich`}>
             <Button variant="outline">
               <RefreshCw className="mr-2 h-4 w-4" />
               {t('refreshData')}
@@ -110,7 +111,7 @@ export default async function CompanyEnrichedDataPage({ params }: PageProps) {
           <div className="mx-auto max-w-md space-y-4">
             <h3 className="text-2xl font-semibold">{t('noData')}</h3>
             <p className="text-muted-foreground">{t('noDataDescription')}</p>
-            <Link href={`/${locale}/companies/${id}/enrich`}>
+            <Link href={`/${locale}/dashboard/companies/${id}/enrich`}>
               <Button size="lg">
                 <RefreshCw className="mr-2 h-4 w-4" />
                 {t('startEnrichment')}
