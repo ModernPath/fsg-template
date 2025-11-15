@@ -118,8 +118,21 @@ console.log('📋 Params:', {
   id: await params.id // or params.id depending on context
 });
 
-// 4. Consider converting to client component if auth is complex
+// 4. CRITICAL: Verify cookieStore is valid!
+const cookieStore = await cookies();
+console.log('🍪 CookieStore check:', {
+  hasCookieStore: !!cookieStore,
+  hasGet: typeof cookieStore?.get,
+  hasSet: typeof cookieStore?.set,
+  hasDelete: typeof cookieStore?.delete,  // Next.js uses delete!
+  hasRemove: typeof cookieStore?.remove,
+});
+
+// 5. Consider converting to client component if auth is complex
 ```
+
+**⚠️ IMPORTANT:** Next.js `cookies()` uses `.delete()` not `.remove()`!
+Make sure your Supabase client creation accepts this.
 
 ---
 
@@ -244,13 +257,32 @@ When adding new authenticated pages/routes:
 2. Added cookies → Still failed (cache issue) ❌
 3. Converted to client component → Page loaded ✅
 4. API still failed → No cookies in API ❌
-5. Added cookies to API → Finally worked! ✅
+5. Added cookies to API → Still failed! ❌
+6. Added detailed logging → Found root cause! 🎯
+7. Fixed cookieStore validation → Finally worked! ✅
 
-**Lesson:** Check BOTH page AND API route patterns!
+**The REAL root cause:**
+- `isValidCookieStore()` checked for `.remove()` method
+- Next.js `cookies()` uses `.delete()` instead!
+- Validation failed → Client created without session support
+- Result: "Auth session missing!" error
 
-**Time wasted:** ~2 hours debugging
+**The fix:**
+```typescript
+// Accept EITHER remove() OR delete()
+const isValidCookieStore = (obj: any): boolean => {
+  return obj && 
+    typeof obj.get === 'function' && 
+    typeof obj.set === 'function' && 
+    (typeof obj.remove === 'function' || typeof obj.delete === 'function');
+}
+```
 
-**Time saved with this guide:** ~1 hour 50 minutes
+**Lesson:** Always validate that your cookieStore implementation matches Next.js's API!
+
+**Time wasted:** ~3 hours debugging
+
+**Time saved with this guide:** ~2 hours 50 minutes
 
 ---
 
