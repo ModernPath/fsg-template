@@ -1,4 +1,5 @@
 /**
+import { parseGeminiJSON } from '@/lib/utils/json-parser';
  * M&A History Module (Module 10)
  * 
  * Fetches M&A history, funding rounds, and ownership information
@@ -56,7 +57,7 @@ export async function enrichMAHistory(
 
     const result = await model.generateContent(prompt);
     const text = result.response.text();
-    const parsed = JSON.parse(text);
+    const parsed = parseGeminiJSON(text);
 
     console.log('✅ [Module 10] M&A History enriched');
     

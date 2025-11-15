@@ -1,4 +1,5 @@
 /**
+import { parseGeminiJSON } from '@/lib/utils/json-parser';
  * Customer Intelligence Module (Module 12)
  * 
  * Analyzes customer base, retention, and revenue patterns
@@ -30,6 +31,7 @@ export async function enrichCustomerIntelligence(
       model: 'gemini-2.0-flash-exp',
       generationConfig: {
         temperature: 0.3,
+          responseMimeType: 'application/json', // Force JSON output
         topP: 0.95,
         maxOutputTokens: 2048,
         responseMimeType: 'application/json',
@@ -47,7 +49,7 @@ export async function enrichCustomerIntelligence(
 
     const result = await model.generateContent(prompt);
     const text = result.response.text();
-    const parsed = JSON.parse(text);
+    const parsed = parseGeminiJSON(text);
 
     console.log('✅ [Module 12] Customer Intelligence enriched');
     

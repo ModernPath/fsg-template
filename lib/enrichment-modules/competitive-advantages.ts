@@ -1,4 +1,5 @@
 /**
+import { parseGeminiJSON } from '@/lib/utils/json-parser';
  * Competitive Advantages Module (Module 14)
  * 
  * Identifies competitive moats and advantages
@@ -28,6 +29,7 @@ export async function enrichCompetitiveAdvantages(
       model: 'gemini-2.0-flash-exp',
       generationConfig: {
         temperature: 0.3,
+          responseMimeType: 'application/json', // Force JSON output
         topP: 0.95,
         maxOutputTokens: 3072,
         responseMimeType: 'application/json',
@@ -45,7 +47,7 @@ export async function enrichCompetitiveAdvantages(
 
     const result = await model.generateContent(prompt);
     const text = result.response.text();
-    const parsed = JSON.parse(text);
+    const parsed = parseGeminiJSON(text);
 
     console.log('✅ [Module 14] Competitive Advantages enriched');
     

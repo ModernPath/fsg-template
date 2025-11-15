@@ -1,4 +1,5 @@
 /**
+import { parseGeminiJSON } from '@/lib/utils/json-parser';
  * Risk Assessment Module (Module 15)
  * 
  * Identifies business, financial, and operational risks
@@ -30,6 +31,7 @@ export async function enrichRiskAssessment(
       model: 'gemini-2.0-flash-exp',
       generationConfig: {
         temperature: 0.3,
+          responseMimeType: 'application/json', // Force JSON output
         topP: 0.95,
         maxOutputTokens: 4096,
         responseMimeType: 'application/json',
@@ -47,7 +49,7 @@ export async function enrichRiskAssessment(
 
     const result = await model.generateContent(prompt);
     const text = result.response.text();
-    const parsed = JSON.parse(text);
+    const parsed = parseGeminiJSON(text);
 
     console.log('✅ [Module 15] Risk Assessment enriched');
     

@@ -1,4 +1,5 @@
 /**
+import { parseGeminiJSON } from '@/lib/utils/json-parser';
  * Exit Attractiveness Module (Module 17)
  * 
  * Assesses the company's attractiveness for potential buyers
@@ -35,6 +36,7 @@ export async function enrichExitAttractiveness(
       model: 'gemini-2.0-flash-exp',
       generationConfig: {
         temperature: 0.3,
+          responseMimeType: 'application/json', // Force JSON output
         topP: 0.95,
         maxOutputTokens: 3072,
         responseMimeType: 'application/json',
@@ -52,7 +54,7 @@ export async function enrichExitAttractiveness(
 
     const result = await model.generateContent(prompt);
     const text = result.response.text();
-    const parsed = JSON.parse(text);
+    const parsed = parseGeminiJSON(text);
 
     console.log('✅ [Module 17] Exit Attractiveness enriched');
     

@@ -1,4 +1,5 @@
 /**
+import { parseGeminiJSON } from '@/lib/utils/json-parser';
  * Personnel Info Module (Module 7)
  * 
  * @module enrichment-modules/personnel-info
@@ -44,6 +45,7 @@ Return JSON:
       model: 'gemini-2.0-flash-exp',
       generationConfig: {
         temperature: 0.2,
+          responseMimeType: 'application/json', // Force JSON output
         maxOutputTokens: 1024,
         responseMimeType: 'application/json',
       },
@@ -51,7 +53,7 @@ Return JSON:
     });
 
     const result = await model.generateContent(prompt);
-    const parsed = JSON.parse(result.response.text());
+    const parsed = parseGeminiJSON(result.response.text());
 
     console.log('✅ [Module 7] Personnel info enriched');
     

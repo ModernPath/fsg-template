@@ -1,4 +1,5 @@
 /**
+import { parseGeminiJSON } from '@/lib/utils/json-parser';
  * Industry Analysis Module (Module 3)
  * 
  * Analyzes company's industry:
@@ -35,6 +36,7 @@ export async function enrichIndustryAnalysis(
       model: 'gemini-2.0-flash-exp',
       generationConfig: {
         temperature: 0.3,
+          responseMimeType: 'application/json', // Force JSON output
         topP: 0.95,
         maxOutputTokens: 4096,
         responseMimeType: 'application/json',
@@ -52,7 +54,7 @@ export async function enrichIndustryAnalysis(
 
     const result = await model.generateContent(prompt);
     const text = result.response.text();
-    const parsed = JSON.parse(text);
+    const parsed = parseGeminiJSON(text);
 
     console.log('✅ [Module 3] Industry analysis enriched');
     

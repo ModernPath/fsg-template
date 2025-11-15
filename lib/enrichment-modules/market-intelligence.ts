@@ -1,4 +1,5 @@
 /**
+import { parseGeminiJSON } from '@/lib/utils/json-parser';
  * Market Intelligence Module (Module 8)
  * 
  * @module enrichment-modules/market-intelligence
@@ -47,6 +48,7 @@ Return JSON:
       model: 'gemini-2.0-flash-exp',
       generationConfig: {
         temperature: 0.3,
+          responseMimeType: 'application/json', // Force JSON output
         maxOutputTokens: 2048,
         responseMimeType: 'application/json',
       },
@@ -54,7 +56,7 @@ Return JSON:
     });
 
     const result = await model.generateContent(prompt);
-    const parsed = JSON.parse(result.response.text());
+    const parsed = parseGeminiJSON(result.response.text());
 
     console.log('✅ [Module 8] Market intelligence enriched');
     

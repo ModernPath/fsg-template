@@ -1,4 +1,5 @@
 /**
+import { parseGeminiJSON } from '@/lib/utils/json-parser';
  * Competitive Analysis Module (Module 4)
  * 
  * @module enrichment-modules/competitive-analysis
@@ -59,6 +60,7 @@ RULES:
       model: 'gemini-2.0-flash-exp',
       generationConfig: {
         temperature: 0.3,
+          responseMimeType: 'application/json', // Force JSON output
         maxOutputTokens: 3072,
         responseMimeType: 'application/json',
       },
@@ -72,7 +74,7 @@ RULES:
     });
 
     const result = await model.generateContent(prompt);
-    const parsed = JSON.parse(result.response.text());
+    const parsed = parseGeminiJSON(result.response.text());
 
     console.log('✅ [Module 4] Competitive analysis enriched');
     

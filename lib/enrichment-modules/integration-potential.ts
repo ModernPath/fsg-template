@@ -1,4 +1,5 @@
 /**
+import { parseGeminiJSON } from '@/lib/utils/json-parser';
  * Integration Potential Module (Module 16)
  * 
  * Assesses post-acquisition integration potential
@@ -29,6 +30,7 @@ export async function enrichIntegrationPotential(
       model: 'gemini-2.0-flash-exp',
       generationConfig: {
         temperature: 0.3,
+          responseMimeType: 'application/json', // Force JSON output
         topP: 0.95,
         maxOutputTokens: 3072,
         responseMimeType: 'application/json',
@@ -46,7 +48,7 @@ export async function enrichIntegrationPotential(
 
     const result = await model.generateContent(prompt);
     const text = result.response.text();
-    const parsed = JSON.parse(text);
+    const parsed = parseGeminiJSON(text);
 
     console.log('✅ [Module 16] Integration Potential enriched');
     

@@ -1,4 +1,5 @@
 /**
+import { parseGeminiJSON } from '@/lib/utils/json-parser';
  * Growth Analysis Module (Module 5)
  * 
  * @module enrichment-modules/growth-analysis
@@ -40,6 +41,7 @@ Use Google Search to find growth opportunities and return JSON:
       model: 'gemini-2.0-flash-exp',
       generationConfig: {
         temperature: 0.4,
+          responseMimeType: 'application/json', // Force JSON output
         maxOutputTokens: 2048,
         responseMimeType: 'application/json',
       },
@@ -47,7 +49,7 @@ Use Google Search to find growth opportunities and return JSON:
     });
 
     const result = await model.generateContent(prompt);
-    const parsed = JSON.parse(result.response.text());
+    const parsed = parseGeminiJSON(result.response.text());
 
     console.log('✅ [Module 5] Growth analysis enriched');
     

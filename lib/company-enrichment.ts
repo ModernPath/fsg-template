@@ -19,6 +19,7 @@
  */
 
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
+import { parseGeminiJSON } from '@/lib/utils/json-parser';
 import type {
   CompanyBasicInfo,
   YearlyFinancialData,
@@ -156,6 +157,7 @@ export class CompanyEnrichment {
         model: this.model,
         generationConfig: {
           temperature: 0.3,
+          responseMimeType: 'application/json', // Force JSON output
           topP: 0.95,
           topK: 40,
           maxOutputTokens: 8192,
@@ -180,7 +182,7 @@ export class CompanyEnrichment {
       const response = result.response;
       const text = response.text();
 
-      const parsed = JSON.parse(text);
+      const parsed = parseGeminiJSON(text);
 
       console.log('✅ [Module 1] Basic info fetched');
 
@@ -233,6 +235,7 @@ export class CompanyEnrichment {
         model: this.model,
         generationConfig: {
           temperature: 0.1,  // Lower temperature for financial data
+          responseMimeType: 'application/json', // Force JSON output
           topP: 0.95,
           topK: 40,
           maxOutputTokens: 8192,
@@ -253,7 +256,7 @@ export class CompanyEnrichment {
       const response = result.response;
       const text = response.text();
 
-      const parsed = JSON.parse(text);
+      const parsed = parseGeminiJSON(text);
 
       console.log('✅ [Module 2] Financial data fetched');
 
