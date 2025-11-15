@@ -72,6 +72,9 @@ async function createGammaPresentation(
   // Build slides from teaser content
   const slides = buildTeaserSlides(teaserContent);
 
+  // Gamma API request structure
+  // For structured generation, we provide detailed slide content
+  // The API may prefer 'text' field with markdown or 'slides' array
   const requestBody: GammaPresentationRequest = {
     title: teaserContent.title,
     description: teaserContent.summary,
@@ -80,9 +83,17 @@ async function createGammaPresentation(
     brandColor: '#D4AF37', // Gold for business/finance theme
   };
 
+  // Alternative: If structured slides don't work, try text-based generation
+  // const requestBody = {
+  //   text: formatTeaserAsText(teaserContent),
+  //   card_type: 'presentation',
+  //   theme: 'professional'
+  // };
+
   try {
-    // Gamma API endpoint (may need adjustment based on actual API docs)
-    const response = await fetch('https://api.gamma.app/v1/generate', {
+    // Gamma API endpoint - using v1/cards for card/presentation generation
+    // Based on Gamma API documentation at developers.gamma.app
+    const response = await fetch('https://api.gamma.app/v1/cards', {
       method: 'POST',
       headers: {
         'X-API-KEY': apiKey, // Gamma uses X-API-KEY header, not Bearer
@@ -99,12 +110,19 @@ async function createGammaPresentation(
 
     const result = await response.json();
     
+    // Gamma API response structure:
+    // {
+    //   id: "card_abc123",
+    //   url: "https://gamma.app/docs/...",
+    //   edit_url: "https://gamma.app/edit/...",
+    //   status: "completed" | "processing" | "failed"
+    // }
     return {
-      id: result.id || result.presentation_id,
-      url: result.url || result.presentation_url,
+      id: result.id || result.card_id || result.presentation_id,
+      url: result.url || result.view_url || result.presentation_url,
       editUrl: result.edit_url || result.editUrl,
-      status: result.status || 'completed',
-      createdAt: result.created_at || new Date().toISOString(),
+      status: result.status || 'processing',
+      createdAt: result.created_at || result.createdAt || new Date().toISOString(),
     };
 
   } catch (error) {
@@ -224,7 +242,8 @@ async function checkGammaStatus(
   apiKey: string
 ): Promise<GammaPresentationResponse> {
   
-  const response = await fetch(`https://api.gamma.app/v1/presentations/${presentationId}`, {
+  // Using v1/cards endpoint for status checks
+  const response = await fetch(`https://api.gamma.app/v1/cards/${presentationId}`, {
     method: 'GET',
     headers: {
       'X-API-KEY': apiKey,
@@ -247,15 +266,16 @@ async function createGammaPresentationFromPrompt(
   apiKey: string
 ): Promise<GammaPresentationResponse> {
   
-  const response = await fetch('https://api.gamma.app/v1/generate', {
+  // Using v1/cards endpoint with text-based generation
+  const response = await fetch('https://api.gamma.app/v1/cards', {
     method: 'POST',
     headers: {
       'X-API-KEY': apiKey,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      prompt: prompt,
-      type: 'presentation',
+      text: prompt, // Gamma API uses 'text' field for prompt-based generation
+      card_type: 'presentation', // Specify we want a presentation
     }),
   });
 

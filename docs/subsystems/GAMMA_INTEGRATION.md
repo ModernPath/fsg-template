@@ -153,7 +153,7 @@ const presentation = await createGammaPresentationFromPrompt(
 ## Data Flow
 
 ```typescript
-// 1. Enrichment data collected
+// 1. Enrichment data collected (17 modules)
 const enrichedData = {
   basicInfo: { ... },
   financialData: { ... },
@@ -173,12 +173,16 @@ const presentation = await createGammaPresentation(
   GAMMA_API_KEY
 );
 
-// 4. Save to database
+// 4. Save to database (with all Gamma fields)
 await supabase.from('company_assets').insert({
+  company_id: companyId,
+  organization_id: organizationId,
   type: 'teaser',
   content: teaserContent,
+  gamma_presentation_id: presentation.id,
   gamma_presentation_url: presentation.url,
   gamma_edit_url: presentation.editUrl,
+  generation_status: presentation.status,
 });
 ```
 
@@ -190,14 +194,89 @@ Generated presentations are stored in `company_assets`:
 CREATE TABLE company_assets (
   id UUID PRIMARY KEY,
   company_id UUID REFERENCES companies(id),
+  organization_id UUID REFERENCES organizations(id),
+  name TEXT NOT NULL,
   type TEXT, -- 'teaser', 'im', 'pitch_deck'
   content JSONB, -- Teaser content from Gemini
-  gamma_presentation_url TEXT, -- View URL
-  gamma_presentation_id TEXT, -- Gamma ID
-  gamma_edit_url TEXT, -- Edit URL
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  
+  -- Gamma integration fields
+  gamma_presentation_id TEXT, -- Gamma card/presentation ID
+  gamma_presentation_url TEXT, -- View/share URL
+  gamma_edit_url TEXT, -- Edit URL for modifications
+  gamma_embed_url TEXT, -- Embed URL (if needed)
+  generation_status TEXT DEFAULT 'manual', -- 'processing', 'completed', 'failed'
+  
+  -- Storage and metadata
+  storage_path TEXT, -- If exported to PDF/PPTX
+  mime_type TEXT,
+  file_size BIGINT,
+  
+  -- Audit fields
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Index for faster lookups
+CREATE INDEX idx_company_assets_company_id ON company_assets(company_id);
+CREATE INDEX idx_company_assets_gamma_id ON company_assets(gamma_presentation_id);
 ```
+
+## API Endpoints Reference
+
+### POST /v1/cards
+Generate a new presentation/card
+
+**Request (Structured):**
+```json
+{
+  "title": "Presentation Title",
+  "description": "Executive summary",
+  "slides": [
+    {
+      "title": "Slide 1",
+      "content": "Content here"
+    }
+  ],
+  "theme": "professional",
+  "brandColor": "#D4AF37"
+}
+```
+
+**Request (Text-based):**
+```json
+{
+  "text": "Full presentation text with markdown",
+  "card_type": "presentation",
+  "theme": "professional"
+}
+```
+
+**Response:**
+```json
+{
+  "id": "card_abc123",
+  "url": "https://gamma.app/docs/...",
+  "edit_url": "https://gamma.app/edit/...",
+  "status": "completed"
+}
+```
+
+### GET /v1/cards/{id}
+Check presentation status
+
+**Response:**
+```json
+{
+  "id": "card_abc123",
+  "url": "https://gamma.app/docs/...",
+  "edit_url": "https://gamma.app/edit/...",
+  "status": "processing" | "completed" | "failed"
+}
+```
+
+**Headers:**
+- `X-API-KEY`: Your Gamma API key (format: `sk-gamma-xxxxx`)
+- `Content-Type`: `application/json`
 
 ## Troubleshooting
 
