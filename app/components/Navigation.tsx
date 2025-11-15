@@ -54,7 +54,9 @@ function AdminSidebar({ links, pathname }: { links: Array<{ href: string; label:
     <div className="hidden sm:flex fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-gray-900 border-r border-gray-800 overflow-y-auto">
       <div className="w-full py-6">
         <div className="px-4 mb-6">
-          <h2 className="text-lg font-semibold text-white">Admin Dashboard</h2>
+          <h2 className="text-lg font-semibold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+            BizExit Admin
+          </h2>
         </div>
         <nav className="space-y-1 px-2">
           {links.map(({ href, label, icon: Icon, children }) => {
@@ -247,10 +249,12 @@ export default function Navigation() {
 
   // Define public links without locale prefix (Link component will add it)
   const publicLinks = [
-    { href: '/', label: t('home') },
-    { href: '/blog', label: t('blog') },
-    { href: '/about', label: t('about') },
-    { href: '/book/initial-consultation', label: t('book') },
+    { href: '/', label: 'Home' },
+    { href: '/sell', label: 'Sell' },
+    { href: '/buy', label: 'Buy' },
+    { href: '/services', label: 'Services' },
+    { href: '/about', label: 'About' },
+    { href: '/contact', label: 'Contact' },
   ];
 
   // Use admin links if in admin section and user is admin and auth is complete
@@ -320,16 +324,16 @@ export default function Navigation() {
             <div className="flex items-center">
               <Link
                 href={(!loading && isAdmin && isAdminPath) ? `/${locale}/admin` : `/${locale}`}
-                className="flex items-center py-2"
+                className="flex items-center py-2 group"
               >
-                <Image
-                  src="/images/lastbot-logo-320x90.png"
-                  alt="LastBot"
-                  width={128}
-                  height={36}
-                  className="h-9 w-auto"
-                  priority
-                />
+                <div className="flex items-center space-x-2">
+                  <div className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-blue-500 bg-clip-text text-transparent group-hover:from-blue-300 group-hover:via-purple-400 group-hover:to-blue-400 transition-all duration-300">
+                    BizExit
+                  </div>
+                  <div className="hidden sm:flex items-center px-2 py-1 bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-full border border-purple-500/30">
+                    <span className="text-xs font-semibold text-purple-300">AI-Powered</span>
+                  </div>
+                </div>
               </Link>
             </div>
 
