@@ -377,32 +377,84 @@ async function createTestDeals(companies: any[], users: Record<string, any>) {
 async function createTestNDAs(companies: any[], users: Record<string, any>) {
   console.log('\n📄 Creating test NDAs...');
 
+  const { generateNDATemplate } = await import('../lib/nda-template');
+
   const ndas = [
     {
       id: '30000000-0000-0000-0000-000000000001',
       company_id: companies[0].id,
       buyer_id: users.buyer?.id,
+      recipient_name: users.buyer?.full_name || 'Kalle Ostaja',
+      recipient_email: users.buyer?.email || 'buyer@bizexit.test',
+      recipient_company: 'Buyer Corporation Oy',
+      recipient_address: 'Ostajantie 10, 00100 Helsinki, Finland',
+      purpose: 'M&A Due Diligence and Business Evaluation for potential acquisition of TechStart Oy',
       status: 'signed',
-      document_url: '/ndas/techstart-nda-2024.pdf',
+      template_version: 'v1.0',
       signed_at: new Date('2024-01-15').toISOString(),
-      expires_at: new Date('2027-01-15').toISOString()
+      signed_by: users.buyer?.id,
+      expires_at: new Date('2027-01-15').toISOString(),
+      created_by: users.seller?.id,
+      content: generateNDATemplate({
+        company_name: companies[0].legal_name || companies[0].name,
+        company_business_id: companies[0].business_id,
+        company_address: `${companies[0].city}, Finland`,
+        recipient_name: 'Kalle Ostaja',
+        recipient_email: 'buyer@bizexit.test',
+        recipient_company: 'Buyer Corporation Oy',
+        recipient_address: 'Ostajantie 10, 00100 Helsinki, Finland',
+        purpose: 'M&A Due Diligence and Business Evaluation for potential acquisition',
+        term_years: 3,
+        effective_date: '2024-01-15'
+      })
     },
     {
       id: '30000000-0000-0000-0000-000000000002',
       company_id: companies[1].id,
       buyer_id: users.buyer?.id,
+      recipient_name: users.buyer?.full_name || 'Kalle Ostaja',
+      recipient_email: users.buyer?.email || 'buyer@bizexit.test',
+      purpose: 'Initial discussion and evaluation of Nordic Retail Solutions',
       status: 'pending',
-      document_url: '/ndas/nordic-retail-nda-2024.pdf',
-      expires_at: new Date('2027-06-01').toISOString()
+      template_version: 'v1.0',
+      expires_at: new Date('2027-06-01').toISOString(),
+      created_by: users.seller?.id,
+      content: generateNDATemplate({
+        company_name: companies[1].legal_name || companies[1].name,
+        company_business_id: companies[1].business_id,
+        company_address: `${companies[1].city}, Finland`,
+        recipient_name: 'Kalle Ostaja',
+        recipient_email: 'buyer@bizexit.test',
+        purpose: 'Initial discussion and evaluation',
+        term_years: 3,
+        effective_date: new Date().toISOString()
+      })
     },
     {
       id: '30000000-0000-0000-0000-000000000003',
       company_id: companies[2].id,
       buyer_id: users.buyer?.id,
+      recipient_name: users.buyer?.full_name || 'Kalle Ostaja',
+      recipient_email: users.buyer?.email || 'buyer@bizexit.test',
+      recipient_company: 'Industrial Holdings AB',
+      purpose: 'Strategic acquisition evaluation of CleanTech Industries',
       status: 'signed',
-      document_url: '/ndas/cleantech-nda-2024.pdf',
+      template_version: 'v1.0',
       signed_at: new Date('2024-03-20').toISOString(),
-      expires_at: new Date('2027-03-20').toISOString()
+      signed_by: users.buyer?.id,
+      expires_at: new Date('2027-03-20').toISOString(),
+      created_by: users.seller?.id,
+      content: generateNDATemplate({
+        company_name: companies[2].legal_name || companies[2].name,
+        company_business_id: companies[2].business_id,
+        company_address: `${companies[2].city}, Finland`,
+        recipient_name: 'Kalle Ostaja',
+        recipient_email: 'buyer@bizexit.test',
+        recipient_company: 'Industrial Holdings AB',
+        purpose: 'Strategic acquisition evaluation',
+        term_years: 3,
+        effective_date: '2024-03-20'
+      })
     }
   ];
 

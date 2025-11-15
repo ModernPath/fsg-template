@@ -9,6 +9,7 @@
     "kill-dev": "pkill -9 -f 'npm run dev|next dev|next-server|inngest-cli dev|concurrently.*next dev|postcss' || echo '✓ Kaikki dev prosessit lopetettu'",
     "seed:test-users": "node supabase/seed-users.js",
     "seed:test-data": "NODE_ENV=development tsx scripts/seed-test-data.ts",
+    "reset:test-data": "NODE_ENV=development tsx scripts/reset-test-data.ts",
     "generate-namespaces": "node ./scripts/generate-namespace-manifest.mjs",
     "build": "npm run generate-namespaces && NODE_ENV=production next build",
     "prestart": "NODE_ENV=production next build",
