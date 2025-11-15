@@ -13,7 +13,7 @@ import { MaterialPreviewEdit } from "@/components/materials/MaterialPreviewEdit"
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft, Loader2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function MaterialPreviewPage() {
   const params = useParams();

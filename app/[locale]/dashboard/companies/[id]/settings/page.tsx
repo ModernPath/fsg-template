@@ -19,7 +19,7 @@ import { GammaConfigurationPanel } from "@/components/materials/GammaConfigurati
 import { EnrichmentConfigurationPanel } from "@/components/materials/EnrichmentConfigurationPanel";
 import Link from "next/link";
 import { ArrowLeft, Loader2, Settings, Palette, Database } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function CompanySettingsPage() {
   const params = useParams();

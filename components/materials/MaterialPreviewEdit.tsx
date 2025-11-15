@@ -27,7 +27,7 @@ import {
   Copy,
   Check,
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import Link from "next/link";
 
 interface MaterialAsset {

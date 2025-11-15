@@ -22,7 +22,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Upload, CheckCircle2, Clock, AlertCircle, FileText, Loader2, Sparkles, Download, Settings } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { MaterialTemplateSelector } from "./MaterialTemplateSelector";
 import {
   Dialog,

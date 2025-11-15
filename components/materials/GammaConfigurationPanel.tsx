@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Palette, Save, RotateCcw } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 interface GammaConfig {
   theme: "professional" | "modern" | "minimal" | "creative" | "corporate";
