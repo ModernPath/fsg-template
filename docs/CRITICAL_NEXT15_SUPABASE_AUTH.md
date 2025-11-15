@@ -217,6 +217,13 @@ export async function POST(
         set() {},
         remove() {},
       },
+      auth: {
+        storageKey: "sb-session",
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: true,
+        flowType: "pkce",
+      },
     },
   );
 
@@ -326,8 +333,14 @@ const supabase = createServerClient(url, key, {
     get: (name) => request.cookies.get(name)?.value,
     set: () => {},
     remove: () => {},
+  },
+  auth: {
+    storageKey: "sb-session",
+    flowType: "pkce",
   }
 });
+const { data: { session } } = await supabase.auth.getSession();
+const user = session?.user;
 
 PARAMS (ALL CONTEXTS):
 { params }: { params: Promise<{ id: string }> }
