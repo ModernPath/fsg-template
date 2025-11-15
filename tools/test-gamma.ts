@@ -8,8 +8,11 @@
  */
 
 import * as dotenv from 'dotenv';
-import { createGammaPresentation, createGammaPresentationFromPrompt } from '../lib/gamma-generator';
+import * as gammaModule from '../lib/gamma-generator';
 import type { TeaserContent } from '../lib/teaser-generator';
+
+const gamma = gammaModule as any;
+const { createGammaPresentation, createGammaPresentationFromPrompt } = gamma.default || gamma;
 
 // Load environment variables
 dotenv.config({ path: '.env.local' });

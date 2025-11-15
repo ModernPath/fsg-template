@@ -22,6 +22,7 @@ export const availableNamespaces: string[] = [
   "companies",
   "dashboard",
   "deals",
+  "enrichment",
   "materials",
   "ndas",
   "payments",

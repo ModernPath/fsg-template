@@ -7,29 +7,7 @@
  * Note: Requires Pro or Ultra subscription
  */
 
-export interface TeaserContent {
-  title: string;
-  tagline: string;
-  summary: string;
-  investmentHighlights: string[];
-  businessOverview: {
-    description: string;
-    industry: string;
-    products: string[];
-    marketPosition: string;
-  };
-  financialSnapshot: {
-    revenue: string;
-    profitMargin: string;
-    growthRate: string;
-    ebitda: string;
-  };
-  competitiveAdvantages: string[];
-  growthOpportunities: string[];
-  idealBuyer: string[];
-  transactionRationale: string;
-  nextSteps: string;
-}
+import type { TeaserContent } from './teaser-generator';
 
 export interface GammaSlide {
   type: 'title' | 'content' | 'two-column' | 'image' | 'quote';
@@ -60,7 +38,7 @@ export interface GammaPresentationResponse {
 /**
  * Create a Gamma presentation from teaser content
  */
-async function createGammaPresentation(
+export async function createGammaPresentation(
   teaserContent: TeaserContent,
   apiKey: string
 ): Promise<GammaPresentationResponse> {
@@ -219,7 +197,7 @@ function buildTeaserSlides(teaser: TeaserContent): GammaSlide[] {
 /**
  * Check Gamma presentation status
  */
-async function checkGammaStatus(
+export async function checkGammaStatus(
   presentationId: string,
   apiKey: string
 ): Promise<GammaPresentationResponse> {
@@ -242,7 +220,7 @@ async function checkGammaStatus(
  * Alternative: Generate presentation using Gamma AI prompt
  * (if the structured API above doesn't work)
  */
-async function createGammaPresentationFromPrompt(
+export async function createGammaPresentationFromPrompt(
   prompt: string,
   apiKey: string
 ): Promise<GammaPresentationResponse> {
@@ -267,5 +245,3 @@ async function createGammaPresentationFromPrompt(
   return await response.json();
 }
 
-// Export functions
-export { createGammaPresentation, createGammaPresentationFromPrompt, checkGammaStatus };
