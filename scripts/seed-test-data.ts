@@ -78,34 +78,43 @@ async function createTestUsers() {
 
   for (const [key, userData] of Object.entries(TEST_USERS)) {
     try {
-      // Try to create user
-      const { data: authData, error: signUpError } = await supabase.auth.admin.createUser({
-        email: userData.email,
-        password: userData.password,
-        email_confirm: true,
-        user_metadata: {
-          full_name: userData.full_name,
-        }
-      });
+      // First check if user already exists
+      const { data: existingUsers } = await supabase.auth.admin.listUsers();
+      const existingUser = existingUsers?.users?.find(u => u.email === userData.email);
 
-      if (signUpError && !signUpError.message.includes('already registered')) {
-        console.error(`  ❌ Error creating ${key}:`, signUpError.message);
-        continue;
-      }
+      let userId: string | undefined;
 
-      const userId = authData?.user?.id;
+      if (existingUser) {
+        console.log(`  ℹ️  ${key} already exists (${userData.email})`);
+        userId = existingUser.id;
+        createdUsers[key] = existingUser;
+      } else {
+        // Try to create user
+        const { data: authData, error: signUpError } = await supabase.auth.admin.createUser({
+          email: userData.email,
+          password: userData.password,
+          email_confirm: true,
+          user_metadata: {
+            full_name: userData.full_name,
+          }
+        });
 
-      if (!userId) {
-        // User might already exist, try to get by email
-        const { data: existingUser } = await supabase.auth.admin.listUsers();
-        const user = existingUser.users.find(u => u.email === userData.email);
-        if (user) {
-          createdUsers[key] = user;
-          console.log(`  ✅ ${key} (${userData.email}) - exists`);
+        if (signUpError) {
+          console.error(`  ❌ Error creating ${key}:`, signUpError.message);
+          console.error(`     Details:`, JSON.stringify(signUpError, null, 2));
           continue;
         }
-      } else {
-        createdUsers[key] = authData.user;
+
+        if (authData?.user) {
+          userId = authData.user.id;
+          createdUsers[key] = authData.user;
+          console.log(`  ✅ Created ${key} (${userData.email})`);
+        }
+      }
+
+      if (!userId) {
+        console.error(`  ❌ No user ID for ${key}`);
+        continue;
       }
 
       // Update or create profile
@@ -176,9 +185,9 @@ async function createTestOrganizations(users: Record<string, any>) {
   console.log('\n👥 Linking users to organizations...');
 
   const userOrgLinks = [
-    { user_id: users.broker?.id, organization_id: organizations[0].id, role: 'admin' },
-    { user_id: users.seller?.id, organization_id: organizations[1].id, role: 'admin' },
-    { user_id: users.partner?.id, organization_id: organizations[0].id, role: 'member' },
+    { user_id: users.broker?.id, organization_id: organizations[0].id, role: 'broker' },
+    { user_id: users.seller?.id, organization_id: organizations[1].id, role: 'seller' },
+    { user_id: users.partner?.id, organization_id: organizations[0].id, role: 'viewer' },
   ];
 
   for (const link of userOrgLinks) {
