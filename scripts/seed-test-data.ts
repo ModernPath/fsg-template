@@ -37,6 +37,7 @@ export const TEST_USERS = {
     email: 'admin@bizexit.test',
     password: 'TestAdmin123!',
     full_name: 'Admin User',
+    username: 'admin',
     role: 'admin',
     is_admin: true
   },
@@ -44,24 +45,28 @@ export const TEST_USERS = {
     email: 'broker@bizexit.test',
     password: 'TestBroker123!',
     full_name: 'Matti Meikäläinen',
+    username: 'matti',
     role: 'broker'
   },
   seller: {
     email: 'seller@bizexit.test',
     password: 'TestSeller123!',
     full_name: 'Liisa Myyjä',
+    username: 'liisa',
     role: 'seller'
   },
   buyer: {
     email: 'buyer@bizexit.test',
     password: 'TestBuyer123!',
     full_name: 'Kalle Ostaja',
+    username: 'kalle',
     role: 'buyer'
   },
   partner: {
     email: 'partner@bizexit.test',
     password: 'TestPartner123!',
     full_name: 'Maria Kumppani',
+    username: 'maria',
     role: 'partner'
   }
 };
@@ -109,6 +114,7 @@ async function createTestUsers() {
         .upsert({
           id: userId,
           email: userData.email,
+          username: userData.username,
           full_name: userData.full_name,
           role: userData.role,
           is_admin: userData.is_admin || false,
@@ -139,18 +145,18 @@ async function createTestOrganizations(users: Record<string, any>) {
     {
       id: '00000000-0000-0000-0000-000000000001',
       name: 'BizExit Demo Oy',
+      slug: 'bizexit-demo',
       business_id: '1234567-8',
       type: 'broker',
-      country: 'Finland',
-      city: 'Helsinki'
+      country: 'Finland'
     },
     {
       id: '00000000-0000-0000-0000-000000000002',
       name: 'Test Seller Company Oy',
+      slug: 'test-seller',
       business_id: '8765432-1',
       type: 'seller',
-      country: 'Finland',
-      city: 'Tampere'
+      country: 'Finland'
     }
   ];
 
@@ -182,8 +188,7 @@ async function createTestOrganizations(users: Record<string, any>) {
       .from('user_organizations')
       .upsert({
         ...link,
-        active: true,
-        joined_at: new Date().toISOString()
+        active: true
       }, { 
         onConflict: 'user_id,organization_id' 
       });
@@ -279,7 +284,7 @@ async function createTestFinancials(companies: any[]) {
       fiscal_year: 2023,
       revenue: 850000,
       ebitda: 210000,
-      net_profit: 145000,
+      net_income: 145000,
       total_assets: 450000,
       total_liabilities: 180000,
       currency: 'EUR'
@@ -289,7 +294,7 @@ async function createTestFinancials(companies: any[]) {
       fiscal_year: 2023,
       revenue: 2100000,
       ebitda: 480000,
-      net_profit: 320000,
+      net_income: 320000,
       total_assets: 1200000,
       total_liabilities: 420000,
       currency: 'EUR'
@@ -299,7 +304,7 @@ async function createTestFinancials(companies: any[]) {
       fiscal_year: 2023,
       revenue: 5200000,
       ebitda: 980000,
-      net_profit: 620000,
+      net_income: 620000,
       total_assets: 3800000,
       total_liabilities: 1200000,
       currency: 'EUR'
@@ -332,9 +337,8 @@ async function createTestDeals(companies: any[], users: Record<string, any>) {
       buyer_id: users.buyer?.id,
       name: 'TechStart Acquisition',
       current_stage: 'due_diligence',
-      estimated_value: 2500000,
-      currency: 'EUR',
-      probability: 75
+      deal_value: 2500000,
+      currency: 'EUR'
     },
     {
       id: '20000000-0000-0000-0000-000000000002',
@@ -343,19 +347,17 @@ async function createTestDeals(companies: any[], users: Record<string, any>) {
       buyer_id: users.buyer?.id,
       name: 'Nordic Retail Deal',
       current_stage: 'negotiation',
-      estimated_value: 4200000,
-      currency: 'EUR',
-      probability: 60
+      deal_value: 4200000,
+      currency: 'EUR'
     },
     {
       id: '20000000-0000-0000-0000-000000000003',
       company_id: companies[2].id,
       organization_id: companies[2].organization_id,
       name: 'CleanTech Investment',
-      current_stage: 'loi_submitted',
-      estimated_value: 8500000,
-      currency: 'EUR',
-      probability: 85
+      current_stage: 'signing',
+      deal_value: 8500000,
+      currency: 'EUR'
     }
   ];
 
@@ -479,19 +481,21 @@ async function createTestListings(companies: any[]) {
       id: '40000000-0000-0000-0000-000000000001',
       company_id: companies[0].id,
       title: 'Innovative SaaS Company for Sale',
-      description: 'Profitable SaaS business with recurring revenue and strong growth',
-      published: true,
-      price_display: '€2.5M',
-      teaser_available: true
+      short_description: 'Profitable SaaS business with recurring revenue and strong growth',
+      status: 'active',
+      asking_price: 2500000,
+      currency: 'EUR',
+      published_at: new Date().toISOString()
     },
     {
       id: '40000000-0000-0000-0000-000000000002',
       company_id: companies[1].id,
       title: 'Established E-commerce Platform',
-      description: 'Nordic market leader with 45 employees and proven track record',
-      published: true,
-      price_display: '€4.2M',
-      teaser_available: true
+      short_description: 'Nordic market leader with 45 employees and proven track record',
+      status: 'active',
+      asking_price: 4200000,
+      currency: 'EUR',
+      published_at: new Date().toISOString()
     }
   ];
 
@@ -516,20 +520,28 @@ async function createTestMaterials(companies: any[]) {
       id: '50000000-0000-0000-0000-000000000001',
       company_id: companies[0].id,
       name: 'TechStart Teaser',
-      type: 'teaser',
-      content: { title: 'Investment Opportunity: TechStart Oy' },
+      description: 'Investment opportunity teaser for TechStart Oy',
+      type: 'document',
+      mime_type: 'application/pdf',
+      file_size: 1024000,
+      storage_path: '/materials/techstart-teaser.pdf',
       gamma_presentation_url: 'https://gamma.app/docs/techstart-teaser',
       generated: true,
-      access_level: 'teaser'
+      access_level: 'teaser',
+      generation_status: 'ai_generated'
     },
     {
       id: '50000000-0000-0000-0000-000000000002',
       company_id: companies[1].id,
       name: 'Nordic Retail IM',
-      type: 'information_memorandum',
-      content: { title: 'Information Memorandum: Nordic Retail Solutions' },
+      description: 'Information Memorandum for Nordic Retail Solutions',
+      type: 'document',
+      mime_type: 'application/pdf',
+      file_size: 2048000,
+      storage_path: '/materials/nordic-retail-im.pdf',
       generated: true,
-      access_level: 'nda_signed'
+      access_level: 'nda_signed',
+      generation_status: 'ai_generated'
     }
   ];
 
