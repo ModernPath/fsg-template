@@ -41,7 +41,12 @@ interface GenerationJob {
   created_at: string;
 }
 
-export default async function MaterialsPage() {
+interface MaterialsPageProps {
+  params: Promise<{ locale: string }>;
+}
+
+export default async function MaterialsPage({ params }: MaterialsPageProps) {
+  const { locale } = await params;
   const supabase = await createClient();
 
   // Get user
@@ -51,7 +56,8 @@ export default async function MaterialsPage() {
   } = await supabase.auth.getUser();
 
   if (authError || !user) {
-    redirect("/login");
+    redirect(`/${locale}/auth/sign-in`);
+    return null;
   }
 
   // Get user's organization

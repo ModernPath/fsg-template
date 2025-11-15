@@ -77,7 +77,7 @@ export function DealsKanban({ deals, stages }: DealsKanbanProps) {
   };
 
   return (
-    <div className="flex gap-4 overflow-x-auto pb-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
       {stages.map((stage) => {
         const stageDeals = dealsByStage[stage.id] || [];
         const stageValue = stageValues[stage.id] || 0;
@@ -85,7 +85,7 @@ export function DealsKanban({ deals, stages }: DealsKanbanProps) {
         return (
           <div
             key={stage.id}
-            className="flex-shrink-0 w-80 bg-gray-50 dark:bg-gray-800 rounded-lg"
+            className="bg-gray-50 dark:bg-gray-800 rounded-lg flex flex-col"
           >
             {/* Stage Header */}
             <div className="p-4 border-b border-gray-200 dark:border-gray-700">
