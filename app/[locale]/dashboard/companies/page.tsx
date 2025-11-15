@@ -146,12 +146,12 @@ export default function CompaniesPage() {
                         Näytä tiedot
                       </Button>
                     </Link>
-                    <Link href={`/${locale}/companies/${company.id}/enrich`}>
+                    <Link href={`/${locale}/dashboard/companies/${company.id}/enrich`}>
                       <Button variant="default" size="sm" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
                         🚀 Rikasta yritys (AI)
                       </Button>
                     </Link>
-                    <Link href={`/${locale}/companies/${company.id}/enriched`}>
+                    <Link href={`/${locale}/dashboard/companies/${company.id}/enriched`}>
                       <Button variant="ghost" size="sm">
                         📊 Rikastettu data
                       </Button>

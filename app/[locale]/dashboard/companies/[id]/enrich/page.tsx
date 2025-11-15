@@ -31,14 +31,42 @@ export default async function CompanyEnrichPage({ params }: PageProps) {
     redirect(`/${locale}/auth/sign-in`);
   }
 
+  // Get user's organization first
+  const { data: userOrgs } = await supabase
+    .from('user_organizations')
+    .select('organization_id')
+    .eq('user_id', user.id)
+    .eq('active', true)
+    .maybeSingle();
+
   // Verify company exists and user has access
   const { data: company, error } = await supabase
     .from('companies')
-    .select('id, name')
+    .select('id, name, organization_id')
     .eq('id', id)
     .single();
 
-  if (error || !company) {
+  console.log('Enrichment debug:', {
+    companyId: id,
+    company,
+    error: error?.message,
+    userOrg: userOrgs?.organization_id,
+    companyOrg: company?.organization_id
+  });
+
+  if (error) {
+    console.error('Company fetch error:', error);
+    redirect(`/${locale}/dashboard/companies`);
+  }
+
+  if (!company) {
+    console.error('Company not found');
+    redirect(`/${locale}/dashboard/companies`);
+  }
+
+  // Check if user has access to this company's organization
+  if (userOrgs && company.organization_id !== userOrgs.organization_id) {
+    console.error('User does not have access to this company');
     redirect(`/${locale}/dashboard/companies`);
   }
 
