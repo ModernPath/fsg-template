@@ -226,7 +226,7 @@ export default async function MaterialsPage({ params }: MaterialsPageProps) {
         </div>
         {companies && companies.length > 0 && (
           <Button asChild>
-            <Link href="/dashboard/materials/new">
+            <Link href={`/${locale}/dashboard/materials/new`}>
               <Plus className="w-4 h-4 mr-2" />
               Generate New Materials
             </Link>
@@ -273,7 +273,7 @@ export default async function MaterialsPage({ params }: MaterialsPageProps) {
 
                   <div className="flex gap-2">
                     <Button size="sm" variant="outline" asChild>
-                      <Link href={`/dashboard/materials/job/${job.id}`}>
+                      <Link href={`/${locale}/dashboard/materials/job/${job.id}`}>
                         View Details
                       </Link>
                     </Button>
@@ -310,7 +310,7 @@ export default async function MaterialsPage({ params }: MaterialsPageProps) {
                   
                   <div className="flex gap-2">
                     <Button size="sm" asChild>
-                      <Link href={`/dashboard/materials/${material.id}/preview`}>
+                      <Link href={`/${locale}/dashboard/materials/${material.id}/preview`}>
                         Preview & Edit
                       </Link>
                     </Button>
@@ -352,14 +352,14 @@ export default async function MaterialsPage({ params }: MaterialsPageProps) {
             <CardContent>
               {companies && companies.length > 0 ? (
                 <Button asChild>
-                  <Link href="/dashboard/materials/new">
+                  <Link href={`/${locale}/dashboard/materials/new`}>
                     <Plus className="w-4 h-4 mr-2" />
                     Generate Materials
                   </Link>
                 </Button>
               ) : (
                 <Button asChild>
-                  <Link href="/dashboard/companies/new">
+                  <Link href={`/${locale}/dashboard/companies/new`}>
                     <Plus className="w-4 h-4 mr-2" />
                     Add Company
                   </Link>

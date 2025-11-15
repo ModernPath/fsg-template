@@ -1,100 +1,161 @@
+"use client";
+
 /**
- * New Materials Generation Page
+ * New Material Generation Page
  * 
- * Select company and start the material generation wizard
+ * Wizard for creating new business materials (teasers, IMs, pitch decks)
  */
 
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MaterialsSelectionClient } from "./materials-selection-client";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
+import { MaterialGenerationWizard } from "@/components/materials/MaterialGenerationWizard";
+import { ArrowLeft, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
-export default async function NewMaterialsPage() {
-  const supabase = await createClient();
+export default function NewMaterialPage() {
+  const router = useRouter();
+  const params = useParams();
+  const locale = (params?.locale as string) || 'fi';
+  const supabase = createClient();
+  
+  const [companies, setCompanies] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Get user
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
+  useEffect(() => {
+    async function loadCompanies() {
+      try {
+        // Get current user
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (!user) {
+          router.push(`/${locale}/auth/sign-in`);
+          return;
+        }
 
-  if (authError || !user) {
-    redirect("/login");
-  }
+        // Get user's organization
+        const { data: userOrg, error: orgError } = await supabase
+          .from("user_organizations")
+          .select("organization_id")
+          .eq("user_id", user.id)
+          .eq("active", true)
+          .single();
 
-  // Get user's organization
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select(`
-      id,
-      role,
-      user_organizations(
-        organization_id,
-        role
-      )
-    `)
-    .eq("id", user.id)
-    .single();
+        if (orgError || !userOrg) {
+          setError("Sinulla ei ole organisaatiota");
+          setLoading(false);
+          return;
+        }
 
-  const organizationId = profile?.user_organizations?.[0]?.organization_id;
+        // Get companies
+        const { data: companiesData, error: companiesError } = await supabase
+          .from("companies")
+          .select("*")
+          .eq("organization_id", userOrg.organization_id)
+          .order("name");
 
-  if (!organizationId) {
+        if (companiesError) {
+          setError(companiesError.message);
+        } else {
+          setCompanies(companiesData || []);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Virhe ladattaessa yrityksiä");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadCompanies();
+  }, [supabase, router, locale]);
+
+  if (loading) {
     return (
-      <div className="container mx-auto py-10">
-        <Card>
-          <CardHeader>
-            <CardTitle>No Organization</CardTitle>
-            <CardDescription>
-              You must be part of an organization to generate materials
-            </CardDescription>
-          </CardHeader>
-        </Card>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
       </div>
     );
   }
 
-  // Check permissions
-  if (!["seller", "broker", "admin", "partner"].includes(profile.role.toLowerCase())) {
+  if (error) {
     return (
       <div className="container mx-auto py-10">
-        <Card>
-          <CardHeader>
-            <CardTitle>Insufficient Permissions</CardTitle>
-            <CardDescription>
-              You don't have permission to generate materials. Contact your administrator.
-            </CardDescription>
-          </CardHeader>
-        </Card>
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-red-800 dark:text-red-200 mb-2">
+            Virhe
+          </h3>
+          <p className="text-red-700 dark:text-red-300">{error}</p>
+          <Link href={`/${locale}/dashboard/materials`} className="mt-4 inline-block">
+            <Button variant="outline">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Takaisin
+            </Button>
+          </Link>
+        </div>
       </div>
     );
   }
 
-  // Get companies
-  const { data: companies } = await supabase
-    .from("companies")
-    .select("id, name, industry")
-    .eq("organization_id", organizationId)
-    .order("name");
-
-  if (!companies || companies.length === 0) {
+  if (companies.length === 0) {
     return (
       <div className="container mx-auto py-10">
-        <Card>
-          <CardHeader>
-            <CardTitle>No Companies</CardTitle>
-            <CardDescription>
-              You need to add a company before generating materials
-            </CardDescription>
-          </CardHeader>
-        </Card>
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-2">
+            Ei yrityksiä
+          </h3>
+          <p className="text-blue-700 dark:text-blue-300 mb-4">
+            Lisää ensin yritys, jotta voit luoda materiaaleja.
+          </p>
+          <div className="flex gap-2">
+            <Link href={`/${locale}/dashboard/companies/new`}>
+              <Button>
+                Lisää yritys
+              </Button>
+            </Link>
+            <Link href={`/${locale}/dashboard/materials`}>
+              <Button variant="outline">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Takaisin
+              </Button>
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto py-10">
-      <MaterialsSelectionClient companies={companies} />
+    <div className="container mx-auto py-10 space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        <Link href={`/${locale}/dashboard/materials`}>
+          <Button variant="ghost" size="icon">
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+        </Link>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Luo uutta materiaalia
+          </h1>
+          <p className="mt-1 text-gray-600 dark:text-gray-400">
+            AI-pohjainen teaser, information memorandum tai pitch deck
+          </p>
+        </div>
+      </div>
+
+      {/* Material Generation Wizard */}
+      <MaterialGenerationWizard
+        companies={companies}
+        onComplete={(jobId) => {
+          // Redirect to materials page after successful start
+          router.push(`/${locale}/dashboard/materials?job=${jobId}`);
+        }}
+        onCancel={() => {
+          router.push(`/${locale}/dashboard/materials`);
+        }}
+      />
     </div>
   );
 }
-

@@ -140,10 +140,20 @@ export default function CompaniesPage() {
                       📍 {company.location}
                     </p>
                   )}
-                  <div className="mt-4 flex gap-2">
+                  <div className="mt-4 flex flex-wrap gap-2">
                     <Link href={`/${locale}/dashboard/companies/${company.id}`}>
                       <Button variant="outline" size="sm">
                         Näytä tiedot
+                      </Button>
+                    </Link>
+                    <Link href={`/${locale}/companies/${company.id}/enrich`}>
+                      <Button variant="default" size="sm" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+                        🚀 Rikasta yritys (AI)
+                      </Button>
+                    </Link>
+                    <Link href={`/${locale}/companies/${company.id}/enriched`}>
+                      <Button variant="ghost" size="sm">
+                        📊 Rikastettu data
                       </Button>
                     </Link>
                     <Link href={`/${locale}/dashboard/companies/${company.id}/edit`}>
