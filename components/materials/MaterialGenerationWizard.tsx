@@ -21,8 +21,20 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, CheckCircle2, Clock, AlertCircle, FileText, Loader2, Sparkles, Download } from "lucide-react";
+import { Upload, CheckCircle2, Clock, AlertCircle, FileText, Loader2, Sparkles, Download, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { MaterialTemplateSelector } from "./MaterialTemplateSelector";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { GammaConfigurationPanel } from "./GammaConfigurationPanel";
+import { EnrichmentConfigurationPanel } from "./EnrichmentConfigurationPanel";
 
 interface MaterialGenerationWizardProps {
   companyId: string;
@@ -83,6 +95,10 @@ export function MaterialGenerationWizard({
   const [generateTeaser, setGenerateTeaser] = useState(true);
   const [generateIM, setGenerateIM] = useState(false);
   const [generatePitchDeck, setGeneratePitchDeck] = useState(false);
+
+  // Configuration state
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("professional-teaser");
+  const [showConfigDialog, setShowConfigDialog] = useState(false);
 
   // Questionnaire state
   const [questions, setQuestions] = useState<any[]>([]);
@@ -412,11 +428,75 @@ export function MaterialGenerationWizard({
               </ul>
             </AlertDescription>
           </Alert>
+
+          {/* Template Selection */}
+          {generateTeaser && (
+            <div className="pt-4 border-t">
+              <MaterialTemplateSelector
+                selectedTemplate={selectedTemplate}
+                onSelect={setSelectedTemplate}
+                materialType="teaser"
+              />
+            </div>
+          )}
         </CardContent>
         <CardFooter className="flex justify-between">
-          <Button variant="outline" onClick={() => window.history.back()}>
-            Cancel
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => window.history.back()}>
+              Cancel
+            </Button>
+            
+            {/* Configuration Dialog */}
+            <Dialog open={showConfigDialog} onOpenChange={setShowConfigDialog}>
+              <DialogTrigger asChild>
+                <Button variant="outline">
+                  <Settings className="w-4 h-4 mr-2" />
+                  Advanced Settings
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Generation Settings</DialogTitle>
+                  <DialogDescription>
+                    Configure presentation design and data modules
+                  </DialogDescription>
+                </DialogHeader>
+                <Tabs defaultValue="gamma" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="gamma">Presentation Design</TabsTrigger>
+                    <TabsTrigger value="enrichment">Data Modules</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="gamma" className="space-y-4">
+                    <GammaConfigurationPanel
+                      companyId={companyId}
+                      onSave={() => {
+                        toast({
+                          title: "Settings saved",
+                          description: "Presentation design updated",
+                        });
+                        setShowConfigDialog(false);
+                      }}
+                      onCancel={() => setShowConfigDialog(false)}
+                    />
+                  </TabsContent>
+                  <TabsContent value="enrichment" className="space-y-4">
+                    <EnrichmentConfigurationPanel
+                      companyId={companyId}
+                      onSave={() => {
+                        toast({
+                          title: "Settings saved",
+                          description: "Data modules updated",
+                        });
+                        setShowConfigDialog(false);
+                      }}
+                      onCancel={() => setShowConfigDialog(false)}
+                    />
+                  </TabsContent>
+                </Tabs>
+              </DialogContent>
+            </Dialog>
+          </div>
+
           <Button 
             onClick={handleStartGeneration} 
             disabled={generating || (!generateTeaser && !generateIM && !generatePitchDeck)}

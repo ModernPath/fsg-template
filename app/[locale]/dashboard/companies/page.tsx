@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Settings } from "lucide-react";
 import Link from "next/link";
 
 export default function CompaniesPage() {
@@ -149,6 +149,12 @@ export default function CompaniesPage() {
                     <Link href={`/${locale}/dashboard/companies/${company.id}/edit`}>
                       <Button variant="ghost" size="sm">
                         Muokkaa
+                      </Button>
+                    </Link>
+                    <Link href={`/${locale}/dashboard/companies/${company.id}/settings`}>
+                      <Button variant="ghost" size="sm">
+                        <Settings className="w-4 h-4 mr-1" />
+                        Asetukset
                       </Button>
                     </Link>
                   </div>

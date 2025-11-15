@@ -303,6 +303,11 @@ export default async function MaterialsPage() {
                   </div>
                   
                   <div className="flex gap-2">
+                    <Button size="sm" asChild>
+                      <Link href={`/dashboard/materials/${material.id}/preview`}>
+                        Preview & Edit
+                      </Link>
+                    </Button>
                     {material.gamma_presentation_url && (
                       <Button size="sm" variant="outline" asChild>
                         <a
