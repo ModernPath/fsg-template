@@ -197,16 +197,28 @@ export default function Page() {
 ```typescript
 // app/api/example/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
-import { cookies } from 'next/headers';
+import { createServerClient } from '@supabase/ssr';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const cookieStore = await cookies();
-  const supabase = await createClient(cookieStore);
+  
+  // 🔥 CRITICAL: In API routes, use request.cookies NOT await cookies()!
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value;
+        },
+        set() {},
+        remove() {},
+      },
+    },
+  );
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
@@ -216,6 +228,11 @@ export async function POST(
   // ... rest of route
 }
 ```
+
+**⚠️ WHY NOT `await cookies()`?**
+- `await cookies()` in API routes returns a DIFFERENT cookie store
+- `request.cookies` contains the actual cookies sent by the browser
+- The middleware uses `request.cookies` - API routes must match!
 
 ---
 
@@ -298,10 +315,15 @@ CLIENT COMPONENT:
 'use client';
 const supabase = createClient(); // No cookies!
 
-API ROUTE:
-import { cookies } from 'next/headers';
-const cookieStore = await cookies();
-const supabase = await createClient(cookieStore);
+API ROUTE: 🔥 DIFFERENT!
+import { createServerClient } from '@supabase/ssr';
+const supabase = createServerClient(url, key, {
+  cookies: {
+    get: (name) => request.cookies.get(name)?.value,
+    set: () => {},
+    remove: () => {},
+  }
+});
 
 PARAMS (ALL CONTEXTS):
 { params }: { params: Promise<{ id: string }> }

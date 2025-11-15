@@ -16,7 +16,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
-import { cookies } from 'next/headers';
+import { createServerClient } from '@supabase/ssr';
 import { inngest } from '@/lib/inngest-client';
 
 export async function POST(
@@ -29,12 +29,9 @@ export async function POST(
     
     console.log(`\n🚀 [POST /api/companies/${companyId}/enrich] Starting...`);
 
-    // 1. Authenticate user (with cookies for session)
-    console.log('🔐 Step 1: Getting cookies...');
-    const cookieStore = await cookies();
-    
-    // DEBUG: Log all cookies
-    const allCookies = cookieStore.getAll();
+    // 1. Authenticate user using request.cookies (NOT await cookies())
+    console.log('🔐 Step 1: Getting cookies from request...');
+    const allCookies = request.cookies.getAll();
     console.log('🍪 Step 2: Cookies in request:', {
       count: allCookies.length,
       names: allCookies.map(c => c.name),
@@ -42,8 +39,22 @@ export async function POST(
       hasSbRefreshToken: allCookies.some(c => c.name.includes('sb-') && c.name.includes('refresh')),
     });
     
-    console.log('🔐 Step 3: Creating client...');
-    const supabase = await createClient(cookieStore);
+    console.log('🔐 Step 3: Creating Supabase client...');
+    // Create Supabase client using request.cookies (same as middleware)
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return request.cookies.get(name)?.value;
+          },
+          set() {},
+          remove() {},
+        },
+      },
+    );
+    
     console.log('🔐 Step 4: Client created, calling getUser...');
     
     const {
