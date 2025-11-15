@@ -30,19 +30,32 @@ export async function POST(
     console.log(`\n🚀 [POST /api/companies/${companyId}/enrich] Starting...`);
 
     // 1. Authenticate user (with cookies for session)
+    console.log('🔐 Step 1: Getting cookies...');
     const cookieStore = await cookies();
+    console.log('🔐 Step 2: Cookies retrieved, creating client...');
+    
     const supabase = await createClient(cookieStore);
+    console.log('🔐 Step 3: Client created, calling getUser...');
+    
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser();
 
+    console.log('🔐 Step 4: Auth result:', {
+      hasUser: !!user,
+      userId: user?.id,
+      userEmail: user?.email,
+      authError: authError?.message,
+      authErrorDetails: authError,
+    });
+
     if (authError || !user) {
-      console.error('❌ Authentication failed');
+      console.error('❌ Authentication failed - No user or auth error');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    console.log(`✅ User authenticated: ${user.id}`);
+    console.log(`✅ User authenticated: ${user.id} (${user.email})`);
 
     // 2. Parse request body (with error handling for empty body)
     let body = {};

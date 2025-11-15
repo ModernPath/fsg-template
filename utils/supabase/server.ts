@@ -30,9 +30,22 @@ export const createClient = async (cookieStore?: any, useServiceRole: boolean = 
     )
   }
 
+  // DEBUG: Log cookieStore details
+  console.log('🍪 createClient called with:', {
+    hasCookieStore: !!cookieStore,
+    useServiceRole,
+    cookieStoreType: cookieStore ? typeof cookieStore : 'undefined',
+    hasGet: cookieStore ? typeof cookieStore.get : 'undefined',
+    hasSet: cookieStore ? typeof cookieStore.set : 'undefined',
+    hasRemove: cookieStore ? typeof cookieStore.remove : 'undefined',
+    hasGetAll: cookieStore ? typeof cookieStore.getAll : 'undefined',
+    isValid: isValidCookieStore(cookieStore),
+  });
+
   // If no cookie store is provided, or it doesn't have the expected methods,
   // create a client without cookie handling
   if (!cookieStore || !isValidCookieStore(cookieStore)) {
+    console.log('⚠️ Creating client WITHOUT cookie support!');
     return createSupabaseClient(
       supabaseUrl,
       apiKey,
@@ -47,6 +60,8 @@ export const createClient = async (cookieStore?: any, useServiceRole: boolean = 
       }
     )
   }
+  
+  console.log('✅ Creating client WITH cookie support');
   
   // If cookieStore is the Next.js cookies() object, use its methods
   if (cookieStore.getAll && typeof cookieStore.getAll === 'function') {
