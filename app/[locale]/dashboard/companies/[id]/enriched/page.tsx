@@ -9,6 +9,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
+import { cookies } from 'next/headers';
 import CompanyEnrichedData from '@/components/companies/CompanyEnrichedData';
 import EnrichmentProgress from '@/components/companies/EnrichmentProgress';
 import { Button } from '@/components/ui/button';
@@ -35,7 +36,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function CompanyEnrichedDataPage({ params }: PageProps) {
   const { id, locale } = await params;
-  const supabase = await createClient();
+  const cookieStore = await cookies();
+  const supabase = await createClient(cookieStore);
   const t = await getTranslations({ locale, namespace: 'enriched' });
 
   // Verify authentication

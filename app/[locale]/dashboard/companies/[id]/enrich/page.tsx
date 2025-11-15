@@ -9,6 +9,7 @@
 import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import EnrichmentClient from './enrichment-client';
 
 interface PageProps {
@@ -20,7 +21,8 @@ interface PageProps {
 
 export default async function CompanyEnrichPage({ params }: PageProps) {
   const { id, locale } = await params;
-  const supabase = await createClient();
+  const cookieStore = await cookies();
+  const supabase = await createClient(cookieStore);
 
   // Check authentication
   const {
