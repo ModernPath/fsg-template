@@ -279,11 +279,14 @@ export const companyEnrichmentJob = inngest.createFunction(
     // Batch 2 (Modules 10-17): ~8 requests
     // Total: ~17 requests → Split into 2 batches with 60s delay
     
-    console.log('⏳ [RATE LIMIT] Waiting 60 seconds to avoid rate limit...');
+    // Rate limit delay - Configurable (60-90s recommended)
+    const RATE_LIMIT_DELAY_MS = 70000; // 70 seconds for safety margin
+    
+    console.log(`⏳ [RATE LIMIT] Waiting ${RATE_LIMIT_DELAY_MS / 1000} seconds to avoid rate limit...`);
     console.log('💡 [TIP] Upgrade to Gemini API paid tier for instant processing!');
     console.log('   Free tier: 10 req/min | Paid tier: 1000 req/min (~$3/month)');
     
-    await step.sleep('rate-limit-delay', 60000); // 60 seconds
+    await step.sleep('rate-limit-delay', RATE_LIMIT_DELAY_MS);
     
     console.log('✅ [RATE LIMIT] Delay complete, continuing with M&A modules...');
 
