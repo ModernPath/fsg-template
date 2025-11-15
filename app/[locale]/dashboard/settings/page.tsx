@@ -11,14 +11,31 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building2, User, Bell, Shield, CreditCard, Loader2 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Building2, User, Bell, Shield, CreditCard, Loader2, CheckCircle2, XCircle } from "lucide-react";
 
 export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [organization, setOrganization] = useState<any>(null);
+  
+  // Form states
+  const [orgForm, setOrgForm] = useState({
+    name: "",
+    website: "",
+    country: "",
+    industry: "",
+  });
+  
+  const [profileForm, setProfileForm] = useState({
+    full_name: "",
+    phone: "",
+    linkedin_url: "",
+  });
 
   useEffect(() => {
     async function loadData() {
@@ -63,9 +80,26 @@ export default function SettingsPage() {
         console.log("⚙️ [Settings] Profile:", profileData);
 
         setProfile(profileData);
-        setOrganization(profileData?.user_organizations?.[0]?.organizations || null);
+        const orgData = profileData?.user_organizations?.[0]?.organizations || null;
+        setOrganization(orgData);
 
-        console.log("⚙️ [Settings] Organization:", profileData?.user_organizations?.[0]?.organizations);
+        // Initialize form states
+        if (orgData) {
+          setOrgForm({
+            name: orgData.name || "",
+            website: orgData.website || "",
+            country: orgData.country || "",
+            industry: orgData.industry || "",
+          });
+        }
+        
+        setProfileForm({
+          full_name: profileData?.full_name || "",
+          phone: profileData?.phone || "",
+          linkedin_url: profileData?.linkedin_url || "",
+        });
+
+        console.log("⚙️ [Settings] Organization:", orgData);
       } catch (err: any) {
         console.error("⚙️ [Settings] Error:", err);
         setError(err.message);
@@ -76,6 +110,91 @@ export default function SettingsPage() {
 
     loadData();
   }, []);
+
+  // Save organization settings
+  const saveOrganization = async () => {
+    if (!organization?.id) {
+      setError("No organization found");
+      return;
+    }
+
+    try {
+      setSaving(true);
+      setError(null);
+      setSuccessMessage(null);
+
+      const supabase = createClient();
+      const { error: updateError } = await supabase
+        .from("organizations")
+        .update({
+          name: orgForm.name,
+          website: orgForm.website,
+          country: orgForm.country,
+          industry: orgForm.industry,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", organization.id);
+
+      if (updateError) throw updateError;
+
+      setSuccessMessage("Organization settings saved successfully!");
+      // Reload data to show updated values
+      const { data: updatedOrg } = await supabase
+        .from("organizations")
+        .select("*")
+        .eq("id", organization.id)
+        .single();
+      
+      if (updatedOrg) setOrganization(updatedOrg);
+    } catch (err: any) {
+      console.error("Error saving organization:", err);
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Save profile settings
+  const saveProfile = async () => {
+    if (!user?.id) {
+      setError("No user found");
+      return;
+    }
+
+    try {
+      setSaving(true);
+      setError(null);
+      setSuccessMessage(null);
+
+      const supabase = createClient();
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({
+          full_name: profileForm.full_name,
+          phone: profileForm.phone,
+          linkedin_url: profileForm.linkedin_url,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", user.id);
+
+      if (updateError) throw updateError;
+
+      setSuccessMessage("Profile settings saved successfully!");
+      // Reload data
+      const { data: updatedProfile } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+      
+      if (updatedProfile) setProfile(updatedProfile);
+    } catch (err: any) {
+      console.error("Error saving profile:", err);
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -112,6 +231,26 @@ export default function SettingsPage() {
           Manage your organization and account settings
         </p>
       </div>
+
+      {/* Success Message */}
+      {successMessage && (
+        <Alert className="bg-green-50 dark:bg-green-900/20 border-green-500">
+          <CheckCircle2 className="h-4 w-4 text-green-600" />
+          <AlertDescription className="text-green-800 dark:text-green-200">
+            {successMessage}
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* Error Message */}
+      {error && (
+        <Alert className="bg-red-50 dark:bg-red-900/20 border-red-500">
+          <XCircle className="h-4 w-4 text-red-600" />
+          <AlertDescription className="text-red-800 dark:text-red-200">
+            {error}
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Settings Tabs */}
       <Tabs defaultValue="organization" className="space-y-6">
@@ -150,7 +289,8 @@ export default function SettingsPage() {
                 <Label htmlFor="org_name">Organization Name</Label>
                 <Input
                   id="org_name"
-                  defaultValue={organization?.name}
+                  value={orgForm.name}
+                  onChange={(e) => setOrgForm({ ...orgForm, name: e.target.value })}
                   placeholder="Acme M&A Partners"
                 />
               </div>
@@ -160,7 +300,8 @@ export default function SettingsPage() {
                 <Input
                   id="org_website"
                   type="url"
-                  defaultValue={organization?.website}
+                  value={orgForm.website}
+                  onChange={(e) => setOrgForm({ ...orgForm, website: e.target.value })}
                   placeholder="https://example.com"
                 />
               </div>
@@ -169,7 +310,8 @@ export default function SettingsPage() {
                 <Label htmlFor="org_country">Country</Label>
                 <Input
                   id="org_country"
-                  defaultValue={organization?.country}
+                  value={orgForm.country}
+                  onChange={(e) => setOrgForm({ ...orgForm, country: e.target.value })}
                   placeholder="Finland"
                 />
               </div>
@@ -178,13 +320,23 @@ export default function SettingsPage() {
                 <Label htmlFor="org_industry">Industry</Label>
                 <Input
                   id="org_industry"
-                  defaultValue={organization?.industry}
+                  value={orgForm.industry}
+                  onChange={(e) => setOrgForm({ ...orgForm, industry: e.target.value })}
                   placeholder="M&A Advisory"
                 />
               </div>
 
               <div className="pt-4">
-                <Button>Save Changes</Button>
+                <Button onClick={saveOrganization} disabled={saving}>
+                  {saving ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    "Save Changes"
+                  )}
+                </Button>
               </div>
             </div>
           </div>
@@ -202,7 +354,8 @@ export default function SettingsPage() {
                 <Label htmlFor="full_name">Full Name</Label>
                 <Input
                   id="full_name"
-                  defaultValue={profile?.full_name}
+                  value={profileForm.full_name}
+                  onChange={(e) => setProfileForm({ ...profileForm, full_name: e.target.value })}
                   placeholder="John Doe"
                 />
               </div>
@@ -226,7 +379,8 @@ export default function SettingsPage() {
                 <Input
                   id="phone"
                   type="tel"
-                  defaultValue={profile?.phone}
+                  value={profileForm.phone}
+                  onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
                   placeholder="+358 40 123 4567"
                 />
               </div>
@@ -236,13 +390,23 @@ export default function SettingsPage() {
                 <Input
                   id="linkedin_url"
                   type="url"
-                  defaultValue={profile?.linkedin_url}
+                  value={profileForm.linkedin_url}
+                  onChange={(e) => setProfileForm({ ...profileForm, linkedin_url: e.target.value })}
                   placeholder="https://linkedin.com/in/..."
                 />
               </div>
 
               <div className="pt-4">
-                <Button>Save Changes</Button>
+                <Button onClick={saveProfile} disabled={saving}>
+                  {saving ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    "Save Changes"
+                  )}
+                </Button>
               </div>
             </div>
           </div>
