@@ -32,17 +32,26 @@ export async function POST(
     // 1. Authenticate user (with cookies for session)
     console.log('🔐 Step 1: Getting cookies...');
     const cookieStore = await cookies();
-    console.log('🔐 Step 2: Cookies retrieved, creating client...');
     
+    // DEBUG: Log all cookies
+    const allCookies = cookieStore.getAll();
+    console.log('🍪 Step 2: Cookies in request:', {
+      count: allCookies.length,
+      names: allCookies.map(c => c.name),
+      hasSbAccessToken: allCookies.some(c => c.name.includes('sb-') && c.name.includes('auth-token')),
+      hasSbRefreshToken: allCookies.some(c => c.name.includes('sb-') && c.name.includes('refresh')),
+    });
+    
+    console.log('🔐 Step 3: Creating client...');
     const supabase = await createClient(cookieStore);
-    console.log('🔐 Step 3: Client created, calling getUser...');
+    console.log('🔐 Step 4: Client created, calling getUser...');
     
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser();
 
-    console.log('🔐 Step 4: Auth result:', {
+    console.log('🔐 Step 5: Auth result:', {
       hasUser: !!user,
       userId: user?.id,
       userEmail: user?.email,
