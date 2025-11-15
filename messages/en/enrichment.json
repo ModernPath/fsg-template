@@ -1,0 +1,163 @@
+{
+  "enrichment": {
+    "loadingStatus": "Loading enrichment status...",
+    "statusPending": "Pending",
+    "statusProcessing": "Processing",
+    "statusCompleted": "Completed",
+    "statusFailed": "Failed",
+    "enrichmentProgress": "Enrichment Progress",
+    "progressText": "{progress}% complete",
+    "completedAt": "Completed at {date}",
+    "noData": "No enriched data available",
+    "title": "Enrich Company Data",
+    "subtitle": "Start AI-powered company data enrichment",
+    "cardTitle": "Comprehensive Company Enrichment",
+    "cardDescription": "Our AI will analyze publicly available data from multiple sources to provide deep insights about this company.",
+    "modulesTitle": "What will be enriched?",
+    "baseModules": "Core Business Intelligence (9 modules)",
+    "maModules": "M&A Intelligence (8 modules)",
+    "modules": {
+      "basicInfo": "Company basic information",
+      "financial": "Financial data & metrics",
+      "industry": "Industry analysis",
+      "competitive": "Competitive landscape",
+      "growth": "Growth potential",
+      "health": "Financial health",
+      "personnel": "Personnel information",
+      "market": "Market intelligence",
+      "web": "Online presence",
+      "maHistory": "M&A history",
+      "valuation": "Valuation data",
+      "customers": "Customer intelligence",
+      "operations": "Operational efficiency",
+      "advantages": "Competitive advantages",
+      "risks": "Risk assessment",
+      "integration": "Integration potential",
+      "exit": "Exit attractiveness"
+    },
+    "timelineTitle": "Processing Time",
+    "timelineDescription": "Enrichment typically takes 3-5 minutes. You can leave this page and return later.",
+    "starting": "Starting enrichment...",
+    "startButton": "Start Enrichment",
+    "refreshData": "Refresh Data",
+    "noDataDescription": "This company has not been enriched yet. Start the enrichment process to gather comprehensive insights.",
+    "startEnrichment": "Start Enrichment"
+  },
+  "enriched": {
+    "pageTitle": "Enriched Company Data",
+    "pageDescription": "View comprehensive AI-powered company insights",
+    "subtitle": "Enriched Company Data",
+    "confidenceScore": "Confidence Score",
+    "dataReliability": "Data reliability from verified sources",
+    "completenessScore": "Completeness Score",
+    "dataCoverage": "Data coverage across all modules",
+    "unknown": "Unknown",
+    "tabs": {
+      "overview": "Overview",
+      "financial": "Financial",
+      "market": "Market",
+      "operations": "Operations",
+      "competitive": "Competitive",
+      "valuation": "Valuation",
+      "risks": "Risks",
+      "exit": "Exit Strategy"
+    },
+    "basicInfo": {
+      "title": "Company Overview",
+      "industry": "Industry",
+      "founded": "Founded",
+      "employees": "Employees",
+      "website": "Website",
+      "products": "Products & Services"
+    },
+    "industryAnalysis": {
+      "title": "Industry Analysis",
+      "trends": "Industry Trends",
+      "marketSize": "Market Size",
+      "growthRate": "Growth Rate",
+      "outlook": "Market Outlook"
+    },
+    "financialData": {
+      "title": "Financial Data",
+      "revenue": "Revenue",
+      "profit": "Operating Profit",
+      "assets": "Total Assets",
+      "equity": "Equity"
+    },
+    "financialHealth": {
+      "title": "Financial Health",
+      "profitability": "Profitability",
+      "liquidity": "Liquidity",
+      "solvency": "Solvency",
+      "overall": "Overall Health"
+    },
+    "marketIntelligence": {
+      "title": "Market Intelligence",
+      "position": "Market Position",
+      "share": "Market Share",
+      "sentiment": "Customer Sentiment"
+    },
+    "competitiveAnalysis": {
+      "title": "Competitive Analysis"
+    },
+    "personnelInfo": {
+      "title": "Personnel",
+      "count": "Employee Count",
+      "growth": "Growth Rate",
+      "keyPersonnel": "Key Personnel"
+    },
+    "operationalEfficiency": {
+      "title": "Operational Efficiency",
+      "revenuePerEmployee": "Revenue per Employee",
+      "profitPerEmployee": "Profit per Employee",
+      "automation": "Automation Level"
+    },
+    "customerIntelligence": {
+      "title": "Customer Intelligence",
+      "concentration": "Customer Concentration",
+      "retention": "Retention Rate",
+      "recurring": "Recurring Revenue"
+    },
+    "competitiveAdvantages": {
+      "title": "Competitive Advantages",
+      "usp": "Unique Selling Points",
+      "brand": "Brand Strength",
+      "switching": "Switching Costs"
+    },
+    "valuationData": {
+      "title": "Valuation",
+      "low": "Low Estimate",
+      "mid": "Mid Estimate",
+      "high": "High Estimate",
+      "comparables": "Comparable Transactions"
+    },
+    "maHistory": {
+      "title": "M&A History",
+      "acquisitions": "Previous Acquisitions",
+      "noAcquisitions": "No previous acquisitions found"
+    },
+    "riskAssessment": {
+      "title": "Risk Assessment",
+      "mitigation": "Mitigation",
+      "noRisks": "No major risks identified"
+    },
+    "exitAttractiveness": {
+      "title": "Exit Attractiveness",
+      "buyers": "Ideal Buyer Profiles",
+      "strategicValue": "Strategic Value",
+      "timing": "Market Timing",
+      "market": "Market Conditions"
+    },
+    "integrationPotential": {
+      "title": "Integration Potential",
+      "synergies": "Potential Synergies",
+      "revenue": "Revenue Synergies",
+      "cost": "Cost Synergies",
+      "complexity": "Integration Complexity",
+      "cultural": "Cultural Fit"
+    },
+    "noFinancialData": "No financial data available",
+    "noCompetitors": "No competitors identified"
+  }
+}
+

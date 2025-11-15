@@ -632,23 +632,31 @@ export const materialsConsolidateData = inngest.createFunction(
         .select("*")
         .eq("job_id", jobId);
 
+      // ✨ NEW: Get enriched company data (17 modules)
+      const { data: enrichedData } = await supabase
+        .from("company_enriched_data")
+        .select("*")
+        .eq("company_id", companyId)
+        .single();
+
       return {
         company,
         publicData,
         financialData,
         questionnaireData,
+        enrichedData,
       };
     });
 
     // Use AI to consolidate and structure the data
     const consolidatedData = await step.run("ai-consolidate", async () => {
-      // TODO: Call Gemini to consolidate all data into structured format
-      // For now, just combine
+      // ✨ Combine all data sources including enriched data (17 modules)
       return {
         company_overview: allData.company,
         public_info: allData.publicData,
         financials: allData.financialData,
         questionnaire: allData.questionnaireData,
+        enriched: allData.enrichedData, // 17 modules of enriched data
         consolidated_at: new Date().toISOString(),
       };
     });
@@ -763,22 +771,48 @@ export const materialsGenerateTeaser = inngest.createFunction(
       .eq("id", jobId)
       .single();
 
-    // Generate teaser content with AI
+    // Generate teaser content with AI using enriched data
     const teaserContent = await step.run("ai-generate-teaser", async () => {
-      // TODO: Call Gemini to generate teaser content
-      return {
-        title: `Business Opportunity: ${job?.metadata?.company_overview?.name}`,
-        summary: "AI-generated compelling summary...",
-        highlights: [
-          "Key highlight 1",
-          "Key highlight 2",
-          "Key highlight 3",
-        ],
-      };
+      const API_KEY = process.env.GOOGLE_AI_STUDIO_KEY || process.env.GEMINI_API_KEY;
+      
+      if (!API_KEY) {
+        console.error("Gemini API key not configured");
+        return {
+          title: `Business Opportunity: ${job?.metadata?.company_overview?.name}`,
+          summary: "Teaser generation requires Gemini API key",
+          highlights: [],
+        };
+      }
+
+      try {
+        // Import teaser generator
+        const { generateTeaser } = await import('@/lib/teaser-generator');
+
+        // Generate comprehensive teaser using enriched data
+        const teaser = await generateTeaser({
+          companyOverview: {
+            name: job?.metadata?.company_overview?.name || 'Unknown Company',
+            industry: job?.metadata?.company_overview?.industry,
+            description: job?.metadata?.company_overview?.description,
+          },
+          enrichedData: job?.metadata?.enriched?.enriched_data,
+          financialData: job?.metadata?.financials,
+          questionnaireData: job?.metadata?.questionnaire,
+        }, API_KEY);
+
+        return teaser;
+      } catch (error) {
+        console.error("Teaser generation error:", error);
+        return {
+          title: `Business Opportunity: ${job?.metadata?.company_overview?.name}`,
+          summary: "Error generating teaser content",
+          highlights: [],
+        };
+      }
     });
 
-    // Create Gamma presentation (PLACEHOLDER - will be implemented when API key is available)
-    const gammaUrl = await step.run("create-gamma-presentation", async () => {
+    // Create Gamma presentation
+    const gammaResult = await step.run("create-gamma-presentation", async () => {
       const gammaApiKey = process.env.GAMMA_API_KEY;
       
       if (!gammaApiKey) {
@@ -786,39 +820,55 @@ export const materialsGenerateTeaser = inngest.createFunction(
         return null;
       }
 
-      // TODO: Call Gamma.app API to create presentation
-      // This is a placeholder structure
       try {
-        const response = await fetch("https://api.gamma.app/v1/presentations", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${gammaApiKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            title: teaserContent.title,
-            slides: [
-              {
-                type: "title",
-                content: teaserContent.summary,
-              },
-              {
-                type: "content",
-                items: teaserContent.highlights,
-              },
-            ],
-          }),
-        });
+        // Import Gamma generator
+        const { createGammaPresentation } = await import('@/lib/gamma-generator');
 
-        if (response.ok) {
-          const data = await response.json();
-          return data.presentation_url;
-        }
+        // Create professional presentation from teaser content
+        const presentation = await createGammaPresentation(teaserContent, gammaApiKey);
+
+        console.log(`✅ Gamma presentation created: ${presentation.url}`);
+        
+        return {
+          url: presentation.url,
+          editUrl: presentation.editUrl,
+          id: presentation.id,
+          status: presentation.status,
+        };
       } catch (error) {
-        console.error("Gamma API error:", error);
-      }
+        console.error("❌ Gamma API error:", error);
+        
+        // Try alternative prompt-based approach if structured API fails
+        if (gammaApiKey) {
+          try {
+            const { createGammaPresentationFromPrompt } = await import('@/lib/gamma-generator');
+            
+            const prompt = `Create a professional M&A teaser presentation for ${teaserContent.title}.
+            
+Executive Summary: ${teaserContent.summary}
 
-      return null;
+Investment Highlights:
+${teaserContent.investmentHighlights?.join('\n') || ''}
+
+Include slides for: business overview, financial snapshot, competitive advantages, growth opportunities, ideal buyer profile, and next steps.`;
+
+            const presentation = await createGammaPresentationFromPrompt(prompt, gammaApiKey);
+            console.log(`✅ Gamma presentation created via prompt: ${presentation.url}`);
+            
+            return {
+              url: presentation.url,
+              editUrl: presentation.editUrl,
+              id: presentation.id,
+              status: presentation.status,
+            };
+          } catch (promptError) {
+            console.error("❌ Gamma prompt-based generation also failed:", promptError);
+            return null;
+          }
+        }
+        
+        return null;
+      }
     });
 
     // Save teaser as company asset
@@ -831,7 +881,9 @@ export const materialsGenerateTeaser = inngest.createFunction(
           name: `Teaser - ${job?.metadata?.company_overview?.name}`,
           type: "teaser",
           content: teaserContent,
-          gamma_presentation_url: gammaUrl,
+          gamma_presentation_url: gammaResult?.url,
+          gamma_presentation_id: gammaResult?.id,
+          gamma_edit_url: gammaResult?.editUrl,
           created_at: new Date().toISOString(),
         })
         .select()
@@ -851,7 +903,12 @@ export const materialsGenerateTeaser = inngest.createFunction(
         .eq("id", jobId);
     });
 
-    return { success: true, assetId: teaserAsset?.id, gammaUrl };
+    return { 
+      success: true, 
+      assetId: teaserAsset?.id, 
+      gammaUrl: gammaResult?.url,
+      gammaEditUrl: gammaResult?.editUrl,
+    };
   }
 );
 

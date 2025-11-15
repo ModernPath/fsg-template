@@ -8,6 +8,7 @@ import {
   generateContentFromPlan,
   generateContentBulk
 } from '@/lib/inngest-functions';
+import { companyEnrichmentJob } from '@/lib/inngest/functions/company-enrichment';
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -17,6 +18,7 @@ export const { GET, POST, PUT } = serve({
     generateDailyContent,
     analyzeContentPerformance,
     generateContentFromPlan,
-    generateContentBulk
+    generateContentBulk,
+    companyEnrichmentJob,
   ],
 }); 

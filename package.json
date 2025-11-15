@@ -31,6 +31,7 @@
     "vertex-ai-video": "NODE_ENV=development node tools/vertex-ai-video-tool.js",
     "vertex-ai-image": "NODE_ENV=development node tools/vertex-ai-image-tool.js",
     "download-file": "NODE_ENV=development tsx tools/download-file.ts",
+    "test-gamma": "NODE_ENV=development tsx tools/test-gamma.ts",
     "seed:users": "tsx scripts/seed-users.ts --env dev # Uses .env.local",
     "seed:users:local": "tsx scripts/seed-users.ts --env dev",
     "seed:users:prod": "NODE_ENV=production tsx scripts/seed-users.ts --env prod",

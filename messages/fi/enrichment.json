@@ -1,0 +1,163 @@
+{
+  "enrichment": {
+    "loadingStatus": "Ladataan rikastuksen tilaa...",
+    "statusPending": "Odottaa",
+    "statusProcessing": "Käsittelyssä",
+    "statusCompleted": "Valmis",
+    "statusFailed": "Epäonnistui",
+    "enrichmentProgress": "Rikastuksen edistyminen",
+    "progressText": "{progress}% valmis",
+    "completedAt": "Valmistunut {date}",
+    "noData": "Rikastettua dataa ei saatavilla",
+    "title": "Rikasta yrityksen tiedot",
+    "subtitle": "Käynnistä AI-pohjainen yrityksen tietojen rikastus",
+    "cardTitle": "Kattava yritysanalyysi",
+    "cardDescription": "Tekoälymme analysoi julkisesti saatavilla olevat tiedot useista lähteistä tarjotakseen syvälliset näkemykset yrityksestä.",
+    "modulesTitle": "Mitä rikastetaan?",
+    "baseModules": "Perustietous (9 moduulia)",
+    "maModules": "Yrityskauppaintelligenssi (8 moduulia)",
+    "modules": {
+      "basicInfo": "Yrityksen perustiedot",
+      "financial": "Taloustiedot ja tunnusluvut",
+      "industry": "Toimiala-analyysi",
+      "competitive": "Kilpailutilanne",
+      "growth": "Kasvupotentiaali",
+      "health": "Taloudellinen terveys",
+      "personnel": "Henkilöstötiedot",
+      "market": "Markkinatiedustelu",
+      "web": "Verkkoläsnäolo",
+      "maHistory": "Yrityskauppahistoria",
+      "valuation": "Arvostustiedot",
+      "customers": "Asiakastiedustelu",
+      "operations": "Toiminnan tehokkuus",
+      "advantages": "Kilpailuedut",
+      "risks": "Riskiarvio",
+      "integration": "Integrointipotentiaali",
+      "exit": "Exit-potentiaali"
+    },
+    "timelineTitle": "Käsittelyaika",
+    "timelineDescription": "Rikastus kestää tyypillisesti 3-5 minuuttia. Voit poistua sivulta ja palata myöhemmin.",
+    "starting": "Käynnistetään rikastusta...",
+    "startButton": "Käynnistä rikastus",
+    "refreshData": "Päivitä tiedot",
+    "noDataDescription": "Tätä yritystä ei ole vielä rikastettu. Aloita rikastusprosessi saadaksesi kattavat tiedot.",
+    "startEnrichment": "Aloita rikastus"
+  },
+  "enriched": {
+    "pageTitle": "Rikastetut yritystiedot",
+    "pageDescription": "Katso kattavat AI-pohjaiset yritysanalyysit",
+    "subtitle": "Rikastetut yritystiedot",
+    "confidenceScore": "Luotettavuus",
+    "dataReliability": "Tietojen luotettavuus varmennetuista lähteistä",
+    "completenessScore": "Kattavuus",
+    "dataCoverage": "Tietojen kattavuus kaikissa moduuleissa",
+    "unknown": "Tuntematon",
+    "tabs": {
+      "overview": "Yleiskatsaus",
+      "financial": "Talous",
+      "market": "Markkinat",
+      "operations": "Toiminnot",
+      "competitive": "Kilpailu",
+      "valuation": "Arvostus",
+      "risks": "Riskit",
+      "exit": "Exit-strategia"
+    },
+    "basicInfo": {
+      "title": "Yrityksen yleiskatsaus",
+      "industry": "Toimiala",
+      "founded": "Perustettu",
+      "employees": "Työntekijät",
+      "website": "Verkkosivut",
+      "products": "Tuotteet ja palvelut"
+    },
+    "industryAnalysis": {
+      "title": "Toimiala-analyysi",
+      "trends": "Toimialatrendit",
+      "marketSize": "Markkinakoko",
+      "growthRate": "Kasvuvauhti",
+      "outlook": "Markkinanäkymät"
+    },
+    "financialData": {
+      "title": "Taloustiedot",
+      "revenue": "Liikevaihto",
+      "profit": "Liikevoitto",
+      "assets": "Taseen loppusumma",
+      "equity": "Oma pääoma"
+    },
+    "financialHealth": {
+      "title": "Taloudellinen terveys",
+      "profitability": "Kannattavuus",
+      "liquidity": "Maksuvalmius",
+      "solvency": "Vakavaraisuus",
+      "overall": "Kokonaisterveys"
+    },
+    "marketIntelligence": {
+      "title": "Markkinatiedustelu",
+      "position": "Markkina-asema",
+      "share": "Markkinaosuus",
+      "sentiment": "Asiakaspalaute"
+    },
+    "competitiveAnalysis": {
+      "title": "Kilpailija-analyysi"
+    },
+    "personnelInfo": {
+      "title": "Henkilöstö",
+      "count": "Henkilöstömäärä",
+      "growth": "Kasvuvauhti",
+      "keyPersonnel": "Avainhenkilöt"
+    },
+    "operationalEfficiency": {
+      "title": "Toiminnan tehokkuus",
+      "revenuePerEmployee": "Liikevaihto / työntekijä",
+      "profitPerEmployee": "Tulos / työntekijä",
+      "automation": "Automaatioaste"
+    },
+    "customerIntelligence": {
+      "title": "Asiakastiedustelu",
+      "concentration": "Asiakaskeskittymä",
+      "retention": "Säilytysaste",
+      "recurring": "Toistuva liikevaihto"
+    },
+    "competitiveAdvantages": {
+      "title": "Kilpailuedut",
+      "usp": "Ainutlaatuiset myyntivaltit",
+      "brand": "Brändin vahvuus",
+      "switching": "Vaihtokustannukset"
+    },
+    "valuationData": {
+      "title": "Arvostus",
+      "low": "Matala arvio",
+      "mid": "Keskiarvio",
+      "high": "Korkea arvio",
+      "comparables": "Vertailukaupat"
+    },
+    "maHistory": {
+      "title": "Yrityskauppahistoria",
+      "acquisitions": "Aiemmat yritysostot",
+      "noAcquisitions": "Yritysostoja ei löytynyt"
+    },
+    "riskAssessment": {
+      "title": "Riskiarvio",
+      "mitigation": "Riskinhallinta",
+      "noRisks": "Merkittäviä riskejä ei tunnistettu"
+    },
+    "exitAttractiveness": {
+      "title": "Exit-potentiaali",
+      "buyers": "Ideaalit ostajaprofiilit",
+      "strategicValue": "Strateginen arvo",
+      "timing": "Markkinan ajoitus",
+      "market": "Markkinaolosuhteet"
+    },
+    "integrationPotential": {
+      "title": "Integrointipotentiaali",
+      "synergies": "Mahdolliset synergiat",
+      "revenue": "Liikevaihtosynergiat",
+      "cost": "Kustannussynergiat",
+      "complexity": "Integroinnin monimutkaisuus",
+      "cultural": "Kulttuurinen yhteensopivuus"
+    },
+    "noFinancialData": "Taloustietoja ei saatavilla",
+    "noCompetitors": "Kilpailijoita ei tunnistettu"
+  }
+}
+
