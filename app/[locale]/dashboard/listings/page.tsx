@@ -9,7 +9,14 @@ import { Plus, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 
-export default async function ListingsPage() {
+interface ListingsPageProps {
+  params: Promise<{
+    locale: string;
+  }>;
+}
+
+export default async function ListingsPage({ params }: ListingsPageProps) {
+  const { locale } = await params;
   const supabase = await createClient();
 
   // Get user context
@@ -83,7 +90,7 @@ export default async function ListingsPage() {
             Manage your listings and portal syndication
           </p>
         </div>
-        <Link href="/dashboard/listings/new">
+        <Link href={`/${locale}/dashboard/listings/new`}>
           <Button>
             <Plus className="mr-2 h-4 w-4" />
             Create Listing
@@ -133,7 +140,7 @@ export default async function ListingsPage() {
                     </div>
                   </div>
                 </div>
-                <Link href={`/dashboard/listings/${listing.id}`}>
+                <Link href={`/${locale}/dashboard/listings/${listing.id}`}>
                   <Button variant="outline">View Details</Button>
                 </Link>
               </div>
@@ -194,7 +201,7 @@ export default async function ListingsPage() {
             <p className="text-gray-600 dark:text-gray-400 mb-4">
               Create your first listing to start syndication
             </p>
-            <Link href="/dashboard/listings/new">
+            <Link href={`/${locale}/dashboard/listings/new`}>
               <Button>
                 <Plus className="mr-2 h-4 w-4" />
                 Create Listing

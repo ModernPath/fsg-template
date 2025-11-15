@@ -9,7 +9,14 @@ import { Plus, Mail, Phone, FileSignature } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 
-export default async function BuyersPage() {
+interface BuyersPageProps {
+  params: Promise<{
+    locale: string;
+  }>;
+}
+
+export default async function BuyersPage({ params }: BuyersPageProps) {
+  const { locale } = await params;
   const supabase = await createClient();
 
   // Get user context
@@ -73,7 +80,7 @@ export default async function BuyersPage() {
             Manage buyer profiles and track their activity
           </p>
         </div>
-        <Link href="/dashboard/buyers/new">
+        <Link href={`/${locale}/dashboard/buyers/new`}>
           <Button>
             <Plus className="mr-2 h-4 w-4" />
             Add Buyer
@@ -159,7 +166,7 @@ export default async function BuyersPage() {
                 {/* Actions */}
                 <div className="flex gap-2">
                   <Link
-                    href={`/dashboard/buyers/${buyer.id}`}
+                    href={`/${locale}/dashboard/buyers/${buyer.id}`}
                     className="flex-1"
                   >
                     <Button variant="outline" className="w-full">
@@ -187,7 +194,7 @@ export default async function BuyersPage() {
             <p className="text-gray-600 dark:text-gray-400 mb-4">
               Start adding buyers to track their activity
             </p>
-            <Link href="/dashboard/buyers/new">
+            <Link href={`/${locale}/dashboard/buyers/new`}>
               <Button>
                 <Plus className="mr-2 h-4 w-4" />
                 Add Buyer

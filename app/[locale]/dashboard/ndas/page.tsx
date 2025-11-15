@@ -9,7 +9,14 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Download, CheckCircle, Clock, FileSignature } from "lucide-react";
 import Link from "next/link";
 
-export default async function NDAsPage() {
+interface NDAsPageProps {
+  params: Promise<{
+    locale: string;
+  }>;
+}
+
+export default async function NDAsPage({ params }: NDAsPageProps) {
+  const { locale } = await params;
   const supabase = await createClient();
 
   // Get user context
@@ -99,7 +106,7 @@ export default async function NDAsPage() {
             Manage Non-Disclosure Agreements
           </p>
         </div>
-        <Link href="/dashboard/ndas/new">
+        <Link href={`/${locale}/dashboard/ndas/new`}>
           <Button>
             <Plus className="mr-2 h-4 w-4" />
             Create NDA
@@ -233,7 +240,7 @@ export default async function NDAsPage() {
                             <Download className="w-4 h-4" />
                           </Button>
                         )}
-                        <Link href={`/dashboard/ndas/${nda.id}`}>
+                        <Link href={`/${locale}/dashboard/ndas/${nda.id}`}>
                           <Button variant="outline" size="sm">
                             View
                           </Button>
