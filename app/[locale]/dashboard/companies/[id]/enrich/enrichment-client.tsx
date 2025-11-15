@@ -25,18 +25,35 @@ export default function EnrichmentClient({ companyId, companyName, locale }: Pro
     setError(null);
 
     try {
+      console.log('🚀 Starting enrichment for company:', companyId);
+      
       const res = await fetch(`/api/companies/${companyId}/enrich`, {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          modules: null, // null = all modules
+          force: false,
+          priority: 'normal',
+        }),
       });
+
+      console.log('📡 Enrichment API response status:', res.status);
 
       if (!res.ok) {
         const data = await res.json();
+        console.error('❌ Enrichment API error:', data);
         throw new Error(data.error || 'Failed to start enrichment');
       }
 
+      const result = await res.json();
+      console.log('✅ Enrichment started:', result);
+
       // Redirect to enriched data page
-      router.push(`/${locale}/companies/${companyId}/enriched`);
+      router.push(`/${locale}/dashboard/companies/${companyId}/enriched`);
     } catch (err) {
+      console.error('❌ Enrichment client error:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setLoading(false);

@@ -41,8 +41,14 @@ export async function POST(
 
     const companyId = params.id;
 
-    // 2. Parse request body
-    const body = await request.json();
+    // 2. Parse request body (with error handling for empty body)
+    let body = {};
+    try {
+      body = await request.json();
+    } catch (e) {
+      console.log('⚠️ No request body, using defaults');
+    }
+    
     const {
       modules = null,  // null = all modules
       force = false,
