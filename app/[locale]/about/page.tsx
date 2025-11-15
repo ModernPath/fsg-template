@@ -1,215 +1,190 @@
-'use server';
+/**
+ * About Page
+ * Company information and mission
+ */
 
-import { useTranslations } from 'next-intl';
-import Image from 'next/image';
-import Link from 'next/link';
-import ContactForm from '@/components/contact/ContactForm';
-import { Button } from '@/app/components/Button';
-import { createClient } from '@/utils/supabase/server';
-import { getTranslations } from 'next-intl/server';
-import { setupServerLocale } from '@/app/i18n/server-utils';
-import { AnimatedOrbs } from '@/app/components/AnimatedOrbs';
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Target, Users, Zap, Heart } from "lucide-react";
 
-interface Props {
-  params: Promise<{
-    locale: string
-  }>
-}
-
-export default async function About({ params }: Props) {
-  const { locale } = await params;
-  await setupServerLocale(locale);
-  const t = await getTranslations('About');
-
-  // Fetch latest news posts
-  const supabase = await createClient();
-  const { data: latestNews } = await supabase
-    .from('posts')
-    .select('*')
-    .eq('locale', locale)
-    .eq('published', true)
-    .eq('subject', 'news')
-    .order('created_at', { ascending: false })
-    .limit(3);
-
+export default function AboutPage() {
   return (
-    <main className="flex min-h-screen flex-col bg-black">
-      {/* About Section */}
-      <section className="relative py-24 overflow-hidden">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 opacity-80" />
-        
-        <AnimatedOrbs orbs={[
-          {
-            size: 'lg',
-            color: 'indigo',
-            blur: 'lg',
-            animation: 'float',
-            speed: 'slow',
-            className: 'absolute top-1/4 right-1/4'
-          },
-          {
-            size: 'lg',
-            color: 'purple',
-            blur: 'lg',
-            animation: 'float',
-            speed: 'medium',
-            className: 'absolute bottom-1/4 left-1/3'
-          }
-        ]} />
-
-        <div className="container relative mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-5xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
-              {t('title')}
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section className="bg-gradient-to-br from-blue-600 via-purple-600 to-blue-700 text-white py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h1 className="text-5xl font-bold mb-6">
+              About BizExit
             </h1>
-            <p className="text-xl text-gray-300 mb-16 text-center leading-relaxed max-w-3xl mx-auto">
-              {t('description')}
+            <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
+              We're revolutionizing M&A transactions with AI-powered technology
             </p>
           </div>
         </div>
       </section>
 
-      {/* Latest News Section */}
-      <section className="relative py-24 overflow-hidden">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-tl from-gray-900 via-black to-gray-900 opacity-80" />
-        
-        <AnimatedOrbs orbs={[
-          {
-            size: 'lg',
-            color: 'indigo',
-            blur: 'lg',
-            animation: 'float',
-            speed: 'slow',
-            className: 'absolute top-1/4 right-1/4'
-          },
-          {
-            size: 'lg',
-            color: 'purple',
-            blur: 'lg',
-            animation: 'float',
-            speed: 'medium',
-            className: 'absolute bottom-1/4 left-1/3'
-          }
-        ]} />
+      {/* Mission */}
+      <section className="py-20 bg-white dark:bg-gray-900">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
+              Our Mission
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-400 leading-relaxed">
+              To democratize business acquisitions by making professional M&A services 
+              accessible to everyone through artificial intelligence. We believe every 
+              business owner deserves a fair, transparent, and efficient exit process.
+            </p>
+          </div>
+        </div>
+      </section>
 
-        <div className="container relative mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex justify-between items-center mb-12">
-              <h2 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-400">
-                {t('news.title')}
+      {/* Values */}
+      <section className="py-20 bg-gray-50 dark:bg-gray-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12">
+            Our Values
+          </h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="bg-white dark:bg-gray-900 p-6 rounded-lg text-center">
+              <div className="bg-blue-100 dark:bg-blue-900/30 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Target className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+                Transparency
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Clear pricing, verified data, and honest communication
+              </p>
+            </div>
+            <div className="bg-white dark:bg-gray-900 p-6 rounded-lg text-center">
+              <div className="bg-purple-100 dark:bg-purple-900/30 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Zap className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+                Innovation
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Cutting-edge AI technology for better outcomes
+              </p>
+            </div>
+            <div className="bg-white dark:bg-gray-900 p-6 rounded-lg text-center">
+              <div className="bg-green-100 dark:bg-green-900/30 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="w-8 h-8 text-green-600 dark:text-green-400" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+                Trust
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Building long-term relationships with integrity
+              </p>
+            </div>
+            <div className="bg-white dark:bg-gray-900 p-6 rounded-lg text-center">
+              <div className="bg-orange-100 dark:bg-orange-900/30 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Heart className="w-8 h-8 text-orange-600 dark:text-orange-400" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+                Excellence
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Committed to delivering exceptional results
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Technology */}
+      <section className="py-20 bg-white dark:bg-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
+                Built on Advanced AI
               </h2>
-              <Link
-                href={`/${locale}/blog?subject=news`}
-                className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
-              >
-                {t('news.viewAll')} →
+              <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
+                BizExit leverages Google's Gemini AI and 17+ data enrichment modules to provide 
+                comprehensive business analysis. Our platform automatically gathers and analyzes 
+                data from public registries, financial databases, and market intelligence sources.
+              </p>
+              <p className="text-lg text-gray-600 dark:text-gray-400 mb-6">
+                This technology enables us to generate professional marketing materials, accurate 
+                valuations, and detailed company reports in minutes instead of weeks.
+              </p>
+              <Link href="/services">
+                <Button>Learn About Our Services</Button>
               </Link>
             </div>
-
-            <div className="space-y-8">
-              {latestNews?.map((post) => (
-                <div
-                  key={post.id}
-                  className="bg-gray-900/50 backdrop-blur-sm p-8 rounded-xl shadow-2xl border border-gray-800/50 hover:border-gray-700/50 transition-colors"
-                >
-                  <p className="text-gray-400 mb-4">
-                    {new Date(post.created_at).toLocaleDateString()}
-                  </p>
-                  <h3 className="text-2xl font-bold mb-6 text-gray-100">
-                    {post.title}
-                  </h3>
-                  <p className="text-gray-300 mb-6">
-                    {post.excerpt}
-                  </p>
-                  <Link 
-                    href={`/${locale}/blog/${post.slug}`}
-                    className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
-                  >
-                    {t('news.readMore')} →
-                  </Link>
-                </div>
-              ))}
+            <div className="bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 p-8 rounded-lg">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                Key Features
+              </h3>
+              <ul className="space-y-3">
+                <li className="flex items-start text-gray-700 dark:text-gray-300">
+                  <span className="text-blue-600 dark:text-blue-400 mr-2">✓</span>
+                  AI-powered company valuation
+                </li>
+                <li className="flex items-start text-gray-700 dark:text-gray-300">
+                  <span className="text-purple-600 dark:text-purple-400 mr-2">✓</span>
+                  Automated material generation
+                </li>
+                <li className="flex items-start text-gray-700 dark:text-gray-300">
+                  <span className="text-green-600 dark:text-green-400 mr-2">✓</span>
+                  17+ data enrichment modules
+                </li>
+                <li className="flex items-start text-gray-700 dark:text-gray-300">
+                  <span className="text-orange-600 dark:text-orange-400 mr-2">✓</span>
+                  Secure NDA management
+                </li>
+                <li className="flex items-start text-gray-700 dark:text-gray-300">
+                  <span className="text-pink-600 dark:text-pink-400 mr-2">✓</span>
+                  Deal pipeline tracking
+                </li>
+              </ul>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section className="relative py-24 overflow-hidden">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 opacity-80" />
-        
-        <AnimatedOrbs orbs={[
-          {
-            size: 'lg',
-            color: 'indigo',
-            blur: 'lg',
-            animation: 'float',
-            speed: 'slow',
-            className: 'absolute top-1/4 right-1/4'
-          },
-          {
-            size: 'lg',
-            color: 'purple',
-            blur: 'lg',
-            animation: 'float',
-            speed: 'medium',
-            className: 'absolute bottom-1/4 left-1/3'
-          }
-        ]} />
-
-        <div className="container relative mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl font-bold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
-              {t('contact.title')}
+      {/* Team Section - Placeholder */}
+      <section className="py-20 bg-gray-50 dark:bg-gray-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
+              Based in Finland
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              {/* Contact Information */}
-              <div>
-                <h3 className="text-2xl font-bold mb-6 text-gray-100">
-                  {t('contact.info.title')}
-                </h3>
-                <div className="space-y-6">
-                  <div>
-                    <h4 className="text-lg font-semibold mb-2 text-gray-100">
-                      {t('contact.address.title')}
-                    </h4>
-                    <p className="text-gray-300">{t('contact.address.street')}</p>
-                    <p className="text-gray-300">{t('contact.address.postal')}</p>
-                    <p className="text-gray-300">{t('contact.address.country')}</p>
-                  </div>
-                  <div>
-                    <h4 className="text-lg font-semibold mb-2 text-gray-100">
-                      {t('contact.social.title')}
-                    </h4>
-                    <div className="flex space-x-4">
-                      <Link
-                        href="https://www.linkedin.com/company/lastbot"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-400 hover:text-blue-300 transition-colors"
-                      >
-                        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-                        </svg>
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/* Contact Form */}
-              <div>
-                <h3 className="text-2xl font-bold mb-6 text-gray-100">
-                  {t('contact.form.title')}
-                </h3>
-                <ContactForm />
-              </div>
-            </div>
+            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+              We're a Finnish company combining Nordic business culture with cutting-edge technology. 
+              Our platform serves the Nordic and European M&A markets.
+            </p>
           </div>
         </div>
       </section>
-    </main>
+
+      {/* CTA */}
+      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl font-bold mb-4">
+            Join Us on This Journey
+          </h2>
+          <p className="text-xl text-blue-100 mb-8">
+            Be part of the future of M&A transactions
+          </p>
+          <div className="flex items-center justify-center gap-4">
+            <Link href="/sell">
+              <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50">
+                Get Started
+              </Button>
+            </Link>
+            <Link href="/contact">
+              <Button size="lg" variant="outline" className="text-white border-white hover:bg-white/10">
+                Contact Us
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }
