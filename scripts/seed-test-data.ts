@@ -78,65 +78,102 @@ async function createTestUsers() {
 
   for (const [key, userData] of Object.entries(TEST_USERS)) {
     try {
-      // First check if user already exists
-      const { data: existingUsers } = await supabase.auth.admin.listUsers();
-      const existingUser = existingUsers?.users?.find(u => u.email === userData.email);
+      // Check if profile already exists by email OR username
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('id, email, username')
+        .or(`email.eq.${userData.email},username.eq.${userData.username}`)
+        .maybeSingle();
 
       let userId: string | undefined;
 
-      if (existingUser) {
+      if (existingProfile) {
         console.log(`  ℹ️  ${key} already exists (${userData.email})`);
-        userId = existingUser.id;
-        createdUsers[key] = existingUser;
+        userId = existingProfile.id;
+        createdUsers[key] = { id: userId, email: userData.email };
+        
+        // Update profile to ensure correct role
+        await supabase
+          .from('profiles')
+          .update({
+            username: userData.username,
+            full_name: userData.full_name,
+            role: userData.role,
+            is_admin: userData.is_admin || false,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', userId);
+          
+        console.log(`  ✅ Updated ${key} profile`);
       } else {
-        // Try to create user
-        const { data: authData, error: signUpError } = await supabase.auth.admin.createUser({
+        // Create user via admin API
+        const { data: authData, error: createError } = await supabase.auth.admin.createUser({
           email: userData.email,
           password: userData.password,
           email_confirm: true,
           user_metadata: {
             full_name: userData.full_name,
+            role: userData.role,
+            username: userData.username
           }
         });
 
-        if (signUpError) {
-          console.error(`  ❌ Error creating ${key}:`, signUpError.message);
-          console.error(`     Details:`, JSON.stringify(signUpError, null, 2));
-          continue;
-        }
-
-        if (authData?.user) {
+        if (createError) {
+          console.error(`  ❌ Auth error for ${key}:`, createError.message);
+          console.log(`  ⚠️  Attempting direct profile insert...`);
+          
+          // Fallback: Create profile directly with valid UUID
+          const crypto = await import('crypto');
+          const fallbackId = crypto.randomUUID();
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert({
+              id: fallbackId,
+              email: userData.email,
+              username: userData.username,
+              full_name: userData.full_name,
+              role: userData.role,
+              is_admin: userData.is_admin || false,
+              email_verified: false,
+              onboarding_completed: true
+            });
+            
+          if (!profileError) {
+            userId = fallbackId;
+            createdUsers[key] = { id: userId, email: userData.email };
+            console.log(`  ⚠️  Created ${key} profile (auth failed, but profile exists)`);
+          } else {
+            console.error(`  ❌ Complete failure for ${key}:`, profileError.message);
+            console.error(`     Code:`, profileError.code);
+            console.error(`     Details:`, JSON.stringify(profileError.details, null, 2));
+            continue;
+          }
+        } else if (authData?.user) {
           userId = authData.user.id;
           createdUsers[key] = authData.user;
           console.log(`  ✅ Created ${key} (${userData.email})`);
+          
+          // Ensure profile has correct data
+          await supabase
+            .from('profiles')
+            .upsert({
+              id: userId,
+              email: userData.email,
+              username: userData.username,
+              full_name: userData.full_name,
+              role: userData.role,
+              is_admin: userData.is_admin || false,
+              email_verified: true,
+              updated_at: new Date().toISOString()
+            }, {
+              onConflict: 'id'
+            });
         }
       }
 
       if (!userId) {
         console.error(`  ❌ No user ID for ${key}`);
         continue;
-      }
-
-      // Update or create profile
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .upsert({
-          id: userId,
-          email: userData.email,
-          username: userData.username,
-          full_name: userData.full_name,
-          role: userData.role,
-          is_admin: userData.is_admin || false,
-          email_verified: true,
-          updated_at: new Date().toISOString()
-        }, {
-          onConflict: 'id'
-        });
-
-      if (profileError) {
-        console.error(`  ❌ Error updating profile for ${key}:`, profileError.message);
-      } else {
-        console.log(`  ✅ ${key} (${userData.email})`);
       }
 
     } catch (error: any) {
