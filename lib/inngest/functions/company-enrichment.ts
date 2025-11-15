@@ -406,6 +406,8 @@ export const companyEnrichmentJob = inngest.createFunction(
           sources_used: baseEnrichedData.metadata.sourcesUsed,
           total_api_calls: 2, // base modules used 2 API calls
           processing_time_ms: Date.now() - startTime,
+        }, {
+          onConflict: 'company_id', // Update if company_id already exists
         });
 
       if (error) {
