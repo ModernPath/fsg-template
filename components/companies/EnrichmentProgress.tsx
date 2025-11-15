@@ -28,7 +28,7 @@ interface EnrichmentProgressProps {
 }
 
 export default function EnrichmentProgress({ companyId, onComplete }: EnrichmentProgressProps) {
-  const t = useTranslations('companies.enrichment');
+  const t = useTranslations('enrichment.enrichment');
   const [job, setJob] = useState<EnrichmentJob | null>(null);
   const [loading, setLoading] = useState(true);
 

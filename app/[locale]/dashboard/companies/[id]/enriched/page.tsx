@@ -10,12 +10,8 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
-import CompanyEnrichedData from '@/components/companies/CompanyEnrichedData';
-import EnrichmentProgress from '@/components/companies/EnrichmentProgress';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, RefreshCw } from 'lucide-react';
-import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
+import EnrichedDataClient from './enriched-client';
 
 interface PageProps {
   params: Promise<{
