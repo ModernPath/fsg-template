@@ -5,11 +5,12 @@ import type { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension
 import { cookies } from 'next/headers'
 
 // Helper to check if an object has the expected cookie store methods
+// Note: Next.js cookies() uses 'delete' instead of 'remove'
 const isValidCookieStore = (obj: any): boolean => {
   return obj && 
     typeof obj.get === 'function' && 
     typeof obj.set === 'function' && 
-    typeof obj.remove === 'function';
+    (typeof obj.remove === 'function' || typeof obj.delete === 'function');
 }
 
 export const createClient = async (cookieStore?: any, useServiceRole: boolean = false) => {
@@ -105,7 +106,12 @@ export const createClient = async (cookieStore?: any, useServiceRole: boolean = 
       },
       remove(name: string, options: CookieOptions) {
         try {
-          cookieStore.remove(name, options)
+          // Next.js cookies() uses 'delete' not 'remove'
+          if (typeof cookieStore.delete === 'function') {
+            cookieStore.delete(name, options)
+          } else if (typeof cookieStore.remove === 'function') {
+            cookieStore.remove(name, options)
+          }
         } catch (error) {
           // The `delete` method was called from a Server Component.
           // This can be ignored if you have middleware refreshing
