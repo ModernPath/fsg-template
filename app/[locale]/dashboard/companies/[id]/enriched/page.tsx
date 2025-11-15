@@ -26,7 +26,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'enriched' });
+  const t = await getTranslations({ locale, namespace: 'enrichment.enriched' });
   
   return {
     title: t('pageTitle'),
@@ -38,7 +38,7 @@ export default async function CompanyEnrichedDataPage({ params }: PageProps) {
   const { id, locale } = await params;
   const cookieStore = await cookies();
   const supabase = await createClient(cookieStore);
-  const t = await getTranslations({ locale, namespace: 'enriched' });
+  const t = await getTranslations({ locale, namespace: 'enrichment.enriched' });
 
   // Verify authentication
   const {
