@@ -220,7 +220,10 @@ export async function POST(
     },
   );
 
-  const { data: { user } } = await supabase.auth.getUser();
+  // 🔥 CRITICAL: Use getSession() NOT getUser()!
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
+  
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -229,10 +232,11 @@ export async function POST(
 }
 ```
 
-**⚠️ WHY NOT `await cookies()`?**
-- `await cookies()` in API routes returns a DIFFERENT cookie store
+**⚠️ WHY getSession() NOT getUser()?**
+- Supabase SSR stores auth in ONE cookie: `sb-session`
+- `getSession()` reads directly from `sb-session` cookie
+- `getUser()` tries to extract JWT from headers (FAILS in API routes!)
 - `request.cookies` contains the actual cookies sent by the browser
-- The middleware uses `request.cookies` - API routes must match!
 
 ---
 
