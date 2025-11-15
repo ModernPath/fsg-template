@@ -37,7 +37,7 @@ import { enrichCompetitiveAdvantages } from '@/lib/enrichment-modules/competitiv
 import { enrichRiskAssessment } from '@/lib/enrichment-modules/risk-assessment';
 import { enrichIntegrationPotential } from '@/lib/enrichment-modules/integration-potential';
 import { enrichExitAttractiveness } from '@/lib/enrichment-modules/exit-attractiveness';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import type { Database } from '@/types/database';
 
 // Initialize Supabase client with service role
@@ -196,9 +196,9 @@ export const companyEnrichmentJob = inngest.createFunction(
     // ==========================================================================
     
     // Initialize Gemini AI client
-    const genAI = new GoogleGenAI({ 
-      apiKey: process.env.GOOGLE_AI_STUDIO_KEY || process.env.GEMINI_API_KEY! 
-    });
+    const genAI = new GoogleGenerativeAI(
+      process.env.GOOGLE_AI_STUDIO_KEY || process.env.GEMINI_API_KEY!
+    );
 
     // Module 3: Industry Analysis
     const industryAnalysis = await step.run('enrich-industry-analysis', async () => {

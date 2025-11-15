@@ -4,7 +4,7 @@
  * @module enrichment-modules/growth-analysis
  */
 
-import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai';
+import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import type { GrowthAnalysis, CompanyBasicInfo } from '@/types/company-enrichment';
 
 export interface GrowthAnalysisOptions {

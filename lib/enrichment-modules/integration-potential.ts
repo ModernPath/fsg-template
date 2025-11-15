@@ -6,7 +6,7 @@
  * @module enrichment-modules/integration-potential
  */
 
-import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai';
+import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import type { IntegrationPotential, CompanyBasicInfo, CompanyFinancialData } from '@/types/company-enrichment';
 
 export interface IntegrationPotentialOptions {

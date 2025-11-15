@@ -6,7 +6,7 @@
  * @module enrichment-modules/risk-assessment
  */
 
-import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai';
+import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import type { RiskAssessment, CompanyBasicInfo, CompanyFinancialData } from '@/types/company-enrichment';
 
 export interface RiskAssessmentOptions {

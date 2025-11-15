@@ -4,7 +4,7 @@
  * @module enrichment-modules/financial-health
  */
 
-import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai';
+import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import type { FinancialHealth, CompanyFinancialData } from '@/types/company-enrichment';
 
 export interface FinancialHealthOptions {

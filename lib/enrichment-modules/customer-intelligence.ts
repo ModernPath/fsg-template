@@ -6,7 +6,7 @@
  * @module enrichment-modules/customer-intelligence
  */
 
-import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai';
+import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import type { CustomerIntelligence, CompanyBasicInfo, CompanyFinancialData } from '@/types/company-enrichment';
 
 export interface CustomerIntelOptions {

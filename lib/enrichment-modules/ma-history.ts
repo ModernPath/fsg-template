@@ -12,7 +12,7 @@
  * @module enrichment-modules/ma-history
  */
 
-import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai';
+import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import type { MandAHistory } from '@/types/company-enrichment';
 
 export interface MAHistoryOptions {

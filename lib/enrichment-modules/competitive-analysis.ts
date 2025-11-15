@@ -4,7 +4,7 @@
  * @module enrichment-modules/competitive-analysis
  */
 
-import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai';
+import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import type { CompetitiveAnalysis } from '@/types/company-enrichment';
 
 export interface CompetitiveAnalysisOptions {

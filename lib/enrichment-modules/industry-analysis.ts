@@ -10,7 +10,7 @@
  * @module enrichment-modules/industry-analysis
  */
 
-import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai';
+import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import type { IndustryAnalysis } from '@/types/company-enrichment';
 
 export interface IndustryAnalysisOptions {

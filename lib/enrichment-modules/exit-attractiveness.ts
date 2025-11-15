@@ -6,7 +6,7 @@
  * @module enrichment-modules/exit-attractiveness
  */
 
-import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai';
+import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import type { 
   ExitAttractiveness, 
   CompanyBasicInfo, 

@@ -6,7 +6,7 @@
  * @module enrichment-modules/competitive-advantages
  */
 
-import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai';
+import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import type { CompetitiveAdvantages, CompanyBasicInfo } from '@/types/company-enrichment';
 
 export interface CompetitiveAdvantagesOptions {

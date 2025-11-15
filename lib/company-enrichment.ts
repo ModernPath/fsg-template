@@ -18,7 +18,7 @@
  * - Types (types/company-enrichment.ts) - Type definitions
  */
 
-import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai';
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import type {
   CompanyBasicInfo,
   YearlyFinancialData,
@@ -46,12 +46,12 @@ export interface EnrichmentConfig {
  * Orchestrates data collection from multiple sources
  */
 export class CompanyEnrichment {
-  private genAI: GoogleGenAI;
+  private genAI: GoogleGenerativeAI;
   private locale: string;
   private model: string;
 
   constructor(config: EnrichmentConfig) {
-    this.genAI = new GoogleGenAI({ apiKey: config.apiKey });
+    this.genAI = new GoogleGenerativeAI(config.apiKey);
     this.locale = config.locale || 'fi';
     this.model = config.model || 'gemini-2.0-flash-exp';
   }

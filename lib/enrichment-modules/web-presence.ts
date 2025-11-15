@@ -4,7 +4,7 @@
  * @module enrichment-modules/web-presence
  */
 
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI } from '@google/generative-ai';
 import type { WebPresence } from '@/types/company-enrichment';
 
 export interface WebPresenceOptions {

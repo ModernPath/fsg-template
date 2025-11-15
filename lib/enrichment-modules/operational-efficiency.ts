@@ -6,7 +6,7 @@
  * @module enrichment-modules/operational-efficiency
  */
 
-import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai';
+import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import type { OperationalEfficiency, CompanyFinancialData, PersonnelInfo } from '@/types/company-enrichment';
 
 export interface OperationalEfficiencyOptions {

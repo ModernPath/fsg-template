@@ -9,7 +9,7 @@
  * @module enrichment-modules/valuation
  */
 
-import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai';
+import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import type { ValuationData, CompanyFinancialData } from '@/types/company-enrichment';
 
 export interface ValuationOptions {

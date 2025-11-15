@@ -4,7 +4,7 @@
  * @module enrichment-modules/market-intelligence
  */
 
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI } from '@google/generative-ai';
 import type { MarketIntelligence } from '@/types/company-enrichment';
 
 export interface MarketIntelligenceOptions {
