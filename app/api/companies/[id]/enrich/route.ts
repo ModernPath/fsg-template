@@ -20,10 +20,13 @@ import { inngest } from '@/lib/inngest-client';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    console.log(`\n🚀 [POST /api/companies/${params.id}/enrich] Starting...`);
+    // Await params first (Next.js 15 requirement)
+    const { id: companyId } = await params;
+    
+    console.log(`\n🚀 [POST /api/companies/${companyId}/enrich] Starting...`);
 
     // 1. Authenticate user
     const supabase = await createClient();
@@ -38,8 +41,6 @@ export async function POST(
     }
 
     console.log(`✅ User authenticated: ${user.id}`);
-
-    const companyId = params.id;
 
     // 2. Parse request body (with error handling for empty body)
     let body = {};
