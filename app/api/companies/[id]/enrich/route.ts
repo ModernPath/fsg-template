@@ -55,12 +55,15 @@ export async function POST(
       },
     );
     
-    console.log('🔐 Step 4: Client created, calling getUser...');
+    console.log('🔐 Step 4: Client created, calling getSession...');
     
+    // Use getSession() instead of getUser() - it reads from sb-session cookie
     const {
-      data: { user },
+      data: { session },
       error: authError,
-    } = await supabase.auth.getUser();
+    } = await supabase.auth.getSession();
+    
+    const user = session?.user;
 
     console.log('🔐 Step 5: Auth result:', {
       hasUser: !!user,
