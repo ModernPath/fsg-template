@@ -1,29 +1,280 @@
 {
-  "title": "AI-material",
-  "subtitle": "AI-genererat försäljningsmaterial för dina företag",
-  "generateMaterials": "Generera material",
-  "types": {
-    "teaser": "Teasers",
-    "im": "Information Memorandum",
-    "pitch_deck": "Pitch Decks",
-    "valuation_report": "Värderingsrapporter"
+  "gamma_config": {
+    "title": "Presentationsdesign",
+    "description": "Anpassa hur dina material kommer att se ut i Gamma-presentationer",
+    "theme": {
+      "label": "Tema",
+      "professional": {
+        "name": "Professionell",
+        "description": "Ren, affärsinriktad design"
+      },
+      "modern": {
+        "name": "Modern",
+        "description": "Samtida med djärva accenter"
+      },
+      "minimal": {
+        "name": "Minimalistisk",
+        "description": "Enkel och elegant"
+      },
+      "creative": {
+        "name": "Kreativ",
+        "description": "Livlig och dynamisk"
+      },
+      "corporate": {
+        "name": "Företagsstil",
+        "description": "Traditionell företagsstil"
+      }
+    },
+    "brand_color": {
+      "label": "Varumärkesfärg",
+      "presets": {
+        "gold": "Guld",
+        "blue": "Blå",
+        "purple": "Lila",
+        "green": "Grön",
+        "red": "Röd",
+        "orange": "Orange",
+        "teal": "Turkos",
+        "gray": "Grå"
+      }
+    },
+    "font_style": {
+      "label": "Typsnittsstil",
+      "sans": {
+        "name": "Sans Serif",
+        "description": "Modern, ren (Helvetica, Arial)"
+      },
+      "serif": {
+        "name": "Serif",
+        "description": "Traditionell, elegant (Times, Georgia)"
+      },
+      "modern": {
+        "name": "Modern",
+        "description": "Samtida (Inter, SF Pro)"
+      },
+      "classic": {
+        "name": "Klassisk",
+        "description": "Tidlös (Garamond, Baskerville)"
+      }
+    },
+    "slide_layout": {
+      "label": "Bildlayout",
+      "widescreen": {
+        "name": "Bredbildsformat (16:9)",
+        "description": "Modernt, bäst för skärmar"
+      },
+      "standard": {
+        "name": "Standard (4:3)",
+        "description": "Klassiskt presentationsformat"
+      },
+      "compact": {
+        "name": "Kompakt",
+        "description": "Mer innehåll per bild"
+      }
+    },
+    "options": {
+      "title": "Ytterligare alternativ",
+      "company_logo": {
+        "title": "Inkludera företagslogotyp",
+        "description": "Lägg till logotyp i bildhuvuden"
+      },
+      "footer": {
+        "title": "Inkludera sidfot",
+        "description": "Visa sidnummer och företagsnamn"
+      },
+      "transitions": {
+        "title": "Bildövergångar",
+        "description": "Mjuka övergångar mellan bilder"
+      },
+      "enabled": "Aktiverad",
+      "disabled": "Inaktiverad"
+    },
+    "actions": {
+      "save": "Spara konfiguration",
+      "saving": "Sparar...",
+      "reset": "Återställ till standard",
+      "cancel": "Avbryt"
+    },
+    "note": {
+      "title": "Observera:",
+      "message": "Dessa inställningar kommer att tillämpas på alla framtida Gamma-presentationer för detta företag. Befintliga presentationer påverkas inte."
+    }
   },
-  "descriptions": {
-    "teaser": "2-sidiga sammanfattningar",
-    "im": "20-50 sidor detaljerade dokument",
-    "pitch_deck": "Investerarpresentationer",
-    "valuation_report": "AI-assisterade värderingar"
+  "preview": {
+    "title": "Materialförhandsvisning",
+    "tabs": {
+      "preview": "Förhandsvisning",
+      "content": "Innehåll",
+      "embed": "Bädda in"
+    },
+    "actions": {
+      "view": "Visa presentation",
+      "edit": "Redigera i Gamma",
+      "share": "Dela länk",
+      "copied": "Kopierad!",
+      "export_pdf": "Exportera PDF",
+      "export_pptx": "Exportera PPTX",
+      "regenerate": "Återskapa",
+      "copy_embed": "Kopiera inbäddningskod"
+    },
+    "stats": {
+      "type": "Typ",
+      "status": "Status",
+      "created": "Skapad",
+      "updated": "Senast uppdaterad"
+    },
+    "management": {
+      "title": "Materialhantering",
+      "description": "Avancerade alternativ för att hantera detta material",
+      "presentation_id": "Gamma presentations-ID",
+      "download_sources": "Ladda ner originalfiler",
+      "delete": {
+        "title": "Radera material",
+        "description": "Ta bort material permanent",
+        "action": "Radera"
+      }
+    },
+    "embed": {
+      "title": "Inbäddningskod",
+      "description": "Använd denna kod för att bädda in presentationen på din webbplats",
+      "no_code": "Ingen inbäddningskod tillgänglig för detta material"
+    },
+    "no_preview": "Ingen förhandsvisning tillgänglig"
   },
-  "recentMaterials": "Senaste material",
-  "actions": {
-    "preview": "Förhandsgranska",
-    "download": "Ladda ner",
-    "generate": "Generera"
+  "templates": {
+    "title": "Välj en mall",
+    "description": "Välj en mall som bäst passar ditt företag och bransch",
+    "recommended": "Rekommenderad",
+    "category": {
+      "general": "Allmän",
+      "tech": "Teknik",
+      "retail": "Detaljhandel",
+      "manufacturing": "Tillverkning",
+      "services": "Tjänster"
+    },
+    "style": {
+      "formal": "Formell",
+      "modern": "Modern",
+      "creative": "Kreativ",
+      "minimal": "Minimal"
+    },
+    "includes": "Inkluderar:",
+    "slides": "{count} bilder",
+    "preview": "Förhandsgranska mall",
+    "select": "Välj denna mall",
+    "selected": {
+      "title": "Mall vald:",
+      "message": "Ditt material kommer att skapas med denna mallstruktur"
+    }
   },
-  "created": "Skapad",
-  "empty": {
-    "title": "Inget material än",
-    "description": "Skapa ditt första AI-drivna försäljningsmaterial"
+  "enrichment": {
+    "title": "Välj anrikningsmoduler",
+    "description": "Välj vilka datamoduler som ska inkluderas i materialgenereringsprocessen",
+    "summary": {
+      "modules": "{count} moduler valda",
+      "time": "Uppskattad tid: ~{minutes} minuter",
+      "select_all": "Välj alla",
+      "defaults": "Standardval"
+    },
+    "categories": {
+      "base": {
+        "title": "Basmoduler",
+        "badge": "Kärndata"
+      },
+      "ma": {
+        "title": "M&A-specifika moduler",
+        "badge": "Avancerad",
+        "description": "Dessa moduler ger djupgående insikter som är särskilt värdefulla för M&A-transaktioner"
+      }
+    },
+    "modules": {
+      "basic_info": {
+        "name": "Grundläggande information",
+        "description": "Företagsnamn, bransch, plats, affärsmodell"
+      },
+      "financial_data": {
+        "name": "Finansiell data",
+        "description": "Omsättning, EBITDA, nyckeltal"
+      },
+      "industry_analysis": {
+        "name": "Branschanalys",
+        "description": "Marknadsstorlek, trender, tillväxtdrivare"
+      },
+      "competitive_analysis": {
+        "name": "Konkurrensanalys",
+        "description": "Konkurrenter, marknadsposition, differentiering"
+      },
+      "growth_analysis": {
+        "name": "Tillväxtanalys",
+        "description": "Historisk tillväxt, expansionsmöjligheter"
+      },
+      "financial_health": {
+        "name": "Finansiell hälsa",
+        "description": "Lönsamhet, kassaflöde, skuldanalys"
+      },
+      "personnel_info": {
+        "name": "Personalinformation",
+        "description": "Teamstorlek, nyckelpersoner, organisationsstruktur"
+      },
+      "market_intelligence": {
+        "name": "Marknadsintelligens",
+        "description": "Marknadstrender, positionering, möjligheter"
+      },
+      "web_presence": {
+        "name": "Webbnärvaro",
+        "description": "Webbplatsanalys, digitalt fotavtryck"
+      },
+      "ma_history": {
+        "name": "M&A-historik",
+        "description": "Tidigare förvärv, avyttringar, finansieringsronder"
+      },
+      "valuation_data": {
+        "name": "Värderingsdata",
+        "description": "Värderingsmultiplar, jämförbara transaktioner"
+      },
+      "customer_intelligence": {
+        "name": "Kundintelligens",
+        "description": "Kundkoncentration, retention, intäktsmönster"
+      },
+      "operational_efficiency": {
+        "name": "Operativ effektivitet",
+        "description": "Nyckeloperativa mått, produktivitetsanalys"
+      },
+      "competitive_advantages": {
+        "name": "Konkurrensfördelar",
+        "description": "Unika försäljningsargument, inträdesbarriärer"
+      },
+      "risk_assessment": {
+        "name": "Riskbedömning",
+        "description": "Potentiella risker, utmaningar, riskhanteringsstrategier"
+      },
+      "integration_potential": {
+        "name": "Integrationspotential",
+        "description": "Integrationsförmåga, synergiemöjligheter"
+      },
+      "exit_attractiveness": {
+        "name": "Attraktivitet för köpare",
+        "description": "Attraktionskraft för köpare, strategisk passningsanalys"
+      }
+    },
+    "badges": {
+      "required": "Obligatorisk",
+      "time": "{minutes} min"
+    },
+    "actions": {
+      "save": "Spara konfiguration",
+      "saving": "Sparar...",
+      "cancel": "Avbryt"
+    },
+    "note": {
+      "title": "Observera:",
+      "points": [
+        "Fler moduler ger rikare data men tar längre tid att bearbeta",
+        "Obligatoriska moduler kan inte avmarkeras",
+        "M&A-moduler rekommenderas för omfattande teasers och IM",
+        "Du kan uppdatera denna konfiguration när som helst före generering",
+        "Varje modul använder AI för att samla in och analysera data från flera källor"
+      ]
+    }
   }
 }
-

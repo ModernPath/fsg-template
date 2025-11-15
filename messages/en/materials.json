@@ -1,29 +1,280 @@
 {
-  "title": "AI Materials",
-  "subtitle": "AI-generated sale materials for your companies",
-  "generateMaterials": "Generate Materials",
-  "types": {
-    "teaser": "Teasers",
-    "im": "Information Memorandums",
-    "pitch_deck": "Pitch Decks",
-    "valuation_report": "Valuation Reports"
+  "gamma_config": {
+    "title": "Presentation Design",
+    "description": "Customize how your materials will look in Gamma presentations",
+    "theme": {
+      "label": "Theme",
+      "professional": {
+        "name": "Professional",
+        "description": "Clean, business-focused design"
+      },
+      "modern": {
+        "name": "Modern",
+        "description": "Contemporary with bold accents"
+      },
+      "minimal": {
+        "name": "Minimal",
+        "description": "Simple and elegant"
+      },
+      "creative": {
+        "name": "Creative",
+        "description": "Vibrant and dynamic"
+      },
+      "corporate": {
+        "name": "Corporate",
+        "description": "Traditional corporate style"
+      }
+    },
+    "brand_color": {
+      "label": "Brand Color",
+      "presets": {
+        "gold": "Gold",
+        "blue": "Blue",
+        "purple": "Purple",
+        "green": "Green",
+        "red": "Red",
+        "orange": "Orange",
+        "teal": "Teal",
+        "gray": "Gray"
+      }
+    },
+    "font_style": {
+      "label": "Font Style",
+      "sans": {
+        "name": "Sans Serif",
+        "description": "Modern, clean (Helvetica, Arial)"
+      },
+      "serif": {
+        "name": "Serif",
+        "description": "Traditional, elegant (Times, Georgia)"
+      },
+      "modern": {
+        "name": "Modern",
+        "description": "Contemporary (Inter, SF Pro)"
+      },
+      "classic": {
+        "name": "Classic",
+        "description": "Timeless (Garamond, Baskerville)"
+      }
+    },
+    "slide_layout": {
+      "label": "Slide Layout",
+      "widescreen": {
+        "name": "Widescreen (16:9)",
+        "description": "Modern, best for screens"
+      },
+      "standard": {
+        "name": "Standard (4:3)",
+        "description": "Classic presentation format"
+      },
+      "compact": {
+        "name": "Compact",
+        "description": "More content per slide"
+      }
+    },
+    "options": {
+      "title": "Additional Options",
+      "company_logo": {
+        "title": "Include Company Logo",
+        "description": "Add logo to slide headers"
+      },
+      "footer": {
+        "title": "Include Footer",
+        "description": "Show page numbers and company name"
+      },
+      "transitions": {
+        "title": "Slide Transitions",
+        "description": "Smooth transitions between slides"
+      },
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "actions": {
+      "save": "Save Configuration",
+      "saving": "Saving...",
+      "reset": "Reset to Defaults",
+      "cancel": "Cancel"
+    },
+    "note": {
+      "title": "Note:",
+      "message": "These settings will be applied to all future Gamma presentations generated for this company. Existing presentations will not be affected."
+    }
   },
-  "descriptions": {
-    "teaser": "2-page executive summaries",
-    "im": "20-50 page detailed documents",
-    "pitch_deck": "Investor presentations",
-    "valuation_report": "AI-assisted valuations"
+  "preview": {
+    "title": "Material Preview",
+    "tabs": {
+      "preview": "Preview",
+      "content": "Content",
+      "embed": "Embed"
+    },
+    "actions": {
+      "view": "View Presentation",
+      "edit": "Edit in Gamma",
+      "share": "Share Link",
+      "copied": "Copied!",
+      "export_pdf": "Export PDF",
+      "export_pptx": "Export PPTX",
+      "regenerate": "Regenerate",
+      "copy_embed": "Copy Embed Code"
+    },
+    "stats": {
+      "type": "Type",
+      "status": "Status",
+      "created": "Created",
+      "updated": "Last Updated"
+    },
+    "management": {
+      "title": "Material Management",
+      "description": "Advanced options for managing this material",
+      "presentation_id": "Gamma Presentation ID",
+      "download_sources": "Download Original Files",
+      "delete": {
+        "title": "Delete Material",
+        "description": "Permanently remove this material",
+        "action": "Delete"
+      }
+    },
+    "embed": {
+      "title": "Embed Code",
+      "description": "Use this code to embed the presentation on your website",
+      "no_code": "No embed code available for this material"
+    },
+    "no_preview": "No presentation preview available"
   },
-  "recentMaterials": "Recent Materials",
-  "actions": {
-    "preview": "Preview",
-    "download": "Download",
-    "generate": "Generate"
+  "templates": {
+    "title": "Choose a Template",
+    "description": "Select a template that best matches your company and industry",
+    "recommended": "Recommended",
+    "category": {
+      "general": "General",
+      "tech": "Tech",
+      "retail": "Retail",
+      "manufacturing": "Manufacturing",
+      "services": "Services"
+    },
+    "style": {
+      "formal": "Formal",
+      "modern": "Modern",
+      "creative": "Creative",
+      "minimal": "Minimal"
+    },
+    "includes": "Includes:",
+    "slides": "{count} slides",
+    "preview": "Preview Template",
+    "select": "Select This Template",
+    "selected": {
+      "title": "Template selected:",
+      "message": "Your materials will be generated using this template structure"
+    }
   },
-  "created": "Created",
-  "empty": {
-    "title": "No materials yet",
-    "description": "Generate your first AI-powered sale material"
+  "enrichment": {
+    "title": "Select Enrichment Modules",
+    "description": "Choose which data modules to include in the material generation process",
+    "summary": {
+      "modules": "{count} modules selected",
+      "time": "Estimated time: ~{minutes} minutes",
+      "select_all": "Select All",
+      "defaults": "Defaults"
+    },
+    "categories": {
+      "base": {
+        "title": "Base Modules",
+        "badge": "Core Data"
+      },
+      "ma": {
+        "title": "M&A Specific Modules",
+        "badge": "Advanced",
+        "description": "These modules provide deep insights specifically valuable for M&A transactions"
+      }
+    },
+    "modules": {
+      "basic_info": {
+        "name": "Basic Information",
+        "description": "Company name, industry, location, business model"
+      },
+      "financial_data": {
+        "name": "Financial Data",
+        "description": "Revenue, EBITDA, key financial metrics"
+      },
+      "industry_analysis": {
+        "name": "Industry Analysis",
+        "description": "Market size, trends, growth drivers"
+      },
+      "competitive_analysis": {
+        "name": "Competitive Analysis",
+        "description": "Competitors, market position, differentiation"
+      },
+      "growth_analysis": {
+        "name": "Growth Analysis",
+        "description": "Historical growth, expansion opportunities"
+      },
+      "financial_health": {
+        "name": "Financial Health",
+        "description": "Profitability, cash flow, debt analysis"
+      },
+      "personnel_info": {
+        "name": "Personnel Information",
+        "description": "Team size, key executives, organizational structure"
+      },
+      "market_intelligence": {
+        "name": "Market Intelligence",
+        "description": "Market trends, positioning, opportunities"
+      },
+      "web_presence": {
+        "name": "Web Presence",
+        "description": "Website analysis, digital footprint"
+      },
+      "ma_history": {
+        "name": "M&A History",
+        "description": "Previous acquisitions, divestitures, funding rounds"
+      },
+      "valuation_data": {
+        "name": "Valuation Data",
+        "description": "Valuation multiples, comparable transactions"
+      },
+      "customer_intelligence": {
+        "name": "Customer Intelligence",
+        "description": "Customer concentration, retention, revenue patterns"
+      },
+      "operational_efficiency": {
+        "name": "Operational Efficiency",
+        "description": "Key operational metrics, productivity analysis"
+      },
+      "competitive_advantages": {
+        "name": "Competitive Advantages",
+        "description": "Unique selling points, barriers to entry"
+      },
+      "risk_assessment": {
+        "name": "Risk Assessment",
+        "description": "Potential risks, challenges, mitigation strategies"
+      },
+      "integration_potential": {
+        "name": "Integration Potential",
+        "description": "Ease of integration, synergy opportunities"
+      },
+      "exit_attractiveness": {
+        "name": "Exit Attractiveness",
+        "description": "Appeal to buyers, strategic fit analysis"
+      }
+    },
+    "badges": {
+      "required": "Required",
+      "time": "{minutes} min"
+    },
+    "actions": {
+      "save": "Save Configuration",
+      "saving": "Saving...",
+      "cancel": "Cancel"
+    },
+    "note": {
+      "title": "Note:",
+      "points": [
+        "More modules provide richer data but take longer to process",
+        "Required modules cannot be deselected",
+        "M&A modules are recommended for comprehensive teasers and IMs",
+        "You can update this configuration anytime before generation",
+        "Each module uses AI to gather and analyze data from multiple sources"
+      ]
+    }
   }
 }
-

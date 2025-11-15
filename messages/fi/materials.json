@@ -1,29 +1,280 @@
 {
-  "title": "AI-materiaalit",
-  "subtitle": "AI-generoidut myyntimateriaalit yrityksillesi",
-  "generateMaterials": "Generoi materiaaleja",
-  "types": {
-    "teaser": "Teaserit",
-    "im": "Information Memorandum",
-    "pitch_deck": "Pitch Deckit",
-    "valuation_report": "Arvostusraportit"
+  "gamma_config": {
+    "title": "Esityksen ulkoasu",
+    "description": "Mukauta materiaalien ulkoasua Gamma-esityksissä",
+    "theme": {
+      "label": "Teema",
+      "professional": {
+        "name": "Ammattimainen",
+        "description": "Selkeä, liiketoimintapainotteinen ulkoasu"
+      },
+      "modern": {
+        "name": "Moderni",
+        "description": "Nykyaikainen, rohkeilla korostuksilla"
+      },
+      "minimal": {
+        "name": "Minimalistinen",
+        "description": "Yksinkertainen ja tyylikäs"
+      },
+      "creative": {
+        "name": "Luova",
+        "description": "Eloisa ja dynaaminen"
+      },
+      "corporate": {
+        "name": "Yritystyyli",
+        "description": "Perinteinen yritysmaailman tyyli"
+      }
+    },
+    "brand_color": {
+      "label": "Brändiväri",
+      "presets": {
+        "gold": "Kulta",
+        "blue": "Sininen",
+        "purple": "Violetti",
+        "green": "Vihreä",
+        "red": "Punainen",
+        "orange": "Oranssi",
+        "teal": "Turkoosi",
+        "gray": "Harmaa"
+      }
+    },
+    "font_style": {
+      "label": "Fonttityyli",
+      "sans": {
+        "name": "Sans Serif",
+        "description": "Moderni, selkeä (Helvetica, Arial)"
+      },
+      "serif": {
+        "name": "Serif",
+        "description": "Perinteinen, tyylikäs (Times, Georgia)"
+      },
+      "modern": {
+        "name": "Moderni",
+        "description": "Nykyaikainen (Inter, SF Pro)"
+      },
+      "classic": {
+        "name": "Klassinen",
+        "description": "Ajaton (Garamond, Baskerville)"
+      }
+    },
+    "slide_layout": {
+      "label": "Diojen asettelu",
+      "widescreen": {
+        "name": "Laajakuva (16:9)",
+        "description": "Moderni, sopii näytöille"
+      },
+      "standard": {
+        "name": "Standardi (4:3)",
+        "description": "Klassinen esitysmuoto"
+      },
+      "compact": {
+        "name": "Kompakti",
+        "description": "Enemmän sisältöä diaa kohden"
+      }
+    },
+    "options": {
+      "title": "Lisäasetukset",
+      "company_logo": {
+        "title": "Sisällytä yrityksen logo",
+        "description": "Lisää logo diojen ylätunnisteeseen"
+      },
+      "footer": {
+        "title": "Sisällytä alatunniste",
+        "description": "Näytä sivunumerot ja yrityksen nimi"
+      },
+      "transitions": {
+        "title": "Diojen siirtymät",
+        "description": "Sujuvat siirtymät diojen välillä"
+      },
+      "enabled": "Käytössä",
+      "disabled": "Ei käytössä"
+    },
+    "actions": {
+      "save": "Tallenna asetukset",
+      "saving": "Tallennetaan...",
+      "reset": "Palauta oletusasetukset",
+      "cancel": "Peruuta"
+    },
+    "note": {
+      "title": "Huomio:",
+      "message": "Nämä asetukset otetaan käyttöön kaikissa tämän yrityksen tulevissa Gamma-esityksissä. Olemassa oleviin esityksiin ei vaikuteta."
+    }
   },
-  "descriptions": {
-    "teaser": "2-sivuiset tiivistelmät",
-    "im": "20-50 sivuiset yksityiskohtaiset dokumentit",
-    "pitch_deck": "Sijoittajapresentaatiot",
-    "valuation_report": "AI-avusteiset arvostukset"
+  "preview": {
+    "title": "Materiaalin esikatselu",
+    "tabs": {
+      "preview": "Esikatselu",
+      "content": "Sisältö",
+      "embed": "Upotus"
+    },
+    "actions": {
+      "view": "Näytä esitys",
+      "edit": "Muokkaa Gammassa",
+      "share": "Jaa linkki",
+      "copied": "Kopioitu!",
+      "export_pdf": "Vie PDF",
+      "export_pptx": "Vie PPTX",
+      "regenerate": "Luo uudelleen",
+      "copy_embed": "Kopioi upotuskoodi"
+    },
+    "stats": {
+      "type": "Tyyppi",
+      "status": "Tila",
+      "created": "Luotu",
+      "updated": "Päivitetty"
+    },
+    "management": {
+      "title": "Materiaalin hallinta",
+      "description": "Lisätoiminnot materiaalin hallintaan",
+      "presentation_id": "Gamma-esityksen ID",
+      "download_sources": "Lataa alkuperäiset tiedostot",
+      "delete": {
+        "title": "Poista materiaali",
+        "description": "Poista materiaali pysyvästi",
+        "action": "Poista"
+      }
+    },
+    "embed": {
+      "title": "Upotuskoodi",
+      "description": "Käytä tätä koodia upoottaaksesi esityksen verkkosivullesi",
+      "no_code": "Ei upotuskoodia saatavilla tälle materiaalille"
+    },
+    "no_preview": "Ei esikatselua saatavilla"
   },
-  "recentMaterials": "Viimeisimmät materiaalit",
-  "actions": {
-    "preview": "Esikatselu",
-    "download": "Lataa",
-    "generate": "Generoi"
+  "templates": {
+    "title": "Valitse pohja",
+    "description": "Valitse yrityksellesi ja toimialallesi sopiva pohja",
+    "recommended": "Suositeltu",
+    "category": {
+      "general": "Yleinen",
+      "tech": "Teknologia",
+      "retail": "Vähittäiskauppa",
+      "manufacturing": "Tuotanto",
+      "services": "Palvelut"
+    },
+    "style": {
+      "formal": "Muodollinen",
+      "modern": "Moderni",
+      "creative": "Luova",
+      "minimal": "Minimaalinen"
+    },
+    "includes": "Sisältää:",
+    "slides": "{count} diaa",
+    "preview": "Esikatsele pohjaa",
+    "select": "Valitse tämä pohja",
+    "selected": {
+      "title": "Pohja valittu:",
+      "message": "Materiaalisi luodaan käyttäen tämän pohjan rakennetta"
+    }
   },
-  "created": "Luotu",
-  "empty": {
-    "title": "Ei materiaaleja vielä",
-    "description": "Luo ensimmäinen AI-pohjainen myyntimateriaali"
+  "enrichment": {
+    "title": "Valitse rikastusmoduulit",
+    "description": "Valitse mitkä datamoduulit sisällytetään materiaalin luontiprosessiin",
+    "summary": {
+      "modules": "{count} moduulia valittu",
+      "time": "Arvioitu aika: ~{minutes} minuuttia",
+      "select_all": "Valitse kaikki",
+      "defaults": "Oletusvalinnat"
+    },
+    "categories": {
+      "base": {
+        "title": "Perusmoduulit",
+        "badge": "Perusdata"
+      },
+      "ma": {
+        "title": "Yrityskauppoihin erikoistuneet moduulit",
+        "badge": "Edistynyt",
+        "description": "Nämä moduulit tarjoavat syvällistä tietoa erityisesti yrityskauppojen kannalta"
+      }
+    },
+    "modules": {
+      "basic_info": {
+        "name": "Perustiedot",
+        "description": "Yrityksen nimi, toimiala, sijainti, liiketoimintamalli"
+      },
+      "financial_data": {
+        "name": "Talousdata",
+        "description": "Liikevaihto, käyttökate, keskeiset talousluvut"
+      },
+      "industry_analysis": {
+        "name": "Toimiala-analyysi",
+        "description": "Markkinakoko, trendit, kasvuajurit"
+      },
+      "competitive_analysis": {
+        "name": "Kilpailija-analyysi",
+        "description": "Kilpailijat, markkina-asema, erottautuminen"
+      },
+      "growth_analysis": {
+        "name": "Kasvuanalyysi",
+        "description": "Historiallinen kasvu, laajentumismahdollisuudet"
+      },
+      "financial_health": {
+        "name": "Taloudellinen terveys",
+        "description": "Kannattavuus, kassavirta, velka-analyysi"
+      },
+      "personnel_info": {
+        "name": "Henkilöstötiedot",
+        "description": "Tiimin koko, avainhenkilöt, organisaatiorakenne"
+      },
+      "market_intelligence": {
+        "name": "Markkinatiedustelu",
+        "description": "Markkinatrendit, asemointi, mahdollisuudet"
+      },
+      "web_presence": {
+        "name": "Verkkonäkyvyys",
+        "description": "Verkkosivujen analyysi, digitaalinen jalanjälki"
+      },
+      "ma_history": {
+        "name": "Yrityskauppahistoria",
+        "description": "Aiemmat yritysostot, irtautumiset, rahoituskierrokset"
+      },
+      "valuation_data": {
+        "name": "Arvostusdata",
+        "description": "Arvostuskertoimet, vertailukelpoiset kaupat"
+      },
+      "customer_intelligence": {
+        "name": "Asiakasäly",
+        "description": "Asiakaskeskittymä, säilyvyys, liikevaihdon rakenne"
+      },
+      "operational_efficiency": {
+        "name": "Toiminnallinen tehokkuus",
+        "description": "Keskeiset toiminnalliset mittarit, tuottavuusanalyysi"
+      },
+      "competitive_advantages": {
+        "name": "Kilpailuedut",
+        "description": "Ainutlaatuiset myyntipisteet, markkinaesteet"
+      },
+      "risk_assessment": {
+        "name": "Riskiarvio",
+        "description": "Mahdolliset riskit, haasteet, riskienhallintastrategiat"
+      },
+      "integration_potential": {
+        "name": "Integrointipotentiaali",
+        "description": "Integroinnin helppous, synergiamahdollisuudet"
+      },
+      "exit_attractiveness": {
+        "name": "Vetovoimaisuus ostajille",
+        "description": "Houkuttelevuus ostajille, strateginen sopivuusanalyysi"
+      }
+    },
+    "badges": {
+      "required": "Pakollinen",
+      "time": "{minutes} min"
+    },
+    "actions": {
+      "save": "Tallenna asetukset",
+      "saving": "Tallennetaan...",
+      "cancel": "Peruuta"
+    },
+    "note": {
+      "title": "Huomio:",
+      "points": [
+        "Useammat moduulit tarjoavat rikkaamman datan, mutta käsittely kestää kauemmin",
+        "Pakollisia moduuleja ei voi poistaa valinnasta",
+        "Yrityskauppamoduuleja suositellaan kattaviin teasereihin ja esittelyihin",
+        "Voit päivittää nämä asetukset milloin tahansa ennen luontia",
+        "Jokainen moduuli käyttää tekoälyä tiedon keräämiseen ja analysointiin useista lähteistä"
+      ]
+    }
   }
 }
-
