@@ -25,19 +25,39 @@ export default async function CompanyEnrichPage({ params }: PageProps) {
   // Check authentication
   const {
     data: { user },
+    error: authError,
   } = await supabase.auth.getUser();
 
-  if (!user) {
+  console.log('🔐 Enrich Page Auth Debug:', {
+    hasUser: !!user,
+    userId: user?.id,
+    authError: authError?.message,
+    path: `/fi/dashboard/companies/${id}/enrich`
+  });
+
+  if (!user || authError) {
+    console.error('❌ No user or auth error, redirecting to sign-in');
     redirect(`/${locale}/auth/sign-in`);
+    return null;
   }
 
-  // Get user's organization first
-  const { data: userOrgs } = await supabase
-    .from('user_organizations')
-    .select('organization_id')
-    .eq('user_id', user.id)
-    .eq('active', true)
-    .maybeSingle();
+  console.log('✅ User authenticated:', user.email);
+
+  // Get user's profile and organization
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select(`
+      id,
+      user_organizations(
+        organization_id,
+        role,
+        active
+      )
+    `)
+    .eq('id', user.id)
+    .single();
+
+  const userOrgs = profile?.user_organizations?.[0];
 
   // Verify company exists and user has access
   const { data: company, error } = await supabase
@@ -46,29 +66,35 @@ export default async function CompanyEnrichPage({ params }: PageProps) {
     .eq('id', id)
     .single();
 
-  console.log('Enrichment debug:', {
+  console.log('🏢 Company Access Debug:', {
     companyId: id,
-    company,
-    error: error?.message,
+    companyName: company?.name,
+    companyError: error?.message,
     userOrg: userOrgs?.organization_id,
-    companyOrg: company?.organization_id
+    companyOrg: company?.organization_id,
+    hasAccess: userOrgs?.organization_id === company?.organization_id
   });
 
   if (error) {
-    console.error('Company fetch error:', error);
+    console.error('❌ Company fetch error:', error);
     redirect(`/${locale}/dashboard/companies`);
+    return null;
   }
 
   if (!company) {
-    console.error('Company not found');
+    console.error('❌ Company not found');
     redirect(`/${locale}/dashboard/companies`);
+    return null;
   }
 
   // Check if user has access to this company's organization
   if (userOrgs && company.organization_id !== userOrgs.organization_id) {
-    console.error('User does not have access to this company');
+    console.error('❌ User does not have access to this company');
     redirect(`/${locale}/dashboard/companies`);
+    return null;
   }
+
+  console.log('✅ Access granted to company:', company.name);
 
   return <EnrichmentClient companyId={id} companyName={company.name} locale={locale} />;
 }
