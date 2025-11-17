@@ -1,0 +1,253 @@
+{
+  "meta": {
+    "title": "Fuengirola Excursiones en Barco - Increíbles Tours en el Mediterráneo",
+    "description": "¡Vive una excursión inolvidable en barco en Fuengirola! Cruceros al atardecer, safari de delfines, excursiones de pesca y charters privados. ¡Reserva ahora!",
+    "keywords": "fuengirola excursiones en barco, mediterráneo, crucero, safari delfines, pesca, charter, españa, málaga"
+  },
+  "hero": {
+    "title": "Fuengirola Excursiones en Barco",
+    "subtitle": "Únete al capitán finlandés en excursiones en barco por las olas del Mediterráneo",
+    "description": "¡Disfruta de momentos inolvidables en el mar! Cruceros privados desde el puerto de Fuengirola para hasta 8 personas. El precio siempre incluye bebidas (agua, cerveza, refrescos, vino blanco).",
+    "bookNow": "Reservar ahora",
+    "viewTrips": "Ver excursiones",
+    "stats": {
+      "years": "Años de experiencia",
+      "customers": "Clientes satisfechos",
+      "rating": "Valoración media",
+      "safety": "Seguro"
+    }
+  },
+  "features": {
+    "title": "¿Por qué elegirnos?",
+    "subtitle": "Ofrecemos servicios completos para excursiones en barco inolvidables",
+    "luxury": {
+      "title": "Barcos de lujo",
+      "description": "Barcos modernos y bien equipados para máxima comodidad"
+    },
+    "routes": {
+      "title": "Rutas increíbles",
+      "description": "Explora las zonas costeras más hermosas de Fuengirola"
+    },
+    "sunset": {
+      "title": "Cruceros al atardecer",
+      "description": "Momentos románticos bajo la luz dorada del sol"
+    },
+    "groups": {
+      "title": "Viajes en grupo",
+      "description": "Perfecto para celebraciones familiares y con amigos"
+    },
+    "photography": {
+      "title": "Oportunidades fotográficas",
+      "description": "Vistas impresionantes y momentos para Instagram garantizados"
+    },
+    "catering": {
+      "title": "Comida y bebida",
+      "description": "Deliciosos aperitivos y refrescos durante el viaje"
+    },
+    "fishing": {
+      "title": "Excursiones de pesca",
+      "description": "Vive una emocionante aventura de pesca en el Mediterráneo"
+    },
+    "safety": {
+      "title": "Seguridad total",
+      "description": "Tripulación experimentada y equipo de seguridad moderno"
+    }
+  },
+  "trips": {
+    "title": "Excursiones populares en barco",
+    "subtitle": "Elige el viaje perfecto para tus necesidades",
+    "from": "Desde",
+    "maxCapacity": "máx {capacity} personas",
+    "book": "Reservar",
+    "exploreMore": "¿Quieres saber más sobre nuestras excursiones?",
+    "viewAllTrips": "Ver todas las excursiones",
+    "sunset": {
+      "title": "Crucero al atardecer",
+      "description": "Crucero romántico de 3 horas bajo la luz dorada del sol, incluye bebidas y aperitivos",
+      "price": "€45/persona"
+    },
+    "dolphinWatching": {
+      "title": "3h Crucero de delfines y natación",
+      "description": "Excursión inolvidable de delfines en el Mediterráneo. Oportunidad de nadar en aguas cristalinas. Incluye bebidas (agua, cerveza, refrescos, vino blanco).",
+      "price": "65€/persona",
+      "duration": "3 horas",
+      "capacity": "Mín. 4 personas, máx 8 personas"
+    },
+    "sunsetCruise": {
+      "title": "2h Crucero al atardecer",
+      "description": "Crucero romántico al atardecer en el Mediterráneo. Disfruta de vistas impresionantes y relajación. Incluye bebidas (agua, cerveza, refrescos, vino blanco).",
+      "price": "45€/persona",
+      "duration": "2 horas",
+      "capacity": "Mín. 4 personas, máx 8 personas"
+    },
+    "privateCharter": {
+      "title": "Cruceros personalizados",
+      "description": "Cruceros de almuerzo, cumpleaños y otros eventos privados. ¡Personalizado según tus necesidades! También se pueden organizar experiencias más largas (cruceros de almuerzo a puertos cercanos).",
+      "price": "¡Solicita presupuesto!",
+      "duration": "A convenir",
+      "capacity": "Máx 8 personas"
+    },
+    "carRental": {
+      "title": "Alquiler de coches - Fiat 500 Descapotable",
+      "description": "¡Ahora también puedes alquilar un Fiat 500 descapotable con nosotros! Los coches son modernos y con pocos kilómetros. ¡Reserva en finlandés!",
+      "price": "Consultar precio",
+      "duration": "Día/semana",
+      "capacity": "2-4 personas"
+    },
+    "dolphin": {
+      "title": "Safari de delfines",
+      "description": "Emocionante aventura de 2 horas con delfines en su hábitat natural",
+      "price": "€35/persona"
+    },
+    "private": {
+      "title": "Charter privado",
+      "description": "Viaje exclusivo de 4 horas con programa totalmente personalizable",
+      "price": "€350/grupo"
+    },
+    "fishing": {
+      "title": "Excursión de pesca",
+      "description": "Aventura de pesca de 5 horas, todo el equipo y guía incluidos",
+      "price": "€65/persona"
+    }
+  },
+  "testimonials": {
+    "title": "Experiencias de nuestros clientes",
+    "subtitle": "Lee lo que dicen nuestros pasajeros",
+    "testimonial1": {
+      "review": "¡Experiencia increíble! El safari de delfines fue la parte más memorable de nuestras vacaciones en España. La tripulación fue amable y profesional.",
+      "author": "Minna Virtanen",
+      "location": "Helsinki, Finlandia"
+    },
+    "testimonial2": {
+      "review": "El crucero al atardecer fue realmente romántico. ¡La manera perfecta de pasar la tarde con mi pareja!",
+      "author": "Jukka Mäkinen",
+      "location": "Tampere, Finlandia"
+    },
+    "testimonial3": {
+      "review": "¡La excursión de pesca fue fantástica! Pescamos varios peces y la guía fue excelente. ¡Lo recomiendo encarecidamente!",
+      "author": "Antti Korhonen",
+      "location": "Oulu, Finlandia"
+    },
+    "testimonial4": {
+      "review": "El charter privado fue la elección perfecta para nuestra celebración familiar. ¡Todo fue genial y los niños lo adoraron!",
+      "author": "Laura Nieminen",
+      "location": "Turku, Finlandia"
+    }
+  },
+  "blog": {
+    "title": "Blog de excursiones en barco",
+    "subtitle": "Consejos, guías e historias de nuestras excursiones",
+    "viewAll": "Ver todo",
+    "readMore": "Leer más",
+    "noPosts": "Aún no hay publicaciones en el blog"
+  },
+  "videos": {
+    "title": "Galería de vídeos",
+    "subtitle": "Mira vídeos increíbles de nuestras excursiones y delfines",
+    "dolphinVideo": "Delfines en el Mediterráneo",
+    "sunsetVideo": "Crucero al atardecer",
+    "tourVideo": "Presentación de la excursión",
+    "watchMore": "¿Quieres ver más vídeos?",
+    "youtubeChannel": "Visita nuestro canal de YouTube"
+  },
+  "gallery": {
+    "title": "Galería de fotos",
+    "subtitle": "Explora los momentos más hermosos de nuestras excursiones",
+    "categories": {
+      "all": "Todas las fotos",
+      "dolphins": "Delfines",
+      "boats": "Barcos",
+      "sunset": "Atardeceres",
+      "customers": "Clientes"
+    },
+    "followUs": "¡Síguenos en Instagram y mira las últimas fotos!"
+  },
+  "charterFeatures": {
+    "title": "Servicios charter premium",
+    "subtitle": "Cruceros chárter privados dirigidos por capitán finlandés - ¡Vamos a la mar!",
+    "captain": {
+      "title": "¡El Susurrador de Delfines!",
+      "description": "Capitán reconocido destacado en artículo de MTV News",
+      "link": "https://www.mtvuutiset.fi/artikkeli/aleksi-on-aurinkorannikon-tunnettu-delfiinikuiskaaja/9155862"
+    },
+    "luxuryYachts": {
+      "title": "Barcos de lujo",
+      "description": "Barcos de primera clase y comodidades modernas"
+    },
+    "privateCharter": {
+      "title": "Charter privado",
+      "description": "Viajes exclusivos personalizados solo para ti"
+    },
+    "cateringServices": {
+      "title": "Servicios de catering",
+      "description": "Comida gourmet y bebidas durante el viaje"
+    },
+    "professionalPhotography": {
+      "title": "Fotografía profesional",
+      "description": "Inmortaliza momentos inolvidables con fotógrafo profesional"
+    },
+    "fullInsurance": {
+      "title": "Seguro completo",
+      "description": "Seguro integral y seguridad en todos los viajes"
+    },
+    "vipService": {
+      "title": "Servicio VIP",
+      "description": "Servicio personalizado y trato de primera"
+    },
+    "specialEvents": {
+      "title": "Eventos especiales",
+      "description": "Organizamos bodas, cumpleaños y eventos corporativos"
+    },
+    "extendedTrips": {
+      "title": "Viajes largos",
+      "description": "Viajes de varios días y aventuras en islas"
+    },
+    "vipCta": {
+      "title": "¿Quieres una experiencia VIP?",
+      "subtitle": "Contáctanos y personalizaremos el viaje perfecto solo para ti",
+      "button": "Reservar charter VIP"
+    }
+  },
+  "chatbot": {
+    "title": "Asistente de reservas",
+    "online": "En línea ahora",
+    "captain": "Capitán",
+    "welcome": "¡Hola! 👋 Estoy aquí para ayudarte a encontrar la excursión perfecta en Fuengirola. ¿Qué te interesaría? ¿Safari de delfines, crucero al atardecer o algo más? 🚤⚓",
+    "placeholder": "Escribe tu mensaje...",
+    "typing": "Escribiendo...",
+    "error": "Lo sentimos, algo salió mal. Inténtalo de nuevo o llámanos al +358 400 770 991",
+    "openChat": "Abrir chat",
+    "close": "Cerrar",
+    "disclaimer": "Chat asistido por IA • Respondemos 24/7"
+  },
+  "contact": {
+    "title": "Contáctanos",
+    "subtitle": "¿Listo para reservar o tienes preguntas? ¡Nos encantaría saber de ti!",
+    "info": {
+      "title": "Información de contacto",
+      "phone": "Teléfono",
+      "phoneValue": "+358 400 770 991 / WhatsApp",
+      "phoneValue2": "+34 633 969 224 / WhatsApp",
+      "email": "Correo electrónico",
+      "emailValue": "varaukset@fuengirolanveneretket.fi",
+      "address": "Dirección",
+      "addressValue": "Puerto Deportivo, Fuengirola, Málaga, España 29640",
+      "hours": "Horario",
+      "hoursValue": "Lun-Dom: 8:00 - 20:00"
+    },
+    "form": {
+      "title": "Enviar mensaje",
+      "name": "Nombre",
+      "namePlaceholder": "Tu nombre",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "email@ejemplo.com",
+      "phone": "Teléfono",
+      "phonePlaceholder": "+34 123 4567",
+      "message": "Mensaje",
+      "messagePlaceholder": "Cuéntanos qué viaje estás planeando o pregúntanos lo que quieras...",
+      "send": "Enviar mensaje",
+      "sending": "Enviando..."
+    }
+  }
+}
+

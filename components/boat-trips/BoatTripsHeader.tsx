@@ -21,9 +21,10 @@ export function BoatTripsHeader({ locale }: BoatTripsHeaderProps) {
   ]
 
   const locales = [
-    { code: 'fi', name: 'Suomi' },
-    { code: 'sv', name: 'Svenska' },
-    { code: 'en', name: 'English' },
+    { code: 'fi', name: 'Suomi', flag: '🇫🇮' },
+    { code: 'sv', name: 'Svenska', flag: '🇸🇪' },
+    { code: 'en', name: 'English', flag: '🇬🇧' },
+    { code: 'es', name: 'Español', flag: '🇪🇸' },
   ]
 
   return (
@@ -46,18 +47,19 @@ export function BoatTripsHeader({ locale }: BoatTripsHeaderProps) {
             </a>
           </div>
           <div className="flex items-center gap-2">
-            <Globe className="w-4 h-4 text-blue-600" />
             {locales.map((loc) => (
               <Link
                 key={loc.code}
-                href={`/${loc.code}/fuengirola-veneretket`}
-                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                href="/fuengirola-veneretket"
+                locale={loc.code}
+                className={`px-3 py-2 rounded-full text-2xl transition-all hover:scale-110 ${
                   locale === loc.code
-                    ? 'bg-blue-600 text-white'
-                    : 'text-blue-600 hover:bg-blue-50'
+                    ? 'bg-blue-50 ring-2 ring-blue-600'
+                    : 'hover:bg-blue-50'
                 }`}
+                title={loc.name}
               >
-                {loc.name}
+                {loc.flag}
               </Link>
             ))}
           </div>
@@ -135,18 +137,21 @@ export function BoatTripsHeader({ locale }: BoatTripsHeaderProps) {
               </a>
             </div>
             {/* Mobile language switcher */}
-            <div className="flex items-center justify-center gap-2 pt-4 border-t border-blue-100">
+            <div className="flex items-center justify-center gap-3 pt-4 border-t border-blue-100">
               {locales.map((loc) => (
                 <Link
                   key={loc.code}
-                  href={`/${loc.code}/fuengirola-veneretket`}
-                  className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                  href="/fuengirola-veneretket"
+                  locale={loc.code}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`px-4 py-3 rounded-full text-3xl transition-all hover:scale-110 ${
                     locale === loc.code
-                      ? 'bg-blue-600 text-white'
-                      : 'text-blue-600 hover:bg-blue-50'
+                      ? 'bg-blue-50 ring-2 ring-blue-600'
+                      : 'hover:bg-blue-50'
                   }`}
+                  title={loc.name}
                 >
-                  {loc.name}
+                  {loc.flag}
                 </Link>
               ))}
             </div>
