@@ -9,6 +9,7 @@ export default getRequestConfig(async ({ locale }) => {
   const config = await getI18nConfig({ locale: validLocale });
   
   return {
+    locale: validLocale,
     messages: config.messages,
     timeZone: config.timeZone
   };
