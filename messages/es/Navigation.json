@@ -1,0 +1,32 @@
+{
+  "home": "Inicio",
+  "about": "Sobre nosotros",
+  "blog": "Blog",
+  "book": "Reservar",
+  "admin_link": "Administración",
+  "signIn": "Iniciar sesión",
+  "signOut": "Cerrar sesión",
+  "backToSite": "Volver al sitio",
+  "admin": {
+    "cms": "Gestión de contenidos",
+    "blog": "Gestión de artículos",
+    "contacts": "Contactos",
+    "analytics": "Analítica",
+    "seo": "SEO",
+    "translations": "Traducciones",
+    "media": "Medios",
+    "users": "Usuarios",
+    "products": "Productos",
+    "landingPages": "Páginas de destino",
+    "calendar": "Calendario",
+    "dataSync": "Sincronización de datos",
+    "personas": "Perfiles de usuario",
+    "contentCalendar": "Calendario de contenidos",
+    "contentGenerator": "Generador de contenidos"
+  },
+  "account": {
+    "title": "Mi cuenta",
+    "settings": "Configuración"
+  }
+}
+

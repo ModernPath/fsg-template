@@ -11,11 +11,15 @@ export function ImageGallerySection() {
   const [selectedImage, setSelectedImage] = useState<typeof images[0] | null>(null)
   const [imageIndex, setImageIndex] = useState(0)
 
+  const closeModal = () => {
+    setSelectedImage(null)
+  }
+
   // ESC-näppäin sulkee lightboxin
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && selectedImage) {
-        setSelectedImage(null)
+        closeModal()
       }
     }
     window.addEventListener('keydown', handleEscape)
@@ -140,15 +144,15 @@ export function ImageGallerySection() {
         {selectedImage && (
           <div 
             className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 animate-in fade-in duration-300"
-            onClick={() => setSelectedImage(null)}
+            onClick={closeModal}
           >
             {/* Close button - SUUREMPI JA NÄKYVÄMPI */}
             <button
               onClick={(e) => {
                 e.stopPropagation()
-                setSelectedImage(null)
+                closeModal()
               }}
-              className="fixed top-4 right-4 md:top-8 md:right-8 bg-red-500 hover:bg-red-600 text-white p-3 md:p-4 rounded-full transition-all duration-300 hover:scale-110 shadow-2xl z-[10000] flex items-center gap-2"
+              className="fixed top-4 right-4 md:top-8 md:right-8 bg-red-500 hover:bg-red-600 text-white p-3 md:p-4 rounded-full transition-all duration-300 hover:scale-110 shadow-2xl z-[10000] flex items-center gap-2 pointer-events-auto"
               aria-label="Sulje"
             >
               <X className="w-6 h-6 md:w-8 md:h-8" />
@@ -158,21 +162,21 @@ export function ImageGallerySection() {
             {/* Navigation buttons */}
             <button
               onClick={(e) => { e.stopPropagation(); prevImage(); }}
-              className="fixed left-2 md:left-8 top-1/2 -translate-y-1/2 bg-blue-600/90 backdrop-blur-md hover:bg-blue-700 text-white p-3 md:p-4 rounded-full transition-all duration-300 hover:scale-110 shadow-2xl z-[10000]"
+              className="fixed left-2 md:left-8 top-1/2 -translate-y-1/2 bg-blue-600/90 backdrop-blur-md hover:bg-blue-700 text-white p-3 md:p-4 rounded-full transition-all duration-300 hover:scale-110 shadow-2xl z-[10000] pointer-events-auto"
               aria-label="Edellinen kuva"
             >
               <ChevronLeft className="w-6 h-6 md:w-8 md:h-8" />
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); nextImage(); }}
-              className="fixed right-2 md:right-8 top-1/2 -translate-y-1/2 bg-blue-600/90 backdrop-blur-md hover:bg-blue-700 text-white p-3 md:p-4 rounded-full transition-all duration-300 hover:scale-110 shadow-2xl z-[10000]"
+              className="fixed right-2 md:right-8 top-1/2 -translate-y-1/2 bg-blue-600/90 backdrop-blur-md hover:bg-blue-700 text-white p-3 md:p-4 rounded-full transition-all duration-300 hover:scale-110 shadow-2xl z-[10000] pointer-events-auto"
               aria-label="Seuraava kuva"
             >
               <ChevronRight className="w-6 h-6 md:w-8 md:h-8" />
             </button>
 
             {/* Image */}
-            <div className="relative max-w-6xl max-h-[90vh] w-full h-full" onClick={(e) => e.stopPropagation()}>
+            <div className="relative max-w-6xl max-h-[90vh] w-full h-full pointer-events-none">
               <Image
                 src={selectedImage.src}
                 alt={selectedImage.alt}
@@ -182,7 +186,7 @@ export function ImageGallerySection() {
             </div>
 
             {/* Image counter & help text */}
-            <div className="fixed bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 z-[10000]">
+            <div className="fixed bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 z-[10000] pointer-events-none">
               <div className="bg-white/10 backdrop-blur-md text-white px-6 py-3 rounded-full shadow-2xl">
                 <span className="font-bold">{imageIndex + 1} / {filteredImages.length}</span>
               </div>

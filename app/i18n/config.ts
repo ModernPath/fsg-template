@@ -3,7 +3,7 @@ export type Locale = string;
 export const defaultLocale: Locale = 'fi';
 
 // This is used for static generation and initial config
-export const staticLocales: Locale[] = ['fi', 'en', 'sv'];
+export const staticLocales: Locale[] = ['fi', 'en', 'sv', 'es'];
 
 // Export locales for next-intl
 export const locales = staticLocales;

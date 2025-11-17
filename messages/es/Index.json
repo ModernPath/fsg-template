@@ -1,0 +1,14 @@
+{
+  "hero": {
+    "title": "Construye aplicaciones web inteligentes con IA",
+    "description": "Plantilla moderna basada en Next.js con funciones de IA integradas, herramientas de desarrollo y mejores prácticas para construir aplicaciones web escalables.",
+    "backgroundAlt": "Fondo tecnológico abstracto",
+    "cta": "Ver en GitHub",
+    "docs": "Documentación"
+  },
+  "meta": {
+    "title": "Plantilla Next.js con IA | Desarrollo web moderno",
+    "description": "Plantilla moderna de Next.js con soporte de IA integrado, integración con Supabase y herramientas de desarrollo para crear aplicaciones web escalables."
+  }
+}
+
