@@ -208,6 +208,18 @@
       "button": "Boka VIP-charter"
     }
   },
+  "chatbot": {
+    "title": "Bokningshjälp",
+    "online": "Online nu",
+    "captain": "Kapten",
+    "welcome": "Hej! 👋 Jag är här för att hjälpa dig hitta den perfekta båtturen i Fuengirola! Vad skulle intressera dig? Delfinsafari, solnedgångskryssning eller något annat? 🚤⚓",
+    "placeholder": "Skriv ditt meddelande...",
+    "typing": "Skriver...",
+    "error": "Ursäkta, något gick fel. Försök igen eller ring oss +358 400 770 991",
+    "openChat": "Öppna chat",
+    "close": "Stäng",
+    "disclaimer": "AI-assisterad chat • Vi svarar 24/7"
+  },
   "contact": {
     "title": "Kontakta oss",
     "subtitle": "Är du redo att boka eller har du frågor? Vi hör gärna av oss!",

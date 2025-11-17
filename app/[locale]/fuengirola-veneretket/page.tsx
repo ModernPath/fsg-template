@@ -15,6 +15,7 @@ import { AOSInit } from '@/components/boat-trips/AOSInit'
 import { BoatTripsHeader } from '@/components/boat-trips/BoatTripsHeader'
 import { BoatTripsFooter } from '@/components/boat-trips/BoatTripsFooter'
 import { CaptainSection } from '@/components/boat-trips/CaptainSection'
+import { BoatTripsChatbot } from '@/components/boat-trips/BoatTripsChatbot'
 
 type Props = {
   params: Promise<{
@@ -80,6 +81,7 @@ export default async function FuengirolaBoatTripsPage({ params }: Props) {
         <ContactSection />
       </main>
       <BoatTripsFooter locale={locale} />
+      <BoatTripsChatbot locale={locale} />
     </>
   )
 }

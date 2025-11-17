@@ -208,6 +208,18 @@
       "button": "Book VIP charter"
     }
   },
+  "chatbot": {
+    "title": "Booking Assistant",
+    "online": "Online now",
+    "captain": "Captain",
+    "welcome": "Hi! 👋 I'm here to help you find the perfect boat trip in Fuengirola! What would interest you? Dolphin safari, sunset cruise or something else? 🚤⚓",
+    "placeholder": "Type your message...",
+    "typing": "Typing...",
+    "error": "Sorry, something went wrong. Please try again or call us +358 400 770 991",
+    "openChat": "Open chat",
+    "close": "Close",
+    "disclaimer": "AI-assisted chat • We respond 24/7"
+  },
   "contact": {
     "title": "Contact us",
     "subtitle": "Ready to book or have questions? We're happy to hear from you!",

@@ -208,6 +208,18 @@
       "button": "Varaa VIP-charter"
     }
   },
+  "chatbot": {
+    "title": "Varausapu",
+    "online": "Online nyt",
+    "captain": "Kapteeni",
+    "welcome": "Terve! 👋 Olen täällä auttamassa sinua löytämään täydellisen venematkan Fuengirolassa! Mitä sinua kiinnostaisi? Delfiiniretki, auringonlaskuristeily vai jotain muuta? 🚤⚓",
+    "placeholder": "Kirjoita viestisi...",
+    "typing": "Kirjoittaa...",
+    "error": "Pahoittelut, jokin meni vikaan. Yritä uudelleen tai soita meille +358 400 770 991",
+    "openChat": "Avaa chat",
+    "close": "Sulje",
+    "disclaimer": "AI-avusteinen chat • Vastaamme 24/7"
+  },
   "contact": {
     "title": "Ota yhteyttä",
     "subtitle": "Oletko valmis varaamaan tai sinulla on kysyttävää? Otamme mielellämme yhteyttä!",
