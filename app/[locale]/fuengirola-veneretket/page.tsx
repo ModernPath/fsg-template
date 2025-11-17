@@ -1,4 +1,3 @@
-import { createClient } from '@/utils/supabase/server'
 import { getTranslations } from 'next-intl/server'
 import { setupServerLocale } from '@/app/i18n/server-utils'
 import { Metadata } from 'next'
@@ -39,35 +38,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-async function getBlogPosts(locale: string) {
-  try {
-    const supabase = await createClient()
-    
-    const { data: posts, error } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .eq('locale', locale)
-      .eq('is_published', true)
-      .contains('subjects', ['boat-trips'])
-      .order('created_at', { ascending: false })
-      .limit(3)
-
-    if (error) {
-      console.error('Error fetching blog posts:', error)
-      return []
-    }
-
-    return posts || []
-  } catch (error) {
-    console.error('Error in getBlogPosts:', error)
-    return []
-  }
-}
-
 export default async function FuengirolaBoatTripsPage({ params }: Props) {
   const { locale } = await params
   await setupServerLocale(locale)
-  const posts = await getBlogPosts(locale)
+  
+  // Staattiset blogipostaukset (ei tietokantaa)
+  const posts: any[] = []
 
   return (
     <>
