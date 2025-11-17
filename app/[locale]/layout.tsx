@@ -1,11 +1,11 @@
 import { Inter } from 'next/font/google'
-import { NextIntlClientProvider, AbstractIntlMessages } from 'next-intl'
+import { NextIntlClientProvider } from 'next-intl'
+import { getMessages } from 'next-intl/server'
 import { staticLocales as locales, defaultLocale } from '../i18n/config'
 import Navigation from '@/app/components/Navigation'
 import FooterWrapper from '@/app/components/FooterWrapper'
 import { ThemeProvider } from 'next-themes'
 import { AuthProvider } from '@/components/auth/AuthProvider'
-import getI18nConfig from '@/app/i18n'
 import { dedupingServerFetch } from '@/lib/utils/server-deduplication'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -58,18 +58,10 @@ export default async function LocaleLayout({ children, params }: Props) {
   const resolvedParams = await params
   const validatedLocale = await validateLocale(resolvedParams.locale)
 
-  // Get messages using our i18n configuration that includes database translations
-  let messages: AbstractIntlMessages = {};
-  try {
-    const i18nConfig = await getI18nConfig({ locale: validatedLocale })
-    messages = (i18nConfig.messages || {}) as AbstractIntlMessages; // Ensure messages is always an object
-  } catch (error) {
-      console.error("Failed to load translations for layout:", error);
-      // Optionally load default locale messages as a fallback here if needed
-  }
+  // Get messages using next-intl's built-in system (uses app/i18n/request.ts)
+  const messages = await getMessages();
 
   return (
-    // Ensure messages is always passed as an object, even if empty
     <NextIntlClientProvider messages={messages} locale={validatedLocale}>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <AuthProvider>

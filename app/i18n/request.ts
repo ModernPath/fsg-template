@@ -21,13 +21,17 @@ import esPrivacy from '@/messages/es/Privacy.json';
 import esProfile from '@/messages/es/Profile.json';
 
 export default getRequestConfig(async ({ locale }) => {
+  console.log('🌐 [i18n/request] Locale:', locale);
+  
   // Validate that the incoming `locale` parameter is valid
   const validLocale = locales.includes(locale as any) ? locale : defaultLocale;
+  console.log('✅ [i18n/request] Valid locale:', validLocale);
 
   let messages;
   
   // Käytä staattisia importteja espanjalle
   if (validLocale === 'es') {
+    console.log('🇪🇸 [i18n/request] Loading Spanish static imports...');
     messages = {
       About: esAbout,
       Account: esAccount,
@@ -47,21 +51,20 @@ export default getRequestConfig(async ({ locale }) => {
       Privacy: esPrivacy,
       Profile: esProfile
     };
+    console.log('📦 [i18n/request] Spanish BoatTrips.hero.title:', (messages as any).BoatTrips?.hero?.title);
   } else {
+    console.log(`🔄 [i18n/request] Loading ${validLocale} using dynamic system...`);
     // Muille kielille käytä vanhaa systeemiä
     const { getI18nConfig } = await import('./config');
     const config = await getI18nConfig({ locale: validLocale });
     messages = config.messages;
   }
   
+  console.log('🎯 [i18n/request] Returning config for locale:', validLocale);
+  
   return {
     locale: validLocale,
     messages,
-    timeZone: 'Europe/Helsinki',
-    // Estä fallback muille kielille - näytä vain valitun kielen käännökset
-    getMessageFallback: ({ namespace, key }) => {
-      // Palauta avain sellaisenaan jos käännöstä ei löydy
-      return `${namespace}.${key}`;
-    }
+    timeZone: 'Europe/Helsinki'
   };
 });
