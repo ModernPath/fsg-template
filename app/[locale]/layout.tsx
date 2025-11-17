@@ -2,6 +2,7 @@ import { Inter } from 'next/font/google'
 import { NextIntlClientProvider, AbstractIntlMessages } from 'next-intl'
 import { staticLocales as locales, defaultLocale } from '../i18n/config'
 import Navigation from '@/app/components/Navigation'
+import FooterWrapper from '@/app/components/FooterWrapper'
 import { ThemeProvider } from 'next-themes'
 import { AuthProvider } from '@/components/auth/AuthProvider'
 import getI18nConfig from '@/app/i18n'
@@ -74,6 +75,7 @@ export default async function LocaleLayout({ children, params }: Props) {
         <AuthProvider>
           <Navigation />
           <main className={inter.className}>{children}</main>
+          <FooterWrapper />
         </AuthProvider>
       </ThemeProvider>
     </NextIntlClientProvider>

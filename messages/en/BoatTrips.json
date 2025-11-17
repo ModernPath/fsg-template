@@ -1,0 +1,240 @@
+{
+  "meta": {
+    "title": "Fuengirola Boat Trips - Amazing Mediterranean Boat Tours",
+    "description": "Experience an unforgettable boat trip in Fuengirola! Sunset cruises, dolphin safaris, fishing trips and private charters. Book now!",
+    "keywords": "fuengirola boat trips, mediterranean, cruise, dolphin safari, fishing trip, charter, spain, málaga"
+  },
+  "hero": {
+    "title": "Fuengirola Boat Trips",
+    "subtitle": "Join a Finnish captain on boat trips on the Mediterranean waves",
+    "description": "Enjoy unforgettable moments at sea! Private charter cruises from Fuengirola port for up to 8 people. Price always includes drinks (water, beer, soft drinks, white wine).",
+    "bookNow": "Book now",
+    "viewTrips": "View trips",
+    "stats": {
+      "years": "Years of experience",
+      "customers": "Happy customers",
+      "rating": "Average rating",
+      "safety": "Safe"
+    }
+  },
+  "features": {
+    "title": "Why choose us?",
+    "subtitle": "We offer comprehensive services for unforgettable boat trips",
+    "luxury": {
+      "title": "Luxury boats",
+      "description": "Modern and well-equipped boats for maximum comfort"
+    },
+    "routes": {
+      "title": "Amazing routes",
+      "description": "Explore Fuengirola's most beautiful coastal areas"
+    },
+    "sunset": {
+      "title": "Sunset cruises",
+      "description": "Romantic moments in the golden sunlight"
+    },
+    "groups": {
+      "title": "Group trips",
+      "description": "Perfect for family celebrations and with friends"
+    },
+    "photography": {
+      "title": "Photo opportunities",
+      "description": "Stunning views and Instagram moments guaranteed"
+    },
+    "catering": {
+      "title": "Food & Drinks",
+      "description": "Delicious snacks and refreshments during the trip"
+    },
+    "fishing": {
+      "title": "Fishing trips",
+      "description": "Experience an exciting fishing adventure in the Mediterranean"
+    },
+    "safety": {
+      "title": "Full safety",
+      "description": "Experienced crew and modern safety equipment"
+    }
+  },
+  "trips": {
+    "title": "Popular boat trips",
+    "subtitle": "Choose the perfect trip for your needs",
+    "from": "From",
+    "maxCapacity": "max {capacity} people",
+    "book": "Book",
+    "exploreMore": "Want to know more about our boat trips?",
+    "viewAllTrips": "View all trips",
+    "sunset": {
+      "title": "Sunset cruise",
+      "description": "Romantic 3-hour cruise in golden sunlight, includes drinks and snacks",
+      "price": "€45/person"
+    },
+    "dolphinWatching": {
+      "title": "3h Dolphin & swim cruise",
+      "description": "Unforgettable dolphin trip in the Mediterranean. Opportunity to swim in crystal clear water. Includes drinks (water, beer, soft drinks, white wine).",
+      "price": "65€/person",
+      "duration": "3 hours",
+      "capacity": "Min. 4 people, max 8 people"
+    },
+    "sunsetCruise": {
+      "title": "2h Sunset cruise",
+      "description": "Romantic sunset cruise in the Mediterranean. Enjoy stunning views and relaxation. Includes drinks (water, beer, soft drinks, white wine).",
+      "price": "45€/person",
+      "duration": "2 hours",
+      "capacity": "Min. 4 people, max 8 people"
+    },
+    "privateCharter": {
+      "title": "Customized cruises",
+      "description": "Lunch cruises, birthday cruises and other charter cruises. Tailored to your exact needs! Longer experiences can also be arranged (lunch cruises to nearby port).",
+      "price": "Ask for quote!",
+      "duration": "By arrangement",
+      "capacity": "Max 8 people"
+    },
+    "carRental": {
+      "title": "Car rental - Fiat 500 Convertible",
+      "description": "Now you can also rent a Fiat 500 convertible from us! The cars are modern and low-mileage beautiful convertibles. Book in Finnish!",
+      "price": "Ask for price",
+      "duration": "Day/week",
+      "capacity": "2-4 people"
+    },
+    "dolphin": {
+      "title": "Dolphin safari",
+      "description": "Exciting 2-hour adventure with dolphins in their natural environment",
+      "price": "€35/person"
+    },
+    "private": {
+      "title": "Private charter",
+      "description": "Exclusive 4-hour trip with fully customizable program",
+      "price": "€350/group"
+    },
+    "fishing": {
+      "title": "Fishing trip",
+      "description": "5-hour fishing adventure, all equipment and guidance included",
+      "price": "€65/person"
+    }
+  },
+  "testimonials": {
+    "title": "Our customers' experiences",
+    "subtitle": "Read what our passengers say about us",
+    "testimonial1": {
+      "review": "Amazing experience! The dolphin safari was the most memorable part of our Spain vacation. The crew was friendly and professional.",
+      "author": "Minna Virtanen",
+      "location": "Helsinki, Finland"
+    },
+    "testimonial2": {
+      "review": "The sunset cruise was truly romantic. Perfect way to spend the evening with my partner!",
+      "author": "Jukka Mäkinen",
+      "location": "Tampere, Finland"
+    },
+    "testimonial3": {
+      "review": "The fishing trip was fantastic! We caught several fish and the guidance was excellent. Highly recommend!",
+      "author": "Antti Korhonen",
+      "location": "Oulu, Finland"
+    },
+    "testimonial4": {
+      "review": "Private charter was the perfect choice for our family celebration. Everything went great and the kids loved it!",
+      "author": "Laura Nieminen",
+      "location": "Turku, Finland"
+    }
+  },
+  "blog": {
+    "title": "Boat trip blog",
+    "subtitle": "Tips, guides and stories from our boat trips",
+    "viewAll": "View all",
+    "readMore": "Read more",
+    "noPosts": "No blog posts yet"
+  },
+  "videos": {
+    "title": "Video gallery",
+    "subtitle": "Watch amazing videos from our boat trips and dolphins",
+    "dolphinVideo": "Dolphins in the Mediterranean",
+    "sunsetVideo": "Sunset cruise",
+    "tourVideo": "Boat trip presentation",
+    "watchMore": "Want to see more videos?",
+    "youtubeChannel": "Visit our YouTube channel"
+  },
+  "gallery": {
+    "title": "Photo gallery",
+    "subtitle": "Explore the most beautiful moments from our boat trips",
+    "categories": {
+      "all": "All photos",
+      "dolphins": "Dolphins",
+      "boats": "Boats",
+      "sunset": "Sunsets",
+      "customers": "Customers"
+    },
+    "followUs": "Follow us on Instagram and see the latest photos!"
+  },
+  "charterFeatures": {
+    "title": "Premium charter services",
+    "subtitle": "Private charter cruises led by Finnish captain - Vamos a la mar!",
+    "captain": {
+      "title": "The Dolphin Whisperer!",
+      "description": "Well-known captain featured in MTV News article",
+      "link": "https://www.mtvuutiset.fi/artikkeli/aleksi-on-aurinkorannikon-tunnettu-delfiinikuiskaaja/9155862"
+    },
+    "luxuryYachts": {
+      "title": "Luxury boats",
+      "description": "Top-class boats and modern amenities"
+    },
+    "privateCharter": {
+      "title": "Private charter",
+      "description": "Exclusive trips tailored just for you"
+    },
+    "cateringServices": {
+      "title": "Catering services",
+      "description": "Gourmet food and drinks during the trip"
+    },
+    "professionalPhotography": {
+      "title": "Professional photography",
+      "description": "Immortalize unforgettable moments with professional photographer"
+    },
+    "fullInsurance": {
+      "title": "Full insurance",
+      "description": "Comprehensive insurance and safety on all trips"
+    },
+    "vipService": {
+      "title": "VIP service",
+      "description": "Personalized service and top treatment"
+    },
+    "specialEvents": {
+      "title": "Special events",
+      "description": "We organize weddings, birthdays and corporate events"
+    },
+    "extendedTrips": {
+      "title": "Extended trips",
+      "description": "Multi-day trips and island adventures"
+    },
+    "vipCta": {
+      "title": "Want a VIP experience?",
+      "subtitle": "Contact us and we'll tailor the perfect trip just for you",
+      "button": "Book VIP charter"
+    }
+  },
+  "contact": {
+    "title": "Contact us",
+    "subtitle": "Ready to book or have questions? We're happy to hear from you!",
+    "info": {
+      "title": "Contact information",
+      "phone": "Phone",
+      "phoneValue": "+358 400 770 991 / WhatsApp",
+      "phoneValue2": "+34 633 969 224 / WhatsApp",
+      "email": "Email",
+      "emailValue": "varaukset@fuengirolanveneretket.fi",
+      "address": "Address",
+      "addressValue": "Puerto Deportivo, Fuengirola, Málaga, España 29640",
+      "hours": "Opening hours",
+      "hoursValue": "Mon-Sun: 8:00 - 20:00"
+    },
+    "form": {
+      "title": "Send message",
+      "name": "Name",
+      "namePlaceholder": "Your name",
+      "email": "Email",
+      "emailPlaceholder": "email@example.com",
+      "phone": "Phone number",
+      "phonePlaceholder": "+1 123 4567",
+      "message": "Message",
+      "messagePlaceholder": "Tell us what trip you're planning or ask us anything...",
+      "send": "Send message",
+      "sending": "Sending..."
+    }
+  }
+}

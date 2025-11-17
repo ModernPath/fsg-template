@@ -1,0 +1,241 @@
+{
+  "meta": {
+    "title": "Fuengirolan Veneretket - Upeat Venematkat Välimerellä",
+    "description": "Koe unohtumaton venematka Fuengirolassa! Auringonlaskuristeily, delfiinisafari, kalastusretket ja yksityiset charter-matkat. Varaa nyt!",
+    "keywords": "fuengirola veneretket, välimerellä, risteily, delfiinisafari, kalastusretki, charter, espanja, málaga"
+  },
+  "hero": {
+    "title": "Fuengirolan Veneretket",
+    "subtitle": "Lähde Suomalaisen kapteenin kanssa veneretkille Välimeren laineille",
+    "description": "Nauttimaan ikimuistoisista hetkistä merellä! Yksityisiä tilausristeilyjä Fuengirolan satamasta maksimissaan 8 hengelle. Hintaan sisältyy aina juomia (vettä, olutta, limua, valkoviiniä).",
+    "bookNow": "Varaa nyt",
+    "viewTrips": "Katso retket",
+    "stats": {
+      "years": "Vuotta kokemusta",
+      "customers": "Tyytyväistä asiakasta",
+      "rating": "Keskiarvo",
+      "safety": "Turvallista"
+    }
+  },
+  "features": {
+    "title": "Miksi valita meidät?",
+    "subtitle": "Tarjoamme kattavat palvelut unohtumattomille venematkoille",
+    "luxury": {
+      "title": "Luksusveneet",
+      "description": "Modernit ja hyvin varustetut veneet maksimaalista mukavuutta varten"
+    },
+    "routes": {
+      "title": "Upeat reitit",
+      "description": "Tutustu Fuengirolan kauneimpiin rannikkoalueisiin"
+    },
+    "sunset": {
+      "title": "Auringonlaskuristeilyt",
+      "description": "Romanttisia hetkiä kultaisessa auringonvalossa"
+    },
+    "groups": {
+      "title": "Ryhmämatkat",
+      "description": "Täydellistä perhejuhliin ja ystävien kanssa"
+    },
+    "photography": {
+      "title": "Valokuvausmahdollisuudet",
+      "description": "Upeat maisemat ja Instagram-hetket taattuna"
+    },
+    "catering": {
+      "title": "Ruoka & Juoma",
+      "description": "Herkullisia välipaloja ja virvokkeita matkalla"
+    },
+    "fishing": {
+      "title": "Kalastusretket",
+      "description": "Koe jännittävä kalastusseikkailu Välimerellä"
+    },
+    "safety": {
+      "title": "Täysi turvallisuus",
+      "description": "Kokenut miehistö ja modernit turvavarusteet"
+    }
+  },
+  "trips": {
+    "title": "Suositut venematkat",
+    "subtitle": "Valitse täydellinen matka tarpeisiisi",
+    "from": "Alkaen",
+    "maxCapacity": "max {capacity} henkeä",
+    "book": "Varaa",
+    "exploreMore": "Haluatko tietää lisää veneretkeistämme?",
+    "viewAllTrips": "Katso kaikki retket",
+    "sunset": {
+      "title": "Auringonlaskuristeily",
+      "description": "Romanttinen 3 tunnin risteily kultaisessa auringonvalossa, sisältää juomia ja välipaloja",
+      "price": "€45/hlö"
+    },
+    "dolphinWatching": {
+      "title": "3h Delfiini- & uintiristeily",
+      "description": "Unohtumaton delfiiniretki Välimerellä. Mahdollisuus uida kirkkaansinisessä vedessä. Sisältää juomia (vettä, olutta, limua, valkoviiniä).",
+      "price": "65€/hlö",
+      "duration": "3 tuntia",
+      "capacity": "Min. 4 hlö, max 8 hlö"
+    },
+    "sunsetCruise": {
+      "title": "2h Auringonlaskuristeily",
+      "description": "Romanttinen auringonlaskuristeily Välimerellä. Nauti upeista maisemista ja rentoutumisesta. Sisältää juomia (vettä, olutta, limua, valkoviiniä).",
+      "price": "45€/hlö",
+      "duration": "2 tuntia",
+      "capacity": "Min. 4 hlö, max 8 hlö"
+    },
+    "privateCharter": {
+      "title": "Räätälöidyt risteilyt",
+      "description": "Lounasristeilyt, syntymäpäiväristeilyt ja muut tilausristeilyt. Räätälöidään juuri sinun tarpeisiisi! Myös pidemmät elämykset sovittavissa (lounasristeilyt läheiseen satamaan).",
+      "price": "Kysy tarjous!",
+      "duration": "Sovittavissa",
+      "capacity": "Max 8 hlö"
+    },
+    "carRental": {
+      "title": "Autonvuokraus - Fiat 500 Avoauto",
+      "description": "Nyt voit myös vuokrata meiltä Fiat 500 avoauton! Autot ovat uudenaikaisia ja vähän ajettuja hienoja avoautoja. Varaa suomeksi!",
+      "price": "Kysy hinta",
+      "duration": "Päivä/viikko",
+      "capacity": "2-4 hlö"
+    },
+    "dolphin": {
+      "title": "Delfiinisafari",
+      "description": "Jännittävä 2 tunnin seikkailu delfiinien kanssa luonnollisessa ympäristössään",
+      "price": "€35/hlö"
+    },
+    "private": {
+      "title": "Yksityinen Charter",
+      "description": "Eksklusiivinen 4 tunnin matka täysin mukautettavalla ohjelmalla",
+      "price": "€350/ryhmä"
+    },
+    "fishing": {
+      "title": "Kalastusretki",
+      "description": "5 tunnin kalastusseikkailu, kaikki välineet ja opastus sisältyy",
+      "price": "€65/hlö"
+    }
+  },
+  "testimonials": {
+    "title": "Asiakkaidemme kokemuksia",
+    "subtitle": "Lue mitä matkustajamme sanovat meistä",
+    "testimonial1": {
+      "review": "Upea kokemus! Delfiinisafari oli elämyksellisin osa Espanjan-lomaamme. Miehistö oli ystävällistä ja ammattitaitoista.",
+      "author": "Minna Virtanen",
+      "location": "Helsinki, Suomi"
+    },
+    "testimonial2": {
+      "review": "Auringonlaskuristeily oli todella romanttinen. Täydellinen tapa viettää iltaa puolison kanssa!",
+      "author": "Jukka Mäkinen",
+      "location": "Tampere, Suomi"
+    },
+    "testimonial3": {
+      "review": "Kalastusretki oli fantastinen! Saimme useita kaloja ja opastus oli erinomaista. Suosittelen lämpimästi!",
+      "author": "Antti Korhonen",
+      "location": "Oulu, Suomi"
+    },
+    "testimonial4": {
+      "review": "Yksityinen charter oli täydellinen valinta perhejuhlaamme. Kaikki sujui loistavasti ja lapset rakastivat sitä!",
+      "author": "Laura Nieminen",
+      "location": "Turku, Suomi"
+    }
+  },
+  "blog": {
+    "title": "Veneretki-blogi",
+    "subtitle": "Vinkkejä, oppaita ja tarinoita veneretkeistämme",
+    "viewAll": "Näytä kaikki",
+    "readMore": "Lue lisää",
+    "noPosts": "Ei vielä blogikirjoituksia"
+  },
+  "videos": {
+    "title": "Videogalleria",
+    "subtitle": "Katso upeita videoita veneretkeistämme ja delfiineistä",
+    "dolphinVideo": "Delfiinit Välimerellä",
+    "sunsetVideo": "Auringonlaskuristeily",
+    "tourVideo": "Veneretken esittely",
+    "watchMore": "Haluatko nähdä lisää videoita?",
+    "youtubeChannel": "Käy YouTube-kanavallam me"
+  },
+  "gallery": {
+    "title": "Kuva galleria",
+    "subtitle": "Tutustu kauneimpiin hetkiin veneretkeiltämme",
+    "categories": {
+      "all": "Kaikki kuvat",
+      "dolphins": "Delfiinit",
+      "boats": "Veneet",
+      "sunset": "Auringonlaskut",
+      "customers": "Asiakkaat"
+    },
+    "followUs": "Seuraa meitä Instagramissa ja näe uusimmat kuvat!"
+  },
+  "charterFeatures": {
+    "title": "Premium Charter -palvelut",
+    "subtitle": "Yksityisiä tilausristeilyjä suomalaisen kapteenin johdolla - Vamos a la mar!",
+    "captain": {
+      "title": "Delfiinikuiskaaja!",
+      "description": "Tutustuttu kapteeni josta MTV Uutisissa artikkeli",
+      "link": "https://www.mtvuutiset.fi/artikkeli/aleksi-on-aurinkorannikon-tunnettu-delfiinikuiskaaja/9155862"
+    },
+    "luxuryYachts": {
+      "title": "Luksusveneet",
+      "description": "Huippuluokan veneet ja modernit mukavuudet"
+    },
+    "privateCharter": {
+      "title": "Yksityinen Charter",
+      "description": "Eksklusiiviset matkat räätälöitynä juuri sinulle"
+    },
+    "cateringServices": {
+      "title": "Catering-palvelut",
+      "description": "Gourmet-ruokaa ja juomia matkan aikana"
+    },
+    "professionalPhotography": {
+      "title": "Ammattivalokuvaus",
+      "description": "Ikuista unohtumattomia hetkiä ammattilaisvalokuvaajalla"
+    },
+    "fullInsurance": {
+      "title": "Täysi vakuutus",
+      "description": "Kattava vakuutus ja turvallisuus kaikilla matkoilla"
+    },
+    "vipService": {
+      "title": "VIP-palvelu",
+      "description": "Yksilöllistä palvelua ja huippukohtelu"
+    },
+    "specialEvents": {
+      "title": "Erikoistapahtumat",
+      "description": "Järjestämme häitä, syntymäpäiviä ja yritystilaisuuksia"
+    },
+    "extendedTrips": {
+      "title": "Pitkät retket",
+      "description": "Monipäiväiset matkat ja saariseikkailut"
+    },
+    "vipCta": {
+      "title": "Haluatko VIP-kokemuksen?",
+      "subtitle": "Ota yhteyttä ja räätälöidään täydellinen matka juuri sinulle",
+      "button": "Varaa VIP-charter"
+    }
+  },
+  "contact": {
+    "title": "Ota yhteyttä",
+    "subtitle": "Oletko valmis varaamaan tai sinulla on kysyttävää? Otamme mielellämme yhteyttä!",
+    "info": {
+      "title": "Yhteystiedot",
+      "phone": "Puhelin",
+      "phoneValue": "+358 400 770 991 / WhatsApp",
+      "phoneValue2": "+34 633 969 224 / WhatsApp",
+      "email": "Sähköposti",
+      "emailValue": "varaukset@fuengirolanveneretket.fi",
+      "address": "Osoite",
+      "addressValue": "Puerto Deportivo, Fuengirola, Málaga, España 29640",
+      "hours": "Aukioloajat",
+      "hoursValue": "Ma-Su: 8:00 - 20:00"
+    },
+    "form": {
+      "title": "Lähetä viesti",
+      "name": "Nimi",
+      "namePlaceholder": "Nimesi",
+      "email": "Sähköposti",
+      "emailPlaceholder": "email@esimerkki.fi",
+      "phone": "Puhelinnumero",
+      "phonePlaceholder": "+358 123 4567",
+      "message": "Viesti",
+      "messagePlaceholder": "Kerro mitä matkaa suunnittelet tai kysy meiltä mitä tahansa...",
+      "send": "Lähetä viesti",
+      "sending": "Lähetetään..."
+    }
+  }
+}
+

@@ -1,12 +1,20 @@
 'use client'
 
 import { useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 
 interface LastBotWidgetProps {
   className?: string
 }
 
 export default function LastBotWidget({ className }: LastBotWidgetProps) {
+  const pathname = usePathname()
+  
+  // Piilota veneretki-sivulla
+  if (pathname?.includes('/fuengirola-veneretket')) {
+    return null
+  }
+
   // Check if LastBot is enabled
   const isEnabled = process.env.NEXT_PUBLIC_ENABLE_LASTBOT_ONE === 'true'
   const baseUrl = process.env.NEXT_PUBLIC_LASTBOT_BASE_URL

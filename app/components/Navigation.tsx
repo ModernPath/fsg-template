@@ -147,6 +147,11 @@ export default function Navigation() {
   const [showLoading, setShowLoading] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
   const supabase = createClient();
+
+  // Piilota navigaatio veneretki-sivulla (sillä on oma header)
+  if (pathname?.includes('/fuengirola-veneretket')) {
+    return null;
+  }
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Set mounted state on client side

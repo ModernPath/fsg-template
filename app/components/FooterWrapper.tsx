@@ -1,13 +1,16 @@
+'use client'
+
 import React from 'react';
-import { NextIntlClientProvider, useMessages } from 'next-intl';
+import { usePathname } from 'next/navigation';
 import Footer from './Footer';
 
 export default function FooterWrapper() {
-  const messages = useMessages();
+  const pathname = usePathname();
   
-  return (
-    <NextIntlClientProvider messages={messages}>
-      <Footer />
-    </NextIntlClientProvider>
-  );
+  // Piilota footer veneretki-sivulla (sillä on oma footer)
+  if (pathname?.includes('/fuengirola-veneretket')) {
+    return null;
+  }
+  
+  return <Footer />;
 } 

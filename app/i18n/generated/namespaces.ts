@@ -7,6 +7,7 @@ export const availableNamespaces: string[] = [
   "Admin",
   "Auth",
   "Blog",
+  "BoatTrips",
   "Common",
   "Contact",
   "CookieConsent",

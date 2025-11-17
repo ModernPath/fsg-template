@@ -6,7 +6,6 @@ import { Providers } from '@/app/providers'
 import { Toaster } from '@/components/ui/toaster'
 import AnalyticsWrapper from '@/components/analytics/AnalyticsWrapper'
 import { CookieConsentWrapper } from '@/components/cookie-consent-wrapper'
-import FooterWrapper from '@/app/components/FooterWrapper'
 import AIBotMessageWrapper from '@/components/AIBotMessageWrapper'
 import LastBotWidget from '@/components/lastbot/LastBotWidget'
 
@@ -110,7 +109,6 @@ export default function RootLayout({
         <AIBotMessageWrapper />
         <Providers>
           {children}
-          <FooterWrapper />
           <Toaster />
           <AnalyticsWrapper />
           <CookieConsentWrapper />

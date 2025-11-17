@@ -100,12 +100,11 @@
     "research": "AI-forskning",
     "generative-ai": "Insikter om generativ AI",
     "case-stories": "Kundberättelser",
-    "all": "Alla inlägg",
-    "news": "Nyheter",
     "updates": "Uppdateringar",
     "insights": "Insikter",
     "tutorials": "Handledningar",
-    "announcements": "Meddelanden"
+    "announcements": "Meddelanden",
+    "boat-trips": "Båtturer"
   },
   "meta": {}
 }
