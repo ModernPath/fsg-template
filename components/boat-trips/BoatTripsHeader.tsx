@@ -12,6 +12,9 @@ interface BoatTripsHeaderProps {
 export function BoatTripsHeader({ locale }: BoatTripsHeaderProps) {
   const t = useTranslations('BoatTrips')
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  
+  // Debug: näytä console.log kun locale vaihtuu
+  console.log('BoatTripsHeader locale:', locale)
 
   const navigation = [
     { name: t('hero.title'), href: '#hero' },
