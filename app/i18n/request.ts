@@ -57,6 +57,11 @@ export default getRequestConfig(async ({ locale }) => {
   return {
     locale: validLocale,
     messages,
-    timeZone: 'Europe/Helsinki'
+    timeZone: 'Europe/Helsinki',
+    // Estä fallback muille kielille - näytä vain valitun kielen käännökset
+    getMessageFallback: ({ namespace, key }) => {
+      // Palauta avain sellaisenaan jos käännöstä ei löydy
+      return `${namespace}.${key}`;
+    }
   };
 });
