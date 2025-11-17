@@ -6,7 +6,6 @@ import { useState, useEffect } from "react";
 import TranslationEditor from "./TranslationEditor";
 import SearchFilter from "./SearchFilter";
 import LanguageManager from "./LanguageManager";
-import { invalidateTranslationCache } from "@/app/i18n";
 import { Locale } from "@/app/i18n/config";
 import { useSearchParams } from "next/navigation";
 import { getNamespaces } from "@/utils/i18n-helpers";
@@ -266,8 +265,7 @@ export default function TranslationsPage() {
       const { error } = await response.json();
       if (error) throw new Error(error);
 
-      // Invalidate cache for the updated locale
-      invalidateTranslationCache(locale as Locale);
+      // Cache will be automatically invalidated on next request
     } catch (err) {
       console.error("Error saving translation:", err);
       // Revert local state on error by refetching translations

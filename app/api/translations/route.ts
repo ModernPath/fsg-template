@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
-import { invalidateTranslationCache } from '@/app/i18n';
+import { revalidatePath } from 'next/cache';
 
 export async function GET() {
   const supabase = await createClient()
@@ -86,8 +86,8 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    // Invalidate cache for the updated locale
-    invalidateTranslationCache(locale)
+    // Invalidate Next.js cache for the updated locale
+    revalidatePath(`/${locale}`)
     
     return NextResponse.json({ success: true })
   } catch (err) {

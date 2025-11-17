@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import toast from 'react-hot-toast'
 import { languages as availableLanguages } from '@/app/i18n/languages'
-import { invalidateTranslationCache } from '@/app/i18n'
 import { Locale } from '@/app/i18n/config'
 import { createClient } from '@/utils/supabase/client'
 
@@ -142,8 +141,7 @@ export default function LanguageManager() {
         setGeneratingLanguage(`${languageCode} (${Math.min((i + batchSize), englishTranslations.length)}/${englishTranslations.length})`)
       }
 
-      // Invalidate translation cache for the new language
-      await invalidateTranslationCache(languageCode as Locale)
+      // Cache will be automatically invalidated on next request
       
       if (success) {
         console.log(`Successfully completed all translations for ${languageCode.toUpperCase()}`)
@@ -239,8 +237,7 @@ export default function LanguageManager() {
       setLanguages(languages.filter(lang => lang.code !== code))
       toast.success(t('languages.removeSuccess'))
 
-      // Invalidate cache to refresh translations
-      await invalidateTranslationCache()
+      // Cache will be automatically invalidated on next request
     } catch (err) {
       console.error('Error removing language:', err)
       toast.error(t('languages.removeError'))
