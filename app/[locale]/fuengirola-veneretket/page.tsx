@@ -40,23 +40,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 async function getBlogPosts(locale: string) {
-  const supabase = await createClient()
-  
-  const { data: posts, error } = await supabase
-    .from('blog_posts')
-    .select('*')
-    .eq('locale', locale)
-    .eq('is_published', true)
-    .contains('subjects', ['boat-trips'])
-    .order('created_at', { ascending: false })
-    .limit(3)
+  try {
+    const supabase = await createClient()
+    
+    const { data: posts, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('locale', locale)
+      .eq('is_published', true)
+      .contains('subjects', ['boat-trips'])
+      .order('created_at', { ascending: false })
+      .limit(3)
 
-  if (error) {
-    console.error('Error fetching blog posts:', error)
+    if (error) {
+      console.error('Error fetching blog posts:', error)
+      return []
+    }
+
+    return posts || []
+  } catch (error) {
+    console.error('Error in getBlogPosts:', error)
     return []
   }
-
-  return posts || []
 }
 
 export default async function FuengirolaBoatTripsPage({ params }: Props) {
