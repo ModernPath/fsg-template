@@ -1,6 +1,6 @@
 import { Inter } from 'next/font/google'
 import { NextIntlClientProvider } from 'next-intl'
-import { getMessages } from 'next-intl/server'
+import { getMessages, setRequestLocale } from 'next-intl/server'
 import { staticLocales as locales, defaultLocale } from '../i18n/config'
 import Navigation from '@/app/components/Navigation'
 import FooterWrapper from '@/app/components/FooterWrapper'
@@ -57,6 +57,9 @@ export default async function LocaleLayout({ children, params }: Props) {
   // Await and validate the incoming locale
   const resolvedParams = await params
   const validatedLocale = await validateLocale(resolvedParams.locale)
+
+  // Enable static rendering - tell next-intl which locale to use
+  setRequestLocale(validatedLocale);
 
   // Get messages using next-intl's built-in system (uses app/i18n/request.ts)
   const messages = await getMessages();

@@ -1,5 +1,4 @@
-import { getTranslations } from 'next-intl/server'
-import { setupServerLocale } from '@/app/i18n/server-utils'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { Metadata } from 'next'
 import { HeroSection } from '@/components/boat-trips/HeroSection'
 import { FeaturesSection } from '@/components/boat-trips/FeaturesSection'
@@ -24,7 +23,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
-  await setupServerLocale(locale)
+  setRequestLocale(locale)
   const t = await getTranslations('BoatTrips')
 
   return {
@@ -40,7 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function FuengirolaBoatTripsPage({ params }: Props) {
   const { locale } = await params
-  await setupServerLocale(locale)
+  setRequestLocale(locale)
   
   // Staattiset blogipostaukset (ei tietokantaa)
   const posts: any[] = []
