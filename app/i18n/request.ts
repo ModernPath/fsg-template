@@ -77,7 +77,10 @@ import esPresentations from '@/messages/es/Presentations.json';
 import esPrivacy from '@/messages/es/Privacy.json';
 import esProfile from '@/messages/es/Profile.json';
 
-export default getRequestConfig(async ({ locale }) => {
+export default getRequestConfig(async ({ requestLocale }) => {
+  // In next-intl v4+, requestLocale is a Promise that needs to be awaited
+  const locale = await requestLocale;
+  
   console.log('🌐 [i18n/request] Locale:', locale);
   
   // Validate that the incoming `locale` parameter is valid
