@@ -19,6 +19,17 @@ type Props = {
 
 // Validate locale before using it
 async function validateLocale(locale: string) {
+  // TEMPORARY FIX: Use static locales only
+  console.log('🌐 [layout] Validating locale:', locale)
+  console.log('🌐 [layout] Available static locales:', locales)
+  
+  const isValid = locales.includes(locale)
+  const validLocale = isValid ? locale : defaultLocale
+  
+  console.log('✅ [layout] Valid locale:', validLocale)
+  return validLocale
+  
+  /* ORIGINAL CODE - DISABLED FOR NOW
   try {
     // Get enabled locales from database
     const baseUrl = typeof window !== 'undefined' 
@@ -47,6 +58,7 @@ async function validateLocale(locale: string) {
     // Fallback to static locales if database check fails
     return locales.includes(locale) ? locale : defaultLocale
   }
+  */
 }
 
 export function generateStaticParams() {
