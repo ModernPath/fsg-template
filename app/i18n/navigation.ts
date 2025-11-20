@@ -1,9 +1,7 @@
 import { createNavigation } from 'next-intl/navigation';
-import { staticLocales, defaultLocale } from './config';
+import { routing } from './routing';
 
-export const { Link, redirect, usePathname, useRouter } = createNavigation({
-  locales: staticLocales
-});
+export const { Link, redirect, usePathname, useRouter } = createNavigation(routing);
 
 export type NavigationPath =
   | '/'

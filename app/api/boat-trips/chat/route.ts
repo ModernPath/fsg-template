@@ -152,7 +152,89 @@ STRENGTHS:
 - Price always includes drinks
 - Small groups (max 8) = personal service
 
-Respond in English, be friendly and professional. Your goal is to get the customer to book!`
+Respond in English, be friendly and professional. Your goal is to get the customer to book!`,
+
+  es: `Eres un representante de ventas amable y profesional de Fuengirola Boat Trips. Tu trabajo es ayudar a los clientes a encontrar el viaje en barco perfecto y convencerlos de reservar.
+
+INFORMACIÓN DE LA EMPRESA:
+- Nombre: Fuengirola Boat Trips (Excursiones en Barco de Fuengirola)
+- Dirigido por un capitán finlandés - "El Susurrador de Delfines" destacado en MTV News
+- Ubicación: Puerto Deportivo, Fuengirola, Málaga, España 29640
+- Contacto:
+  * Teléfono: +358 400 770 991 (WhatsApp)
+  * Teléfono: +34 633 969 224 (WhatsApp)
+  * Email: varaukset@fuengirolanveneretket.fi
+- Horario: Lun-Dom 8:00-20:00
+
+SERVICIOS Y PRECIOS:
+1. Crucero de 3h con delfines y baño - 65€/persona
+   - Mín. 4 personas, máx. 8 personas
+   - Oportunidad de nadar en aguas cristalinas
+   - Incluye bebidas (agua, cerveza, refrescos, vino blanco)
+
+2. Crucero al atardecer de 2h - 45€/persona
+   - Mín. 4 personas, máx. 8 personas
+   - Crucero romántico
+   - Incluye bebidas (agua, cerveza, refrescos, vino blanco)
+
+3. Cruceros personalizados - Solicita presupuesto
+   - Cruceros con almuerzo, cumpleaños, eventos corporativos
+   - Máx. 8 personas
+   - Adaptado a las necesidades del cliente
+
+4. Alquiler de coches - Fiat 500 Descapotable
+   - Descapotables modernos con poco kilometraje
+   - Pregunta por precios por día/semana
+
+FORTALEZAS:
+- Capitán finlandés (comunicación fácil)
+- Más de 10 años de experiencia
+- Más de 15,000 clientes satisfechos
+- Calificación de 5.0 estrellas
+- 100% seguridad
+- Barcos modernos y bien equipados
+- El precio siempre incluye bebidas
+- Grupos pequeños (máx. 8) = servicio personalizado
+
+ESTILO DE RESPUESTA:
+- Usa español de forma natural
+- Sé amable pero profesional
+- Usa emojis moderadamente (⚓🚤☀️🐬)
+- Mantén las respuestas concisas pero informativas
+- Termina siempre con una pregunta o llamada a la acción
+
+¡Recuerda: Tu objetivo es conseguir que el cliente reserve!`
+}
+
+// Simple language detection based on common words and patterns
+function detectLanguage(text: string): string {
+  const lower = text.toLowerCase()
+  
+  // Spanish indicators
+  const spanishWords = ['hola', 'gracias', 'por favor', 'buenos', 'días', 'cuánto', 'dónde', 'qué', 'cómo', 'barco', 'precio']
+  const spanishCount = spanishWords.filter(word => lower.includes(word)).length
+  
+  // Swedish indicators
+  const swedishWords = ['hej', 'tack', 'hur', 'vad', 'var', 'när', 'kan', 'båt', 'pris']
+  const swedishCount = swedishWords.filter(word => lower.includes(word)).length
+  
+  // English indicators
+  const englishWords = ['hello', 'thanks', 'please', 'how', 'what', 'where', 'when', 'boat', 'price']
+  const englishCount = englishWords.filter(word => lower.includes(word)).length
+  
+  // Finnish indicators
+  const finnishWords = ['hei', 'kiitos', 'ole hyvä', 'miten', 'mitä', 'missä', 'milloin', 'vene', 'hinta']
+  const finnishCount = finnishWords.filter(word => lower.includes(word)).length
+  
+  // Return language with most matches
+  const scores = { es: spanishCount, sv: swedishCount, en: englishCount, fi: finnishCount }
+  const maxScore = Math.max(...Object.values(scores))
+  
+  if (maxScore > 0) {
+    return Object.keys(scores).find(key => scores[key as keyof typeof scores] === maxScore) || 'fi'
+  }
+  
+  return '' // No detection
 }
 
 export async function POST(request: NextRequest) {
@@ -166,7 +248,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const systemPrompt = COMPANY_CONTEXT[locale as keyof typeof COMPANY_CONTEXT] || COMPANY_CONTEXT.fi
+    // Detect language from user's message, fallback to page locale
+    const detectedLanguage = detectLanguage(message)
+    const finalLocale = detectedLanguage || locale || 'fi'
+    
+    console.log('🌍 [Chat API] Language detection:', {
+      pageLocale: locale,
+      detected: detectedLanguage,
+      final: finalLocale,
+      message: message.substring(0, 50)
+    })
+
+    const systemPrompt = COMPANY_CONTEXT[finalLocale as keyof typeof COMPANY_CONTEXT] || COMPANY_CONTEXT.fi
 
     const model = genAI.getGenerativeModel({
       model: 'gemini-2.0-flash-exp',
@@ -174,10 +267,17 @@ export async function POST(request: NextRequest) {
     })
 
     // Build conversation history
-    const chatHistory = history?.map((msg: any) => ({
+    let chatHistory = history?.map((msg: any) => ({
       role: msg.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: msg.content }]
     })) || []
+
+    // Gemini requires that the first message in history comes from the user
+    // If the first message is from the model, we'll insert a dummy user message or remove it
+    // Removing is safer as inserting dummy content might confuse the context
+    if (chatHistory.length > 0 && chatHistory[0].role === 'model') {
+      chatHistory = chatHistory.slice(1);
+    }
 
     const chat = model.startChat({
       history: chatHistory,

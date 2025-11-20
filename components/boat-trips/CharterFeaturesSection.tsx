@@ -4,17 +4,17 @@ import { Anchor, Users, Sparkles, Crown, Shield, Award, Wine, Camera } from 'luc
 import { useTranslations } from 'next-intl'
 
 export function CharterFeaturesSection() {
-  const t = useTranslations('BoatTrips.charter')
+  const t = useTranslations('BoatTrips.charterFeatures')
 
   const features = [
-    { icon: Crown, title: 'Luksusveneet', desc: 'Premium kalustoa viimeisimmällä tekniikalla', color: 'from-amber-400 to-amber-600' },
-    { icon: Users, title: 'Yksityinen Charter', desc: 'Oma vene vain sinun seurueellesi', color: 'from-blue-400 to-blue-600' },
-    { icon: Wine, title: 'Catering Palvelut', desc: 'Gourmet-ruoka ja juomat', color: 'from-purple-400 to-purple-600' },
-    { icon: Camera, title: 'Ammattivalokuvaus', desc: 'Ikuista hetkesi ammattitaidolla', color: 'from-pink-400 to-pink-600' },
-    { icon: Shield, title: 'Täysi Vakuutus', desc: '100% turvallinen matka', color: 'from-green-400 to-green-600' },
-    { icon: Award, title: 'VIP-Palvelu', desc: 'Henkilökohtainen concierge', color: 'from-red-400 to-red-600' },
-    { icon: Sparkles, title: 'Erikoistapahtumat', desc: 'Juhlat, häät, yritystapahtumat', color: 'from-cyan-400 to-cyan-600' },
-    { icon: Anchor, title: 'Pitkät Retket', desc: 'Monipäiväiset charter-matkat', color: 'from-indigo-400 to-indigo-600' },
+    { icon: Crown, key: 'luxuryYachts', color: 'from-amber-400 to-amber-600' },
+    { icon: Users, key: 'privateCharter', color: 'from-blue-400 to-blue-600' },
+    { icon: Wine, key: 'cateringServices', color: 'from-purple-400 to-purple-600' },
+    { icon: Camera, key: 'professionalPhotography', color: 'from-pink-400 to-pink-600' },
+    { icon: Shield, key: 'fullInsurance', color: 'from-green-400 to-green-600' },
+    { icon: Award, key: 'vipService', color: 'from-red-400 to-red-600' },
+    { icon: Sparkles, key: 'specialEvents', color: 'from-cyan-400 to-cyan-600' },
+    { icon: Anchor, key: 'extendedTrips', color: 'from-indigo-400 to-indigo-600' },
   ]
 
   return (
@@ -40,15 +40,15 @@ export function CharterFeaturesSection() {
           <div className="inline-block mb-6 px-8 py-3 bg-gradient-to-r from-amber-400 to-amber-600 rounded-full shadow-2xl">
             <span className="text-white font-bold text-sm tracking-widest uppercase flex items-center gap-2">
               <Sparkles className="w-4 h-4" />
-              Premium Charter Experience
+              {t('badge')}
             </span>
           </div>
           
           <h2 className="font-geist text-5xl sm:text-6xl lg:text-7xl font-black mb-8 text-white">
-            Miksi valita meidät?
+            {t('title')}
           </h2>
           <p className="text-2xl text-gray-300 max-w-3xl mx-auto">
-            Tarjoamme ylivoimaista laatua ja palvelua jokaisella retkellä
+            {t('subtitle')}
           </p>
         </div>
 
@@ -57,7 +57,7 @@ export function CharterFeaturesSection() {
             const Icon = feature.icon
             return (
               <div
-                key={index}
+                key={feature.key}
                 data-aos="fade-up"
                 data-aos-delay={index * 100}
                 className="group relative"
@@ -73,10 +73,10 @@ export function CharterFeaturesSection() {
                     </div>
 
                     <h3 className="text-2xl font-black text-white mb-3">
-                      {feature.title}
+                      {t(`${feature.key}.title`)}
                     </h3>
                     <p className="text-gray-300 leading-relaxed text-lg">
-                      {feature.desc}
+                      {t(`${feature.key}.description`)}
                     </p>
                   </div>
 
@@ -93,13 +93,13 @@ export function CharterFeaturesSection() {
           <div className="inline-block bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl p-12 border-2 border-white/20 shadow-2xl max-w-3xl">
             <Crown className="w-16 h-16 text-amber-400 mx-auto mb-6" />
             <h3 className="text-3xl font-black text-white mb-4">
-              Haluatko räätälöidyn charter-kokemuksen?
+              {t('vipCta.title')}
             </h3>
             <p className="text-xl text-gray-300 mb-8">
-              Ota yhteyttä VIP-tiimiimme ja suunnitellaan unelmiesi veneretki
+              {t('vipCta.subtitle')}
             </p>
             <button className="group relative bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-500 hover:via-amber-600 hover:to-amber-700 text-white font-black text-xl px-12 py-6 rounded-full shadow-2xl transition-all duration-500 hover:scale-110 hover:-translate-y-2 overflow-hidden">
-              <span className="relative z-10">Kysy Tarjous</span>
+              <span className="relative z-10">{t('vipCta.button')}</span>
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
             </button>
           </div>

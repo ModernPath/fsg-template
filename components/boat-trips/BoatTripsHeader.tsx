@@ -1,17 +1,32 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { Anchor, Phone, Mail, Menu, X, Globe } from 'lucide-react'
-import { Link } from '@/app/i18n/navigation'
+import { usePathname, useRouter } from '@/app/i18n/navigation'
 
-interface BoatTripsHeaderProps {
-  locale: string
-}
-
-export function BoatTripsHeader({ locale }: BoatTripsHeaderProps) {
+export function BoatTripsHeader() {
   const t = useTranslations('BoatTrips')
+  const pathname = usePathname()
+  const router = useRouter()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  
+  // Extract locale from URL pathname (most reliable for client-side)
+  const [currentLocale, setCurrentLocale] = useState('fi')
+  
+  useEffect(() => {
+    // Get locale from browser URL
+    const path = window.location.pathname
+    const segments = path.split('/').filter(Boolean)
+    const localeFromPath = segments[0]
+    
+    // Validate and set locale
+    const validLocales = ['fi', 'en', 'sv', 'es']
+    if (validLocales.includes(localeFromPath)) {
+      setCurrentLocale(localeFromPath)
+      console.log('🌐 [BoatTripsHeader] Current locale from URL:', localeFromPath)
+    }
+  }, [pathname]) // Re-run when pathname changes
 
   const navigation = [
     { name: t('hero.title'), href: '#hero' },
@@ -26,6 +41,21 @@ export function BoatTripsHeader({ locale }: BoatTripsHeaderProps) {
     { code: 'en', name: 'English', flag: '🇬🇧' },
     { code: 'es', name: 'Español', flag: '🇪🇸' },
   ]
+
+  // Handle locale change with hard navigation
+  const handleLocaleChange = (newLocale: string) => {
+    console.log('🔄 [BoatTripsHeader] Changing locale:', {
+      from: currentLocale,
+      to: newLocale,
+      currentUrl: window.location.href,
+      newUrl: `/${newLocale}/fuengirola-veneretket`
+    })
+    
+    // Force hard navigation to ensure proper locale loading
+    const newUrl = `${window.location.origin}/${newLocale}/fuengirola-veneretket`
+    console.log('🔄 [BoatTripsHeader] Navigating to:', newUrl)
+    window.location.href = newUrl
+  }
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-blue-100 shadow-md">
@@ -48,19 +78,18 @@ export function BoatTripsHeader({ locale }: BoatTripsHeaderProps) {
           </div>
           <div className="flex items-center gap-2">
             {locales.map((loc) => (
-              <Link
+              <button
                 key={loc.code}
-                href="/fuengirola-veneretket"
-                locale={loc.code}
+                onClick={() => handleLocaleChange(loc.code)}
                 className={`px-3 py-2 rounded-full text-2xl transition-all hover:scale-110 ${
-                  locale === loc.code
+                  currentLocale === loc.code
                     ? 'bg-blue-50 ring-2 ring-blue-600'
                     : 'hover:bg-blue-50'
                 }`}
                 title={loc.name}
               >
                 {loc.flag}
-              </Link>
+              </button>
             ))}
           </div>
         </div>
@@ -139,20 +168,21 @@ export function BoatTripsHeader({ locale }: BoatTripsHeaderProps) {
             {/* Mobile language switcher */}
             <div className="flex items-center justify-center gap-3 pt-4 border-t border-blue-100">
               {locales.map((loc) => (
-                <Link
+                <button
                   key={loc.code}
-                  href="/fuengirola-veneretket"
-                  locale={loc.code}
-                  onClick={() => setIsMenuOpen(false)}
+                  onClick={() => {
+                    setIsMenuOpen(false)
+                    handleLocaleChange(loc.code)
+                  }}
                   className={`px-4 py-3 rounded-full text-3xl transition-all hover:scale-110 ${
-                    locale === loc.code
+                    currentLocale === loc.code
                       ? 'bg-blue-50 ring-2 ring-blue-600'
                       : 'hover:bg-blue-50'
                   }`}
                   title={loc.name}
                 >
                   {loc.flag}
-                </Link>
+                </button>
               ))}
             </div>
           </nav>

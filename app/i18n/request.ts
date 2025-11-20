@@ -1,4 +1,6 @@
 import { getRequestConfig } from 'next-intl/server';
+import { headers } from 'next/headers';
+import { routing } from './routing';
 import { locales, defaultLocale } from './config';
 
 // FINNISH (fi)
@@ -78,8 +80,97 @@ import esPrivacy from '@/messages/es/Privacy.json';
 import esProfile from '@/messages/es/Profile.json';
 
 export default getRequestConfig(async ({ requestLocale }) => {
-  // In next-intl v4+, requestLocale is a Promise that needs to be awaited
-  const locale = await requestLocale;
+  // ALWAYS try to get locale from headers first (most reliable)
+  let locale: string | undefined;
+  
+  try {
+    const headersList = await headers();
+    
+    // Try multiple sources in order of reliability
+    // 1. Custom header from middleware (most reliable)
+    let foundLocale = headersList.get('x-next-intl-locale');
+    
+    // 2. Parse from current URL (x-url header) - works for hard refresh
+    if (!foundLocale) {
+      const xUrl = headersList.get('x-url');
+      if (xUrl) {
+        try {
+          const url = new URL(xUrl);
+          const pathSegments = url.pathname.split('/').filter(Boolean);
+          const potentialLocale = pathSegments[0];
+          
+          if (potentialLocale && locales.includes(potentialLocale as any)) {
+            foundLocale = potentialLocale;
+            console.log('🔧 [i18n/request] Got locale from x-url:', foundLocale);
+          }
+        } catch (e) {
+          console.error('Error parsing x-url:', e);
+        }
+      }
+    }
+    
+    // 3. Parse from referer (for navigation)
+    if (!foundLocale) {
+      const referer = headersList.get('referer');
+      if (referer) {
+        try {
+          const url = new URL(referer);
+          const pathSegments = url.pathname.split('/').filter(Boolean);
+          const potentialLocale = pathSegments[0];
+          
+          if (potentialLocale && locales.includes(potentialLocale as any)) {
+            foundLocale = potentialLocale;
+            console.log('🔧 [i18n/request] Got locale from Referer:', foundLocale);
+          }
+        } catch (e) {
+          console.error('Error parsing referer:', e);
+        }
+      }
+    }
+
+    // 4. Parse from x-pathname header
+    if (!foundLocale) {
+      const pathname = headersList.get('x-pathname');
+      if (pathname) {
+        const pathSegments = pathname.split('/').filter(Boolean);
+        const potentialLocale = pathSegments[0];
+        
+        if (potentialLocale && locales.includes(potentialLocale as any)) {
+          foundLocale = potentialLocale;
+          console.log('🔧 [i18n/request] Got locale from x-pathname:', foundLocale);
+        }
+      }
+    }
+
+    // 5. Fallback to requestLocale if headers didn't work
+    if (!foundLocale) {
+      locale = await requestLocale;
+      console.log('🔧 [i18n/request] Using requestLocale:', locale);
+    } else {
+      locale = foundLocale;
+    }
+    
+    // DEBUG: Log headers state
+    console.log('🔍 [i18n/request] Locale resolution:', {
+      resolved: locale,
+      headers: {
+        'x-next-intl-locale': headersList.get('x-next-intl-locale'),
+        'x-url': headersList.get('x-url'),
+        'x-pathname': headersList.get('x-pathname'),
+        'referer': headersList.get('referer')
+      }
+    });
+
+  } catch (error) {
+    console.error('⚠️ [i18n/request] Error in header parsing, falling back to requestLocale:', error);
+    locale = await requestLocale;
+  }
+  
+  // Final fallback to default locale
+  if (!locale) {
+    locale = defaultLocale;
+    console.log('⚠️ [i18n/request] Could not determine locale, using default:', locale);
+  }
   
   console.log('🌐 [i18n/request] Locale:', locale);
   

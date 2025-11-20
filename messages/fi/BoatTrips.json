@@ -18,6 +18,7 @@
     }
   },
   "features": {
+    "badge": "Miksi valita meidät",
     "title": "Miksi valita meidät?",
     "subtitle": "Tarjoamme kattavat palvelut unohtumattomille venematkoille",
     "luxury": {
@@ -148,7 +149,8 @@
     "sunsetVideo": "Auringonlaskuristeily",
     "tourVideo": "Veneretken esittely",
     "watchMore": "Haluatko nähdä lisää videoita?",
-    "youtubeChannel": "Käy YouTube-kanavallam me"
+    "youtubeChannel": "Käy YouTube-kanavalla",
+    "videoInfo": "Videot avataan YouTubessa laadukkaana toistona"
   },
   "gallery": {
     "title": "Kuvagalleria",
@@ -163,12 +165,26 @@
     "followUs": "Seuraa meitä Instagramissa ja näe uusimmat kuvat!"
   },
   "charterFeatures": {
-    "title": "Premium Charter -palvelut",
-    "subtitle": "Yksityisiä tilausristeilyjä suomalaisen kapteenin johdolla - Vamos a la mar!",
+    "badge": "Premium Charter Experience",
+    "title": "Miksi valita meidät?",
+    "subtitle": "Tarjoamme ylivoimaista laatua ja palvelua jokaisella retkellä",
     "captain": {
       "title": "Delfiinikuiskaaja!",
       "description": "Tutustuttu kapteeni josta MTV Uutisissa artikkeli",
-      "link": "https://www.mtvuutiset.fi/artikkeli/aleksi-on-aurinkorannikon-tunnettu-delfiinikuiskaaja/9155862"
+      "link": "https://www.mtvuutiset.fi/artikkeli/aleksi-on-aurinkorannikon-tunnettu-delfiinikuiskaaja/9155862",
+      "button": "Lue artikkeli MTV Uutisissa",
+      "card1": {
+        "title": "Suomalainen",
+        "subtitle": "Kapteeni"
+      },
+      "card2": {
+        "title": "Delfiinitunturi",
+        "subtitle": "Parhaat paikat"
+      },
+      "card3": {
+        "title": "Kokemusta",
+        "subtitle": "Vuosia merellä"
+      }
     },
     "luxuryYachts": {
       "title": "Luksusveneet",

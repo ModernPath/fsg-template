@@ -18,6 +18,7 @@
     }
   },
   "features": {
+    "badge": "Varför välja oss",
     "title": "Varför välja oss?",
     "subtitle": "Vi erbjuder omfattande tjänster för oförglömliga båtturer",
     "luxury": {
@@ -148,7 +149,8 @@
     "sunsetVideo": "Solnedgångskryssning",
     "tourVideo": "Båttur presentation",
     "watchMore": "Vill du se fler videor?",
-    "youtubeChannel": "Besök vår YouTube-kanal"
+    "youtubeChannel": "Besök vår YouTube-kanal",
+    "videoInfo": "Videor öppnas på YouTube i hög kvalitet"
   },
   "gallery": {
     "title": "Bildgalleri",
@@ -163,12 +165,26 @@
     "followUs": "Följ oss på Instagram och se de senaste bilderna!"
   },
   "charterFeatures": {
-    "title": "Premium Charter-tjänster",
-    "subtitle": "Privata beställningskryssningar under ledning av finländsk kapten - Vamos a la mar!",
+    "badge": "Premium Charter Upplevelse",
+    "title": "Varför välja oss?",
+    "subtitle": "Vi erbjuder överlägsen kvalitet och service på varje resa",
     "captain": {
       "title": "Delfinviskaren!",
       "description": "Välkänd kapten som MTV Nyheter skrev artikel om",
-      "link": "https://www.mtvuutiset.fi/artikkeli/aleksi-on-aurinkorannikon-tunnettu-delfiinikuiskaaja/9155862"
+      "link": "https://www.mtvuutiset.fi/artikkeli/aleksi-on-aurinkorannikon-tunnettu-delfiinikuiskaaja/9155862",
+      "button": "Läs artikel i MTV Nyheter",
+      "card1": {
+        "title": "Finländsk",
+        "subtitle": "Kapten"
+      },
+      "card2": {
+        "title": "Delfinexpert",
+        "subtitle": "Bästa platserna"
+      },
+      "card3": {
+        "title": "Erfarenhet",
+        "subtitle": "År till sjöss"
+      }
     },
     "luxuryYachts": {
       "title": "Lyxbåtar",

@@ -18,6 +18,7 @@
     }
   },
   "features": {
+    "badge": "Por qué elegirnos",
     "title": "¿Por qué elegirnos?",
     "subtitle": "Ofrecemos servicios completos para excursiones en barco inolvidables",
     "luxury": {
@@ -148,7 +149,8 @@
     "sunsetVideo": "Crucero al atardecer",
     "tourVideo": "Presentación de la excursión",
     "watchMore": "¿Quieres ver más vídeos?",
-    "youtubeChannel": "Visita nuestro canal de YouTube"
+    "youtubeChannel": "Visita nuestro canal de YouTube",
+    "videoInfo": "Los vídeos se abren en YouTube en alta calidad"
   },
   "gallery": {
     "title": "Galería de fotos",
@@ -163,12 +165,26 @@
     "followUs": "¡Síguenos en Instagram y mira las últimas fotos!"
   },
   "charterFeatures": {
-    "title": "Servicios charter premium",
-    "subtitle": "Cruceros chárter privados dirigidos por capitán finlandés - ¡Vamos a la mar!",
+    "badge": "Experiencia Charter Premium",
+    "title": "¿Por qué elegirnos?",
+    "subtitle": "Ofrecemos calidad y servicio superiores en cada viaje",
     "captain": {
       "title": "¡El Susurrador de Delfines!",
       "description": "Capitán reconocido destacado en artículo de MTV News",
-      "link": "https://www.mtvuutiset.fi/artikkeli/aleksi-on-aurinkorannikon-tunnettu-delfiinikuiskaaja/9155862"
+      "link": "https://www.mtvuutiset.fi/artikkeli/aleksi-on-aurinkorannikon-tunnettu-delfiinikuiskaaja/9155862",
+      "button": "Leer artículo en MTV News",
+      "card1": {
+        "title": "Finlandés",
+        "subtitle": "Capitán"
+      },
+      "card2": {
+        "title": "Experto en Delfines",
+        "subtitle": "Mejores lugares"
+      },
+      "card3": {
+        "title": "Experiencia",
+        "subtitle": "Años en el mar"
+      }
     },
     "luxuryYachts": {
       "title": "Barcos de lujo",

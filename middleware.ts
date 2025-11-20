@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import createI18nMiddleware from "next-intl/middleware";
+import { routing } from "./app/i18n/routing";
 import { defaultLocale, staticLocales } from "./app/i18n/config";
 
 // Add debug mode flag at the top after imports
@@ -14,12 +15,8 @@ function log(...args: any[]) {
   }
 }
 
-// Create middleware with static locales for initial config
-const i18nMiddleware = createI18nMiddleware({
-  locales: staticLocales,
-  defaultLocale,
-  localePrefix: "always",
-});
+// Create middleware with routing configuration
+const i18nMiddleware = createI18nMiddleware(routing);
 
 export async function middleware(request: NextRequest) {
   // Skip middleware for static files and images
@@ -182,15 +179,9 @@ export async function middleware(request: NextRequest) {
     path: request.nextUrl.pathname,
   });
 
-  // Get enabled languages
-  const { data: languages } = await supabase
-    .from("languages")
-    .select("code, enabled")
-    .eq("enabled", true);
-
-  // Get the current path segments
-  const pathSegments = request.nextUrl.pathname.split("/");
-  const locale = pathSegments[1] || defaultLocale;
+  // Get the current path segments (filter out empty strings)
+  const pathSegments = request.nextUrl.pathname.split("/").filter(Boolean);
+  const locale = pathSegments[0] || defaultLocale;
   const isAdminRoute = pathSegments.includes("admin") ||
     pathSegments.includes("hallinta");
 
@@ -206,6 +197,14 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // REMOVED MANUAL LOCALE VALIDATION - i18nMiddleware handles this now with routing config
+  /*
+  // Get enabled languages
+  const { data: languages } = await supabase
+    .from("languages")
+    .select("code, enabled")
+    .eq("enabled", true);
+
   // Check if the locale is enabled
   const enabledLocales =
     languages?.map((lang: { code: string }) => lang.code) || staticLocales;
@@ -220,6 +219,7 @@ export async function middleware(request: NextRequest) {
       ),
     );
   }
+  */
 
   // If accessing admin route and not authenticated, redirect to sign in
   if (isAdminRoute) {
@@ -270,6 +270,36 @@ export async function middleware(request: NextRequest) {
     );
   }
 
+  // Call i18nMiddleware first
+  const i18nResponse = i18nMiddleware(request);
+  
+  // CRITICAL: Set locale information in response headers for getRequestConfig
+  const localeFromPath = pathSegments[0];
+  if (localeFromPath && staticLocales.includes(localeFromPath)) {
+    i18nResponse.headers.set('x-next-intl-locale', localeFromPath);
+    i18nResponse.headers.set('x-pathname', request.nextUrl.pathname);
+    i18nResponse.headers.set('x-url', request.url);
+  }
+  
+  // If i18nMiddleware did a redirect (e.g., invalid locale -> default), return it immediately
+  if (i18nResponse.status === 307 || i18nResponse.status === 308) {
+    // Merge our custom cookies into the redirect response
+    response.cookies.getAll().forEach((cookie) => {
+      i18nResponse.cookies.set({
+        name: cookie.name,
+        value: cookie.value,
+        path: cookie.path || "/",
+        domain: cookie.domain,
+        expires: cookie.expires,
+        httpOnly: cookie.httpOnly,
+        maxAge: cookie.maxAge,
+        sameSite: cookie.sameSite || "lax",
+        secure: cookie.secure || process.env.NODE_ENV === "production",
+      });
+    });
+    return i18nResponse;
+  }
+
   // Redirect to locale path if accessing root
   if (request.nextUrl.pathname === "/") {
     // Get browser's preferred language from Accept-Language header
@@ -281,8 +311,8 @@ export async function middleware(request: NextRequest) {
       const preferredLanguage =
         acceptLanguage.split(",")[0].trim().split("-")[0];
 
-      // Check if the preferred language is in our enabled locales
-      if (enabledLocales.includes(preferredLanguage)) {
+      // Check if the preferred language is in our static locales
+      if (staticLocales.includes(preferredLanguage)) {
         preferredLocale = preferredLanguage;
       }
     }
@@ -290,14 +320,13 @@ export async function middleware(request: NextRequest) {
     response = NextResponse.redirect(
       new URL(`/${preferredLocale}`, request.url),
     );
+    return response;
   }
 
-  // Get i18n response
-  const i18nResponse = i18nMiddleware(request);
-
-  // Copy cookies from i18n response and ensure they are properly set
-  i18nResponse.cookies.getAll().forEach((cookie) => {
-    response.cookies.set({
+  // Use i18nResponse as the base response (it has the correct locale context)
+  // Merge our custom cookies from response into i18nResponse
+  response.cookies.getAll().forEach((cookie) => {
+    i18nResponse.cookies.set({
       name: cookie.name,
       value: cookie.value,
       path: cookie.path || "/",
@@ -310,7 +339,8 @@ export async function middleware(request: NextRequest) {
     });
   });
 
-  return response;
+  // Return i18nResponse which has the correct locale context
+  return i18nResponse;
 }
 
 export const config = {

@@ -18,6 +18,7 @@
     }
   },
   "features": {
+    "badge": "Why choose us",
     "title": "Why choose us?",
     "subtitle": "We offer comprehensive services for unforgettable boat trips",
     "luxury": {
@@ -148,7 +149,8 @@
     "sunsetVideo": "Sunset cruise",
     "tourVideo": "Boat trip presentation",
     "watchMore": "Want to see more videos?",
-    "youtubeChannel": "Visit our YouTube channel"
+    "youtubeChannel": "Visit our YouTube channel",
+    "videoInfo": "Videos open on YouTube in high quality"
   },
   "gallery": {
     "title": "Photo gallery",
@@ -163,12 +165,26 @@
     "followUs": "Follow us on Instagram and see the latest photos!"
   },
   "charterFeatures": {
-    "title": "Premium charter services",
-    "subtitle": "Private charter cruises led by Finnish captain - Vamos a la mar!",
+    "badge": "Premium Charter Experience",
+    "title": "Why choose us?",
+    "subtitle": "We offer superior quality and service on every trip",
     "captain": {
       "title": "The Dolphin Whisperer!",
       "description": "Well-known captain featured in MTV News article",
-      "link": "https://www.mtvuutiset.fi/artikkeli/aleksi-on-aurinkorannikon-tunnettu-delfiinikuiskaaja/9155862"
+      "link": "https://www.mtvuutiset.fi/artikkeli/aleksi-on-aurinkorannikon-tunnettu-delfiinikuiskaaja/9155862",
+      "button": "Read article in MTV News",
+      "card1": {
+        "title": "Finnish",
+        "subtitle": "Captain"
+      },
+      "card2": {
+        "title": "Dolphin Expert",
+        "subtitle": "Best spots"
+      },
+      "card3": {
+        "title": "Experience",
+        "subtitle": "Years at sea"
+      }
     },
     "luxuryYachts": {
       "title": "Luxury boats",

@@ -140,7 +140,7 @@ export function VideoGallerySection() {
               {t('youtubeChannel')}
             </a>
             <p className="text-sm text-blue-400">
-              🎬 Videot avataan YouTubessa laadukkaana toistona
+              🎬 {t('videoInfo')}
             </p>
           </div>
         </div>

@@ -49,7 +49,7 @@ export function CaptainSection() {
                 className="bg-white text-blue-600 hover:bg-gray-100 font-bold text-lg px-8 py-6 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 hover:-translate-y-2"
               >
                 <ExternalLink className="w-5 h-5 mr-2" />
-                Lue artikkeli MTV Uutisissa
+                {t('captain.button')}
               </Button>
             </a>
           </div>
@@ -57,18 +57,18 @@ export function CaptainSection() {
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6" data-aos="fade-up" data-aos-delay="300">
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
               <div className="text-3xl font-black text-amber-400 mb-2">🇫🇮</div>
-              <div className="text-white font-bold">Suomalainen</div>
-              <div className="text-white/80 text-sm">Kapteeni</div>
+              <div className="text-white font-bold">{t('captain.card1.title')}</div>
+              <div className="text-white/80 text-sm">{t('captain.card1.subtitle')}</div>
             </div>
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
               <div className="text-3xl font-black text-amber-400 mb-2">🐬</div>
-              <div className="text-white font-bold">Delfiinitunturi</div>
-              <div className="text-white/80 text-sm">Parhaat paikat</div>
+              <div className="text-white font-bold">{t('captain.card2.title')}</div>
+              <div className="text-white/80 text-sm">{t('captain.card2.subtitle')}</div>
             </div>
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
               <div className="text-3xl font-black text-amber-400 mb-2">⚓</div>
-              <div className="text-white font-bold">Kokemusta</div>
-              <div className="text-white/80 text-sm">Vuosia merellä</div>
+              <div className="text-white font-bold">{t('captain.card3.title')}</div>
+              <div className="text-white/80 text-sm">{t('captain.card3.subtitle')}</div>
             </div>
           </div>
         </div>

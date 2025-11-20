@@ -1,13 +1,8 @@
-'use client';
+import { defineRouting } from 'next-intl/routing';
+import { staticLocales, defaultLocale } from './config';
 
-import { defaultLocale, type Locale } from './config';
-
-// Client-side locale detection
-export function getClientLocale(): Locale {
-  // Use browser's language preference as fallback
-  const browserLocale = typeof window !== 'undefined' 
-    ? window.navigator.language.split('-')[0]
-    : defaultLocale;
-  
-  return browserLocale as Locale;
-}
+export const routing = defineRouting({
+  locales: staticLocales,
+  defaultLocale: defaultLocale,
+  localePrefix: 'always' // Always show locale in URL
+});

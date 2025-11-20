@@ -41,7 +41,7 @@ export function FeaturesSection() {
           <div className="inline-block mb-6">
             <div className="flex items-center gap-3 bg-blue-100 px-6 py-3 rounded-full">
               <Star className="w-5 h-5 text-blue-600 fill-blue-600" />
-              <span className="text-blue-600 font-semibold">Miksi valita meidät</span>
+              <span className="text-blue-600 font-semibold">{t('badge')}</span>
             </div>
           </div>
           <h2 className="font-geist text-5xl sm:text-6xl lg:text-7xl font-bold mb-8 text-blue-600">

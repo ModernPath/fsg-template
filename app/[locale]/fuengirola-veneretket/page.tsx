@@ -47,7 +47,7 @@ export default async function FuengirolaBoatTripsPage({ params }: Props) {
   return (
     <>
       <AOSInit />
-      <BoatTripsHeader locale={locale} />
+      <BoatTripsHeader />
       <main className="min-h-screen bg-white overflow-hidden">
         <HeroSection />
         <CaptainSection />
