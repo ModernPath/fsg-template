@@ -162,22 +162,22 @@ export default async function NDAsPage({ params }: NDAsPageProps) {
       {/* NDAs List */}
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full min-w-[640px]">
             <thead className="bg-gray-50 dark:bg-gray-900">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Company
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden md:table-cell">
                   Signer
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden lg:table-cell">
                   Date
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -189,17 +189,21 @@ export default async function NDAsPage({ params }: NDAsPageProps) {
                     key={nda.id}
                     className="hover:bg-gray-50 dark:hover:bg-gray-900"
                   >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded" />
-                        <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900 dark:text-white">
+                    <td className="px-4 sm:px-6 py-4">
+                      <div className="flex items-center min-w-0">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 dark:bg-gray-700 rounded flex-shrink-0" />
+                        <div className="ml-2 sm:ml-4 min-w-0">
+                          <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
                             {nda.companies?.name || "N/A"}
+                          </div>
+                          {/* Show signer on mobile */}
+                          <div className="md:hidden text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">
+                            {nda.buyer?.full_name || nda.buyer?.email || "N/A"}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 sm:px-6 py-4 hidden md:table-cell">
                       <div className="text-sm text-gray-900 dark:text-white">
                         {nda.buyer?.full_name || nda.buyer?.email || "N/A"}
                       </div>
@@ -209,7 +213,7 @@ export default async function NDAsPage({ params }: NDAsPageProps) {
                         </div>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 sm:px-6 py-4">
                       <Badge
                         variant={
                           nda.status === "signed" ? "default" : "secondary"
@@ -228,13 +232,13 @@ export default async function NDAsPage({ params }: NDAsPageProps) {
                         {nda.status}
                       </Badge>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    <td className="px-4 sm:px-6 py-4 hidden lg:table-cell text-sm text-gray-500 dark:text-gray-400">
                       {nda.signed_at
                         ? new Date(nda.signed_at).toLocaleDateString()
                         : new Date(nda.created_at).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <div className="flex items-center gap-2">
+                    <td className="px-4 sm:px-6 py-4 text-sm">
+                      <div className="flex items-center gap-1 sm:gap-2">
                         {nda.document_url && (
                           <Button variant="ghost" size="sm">
                             <Download className="w-4 h-4" />
@@ -251,7 +255,7 @@ export default async function NDAsPage({ params }: NDAsPageProps) {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center">
+                  <td colSpan={5} className="px-4 sm:px-6 py-12 text-center">
                     <div className="text-gray-500 dark:text-gray-400">
                       <FileSignature className="w-12 h-12 mx-auto mb-4 opacity-50" />
                       <p className="text-lg font-medium mb-2">No NDAs yet</p>

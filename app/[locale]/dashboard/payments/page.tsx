@@ -213,28 +213,28 @@ export default function PaymentsPage() {
       {/* Payments Table */}
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full min-w-[640px]">
             <thead className="bg-gray-50 dark:bg-gray-900">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Invoice #
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden md:table-cell">
                   Deal
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden lg:table-cell">
                   Type
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Amount
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden md:table-cell">
                   Due Date
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -246,28 +246,36 @@ export default function PaymentsPage() {
                     key={payment.id}
                     className="hover:bg-gray-50 dark:hover:bg-gray-900"
                   >
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                      #{payment.invoice_number || payment.id.slice(0, 8)}
+                    <td className="px-4 sm:px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
+                      <div className="min-w-0">
+                        <div className="truncate">
+                          #{payment.invoice_number || payment.id.slice(0, 8)}
+                        </div>
+                        {/* Show deal on mobile */}
+                        <div className="md:hidden text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">
+                          {payment.deals?.companies?.name || "N/A"}
+                        </div>
+                      </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                    <td className="px-4 sm:px-6 py-4 hidden md:table-cell text-sm text-gray-900 dark:text-white">
                       {payment.deals?.companies?.name || "N/A"}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 sm:px-6 py-4 hidden lg:table-cell">
                       <Badge variant="secondary">
                         {payment.type === "fixed_fee"
                           ? "Fixed Fee"
                           : "Success Fee"}
                       </Badge>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                    <td className="px-4 sm:px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
                       €{Number(payment.amount).toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    <td className="px-4 sm:px-6 py-4 hidden md:table-cell text-sm text-gray-500 dark:text-gray-400">
                       {payment.due_date
                         ? new Date(payment.due_date).toLocaleDateString()
                         : "N/A"}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 sm:px-6 py-4">
                       <Badge
                         variant={
                           payment.status === "paid" || payment.status === "succeeded" ? "default" : "secondary"
@@ -283,8 +291,8 @@ export default function PaymentsPage() {
                         {payment.status}
                       </Badge>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <div className="flex items-center gap-2">
+                    <td className="px-4 sm:px-6 py-4 text-sm">
+                      <div className="flex items-center gap-1 sm:gap-2">
                         <Button variant="ghost" size="sm">
                           <Download className="w-4 h-4" />
                         </Button>
@@ -299,7 +307,7 @@ export default function PaymentsPage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center">
+                  <td colSpan={7} className="px-4 sm:px-6 py-12 text-center">
                     <div className="text-gray-500 dark:text-gray-400">
                       <DollarSign className="w-12 h-12 mx-auto mb-4 opacity-50" />
                       <p className="text-lg font-medium mb-2">

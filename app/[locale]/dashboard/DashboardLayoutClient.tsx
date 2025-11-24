@@ -25,6 +25,7 @@ export default function DashboardLayoutClient({
   const { isAuthenticated, session, loading } = useAuth();
   const [profile, setProfile] = useState<any>(null);
   const [profileLoading, setProfileLoading] = useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const supabase = createClient();
 
   // Fetch user profile
@@ -87,21 +88,47 @@ export default function DashboardLayoutClient({
   return (
     <>
       <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-        {/* Sidebar Navigation */}
-        <DashboardNav locale={locale} profile={profile} />
+        {/* Sidebar Navigation - Hidden on mobile */}
+        <div className="hidden lg:flex">
+          <DashboardNav locale={locale} profile={profile} />
+        </div>
+
+        {/* Mobile Sidebar Overlay */}
+        {isMobileMenuOpen && (
+          <>
+            <div
+              className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+            <div className="fixed inset-y-0 left-0 z-50 lg:hidden">
+              <DashboardNav
+                locale={locale}
+                profile={profile}
+                onClose={() => setIsMobileMenuOpen(false)}
+              />
+            </div>
+          </>
+        )}
 
         {/* Main Content */}
-        <div className="flex flex-col flex-1 overflow-hidden">
+        <div className="flex flex-col flex-1 overflow-hidden w-full lg:w-auto">
           {/* Header */}
-          <DashboardHeader user={session.user} profile={profile} locale={locale} />
+          <DashboardHeader
+            user={session.user}
+            profile={profile}
+            locale={locale}
+            onMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          />
 
           {/* Page Content */}
           <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-gray-900">
-            <div className="container mx-auto px-6 py-8">{children}</div>
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+              {children}
+            </div>
           </main>
         </div>
       </div>
-      
+
       {/* Toast Notifications */}
       <Toaster />
     </>

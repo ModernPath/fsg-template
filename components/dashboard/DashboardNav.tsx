@@ -17,6 +17,7 @@ import {
   LayoutDashboard,
   FileStack,
   FileSignature,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
@@ -24,6 +25,7 @@ import { useTranslations } from "next-intl";
 interface DashboardNavProps {
   locale: string;
   profile: any;
+  onClose?: () => void;
 }
 
 const navigationItems = [
@@ -83,7 +85,11 @@ const navigationItems = [
   },
 ];
 
-export function DashboardNav({ locale, profile }: DashboardNavProps) {
+export function DashboardNav({
+  locale,
+  profile,
+  onClose,
+}: DashboardNavProps) {
   const pathname = usePathname();
   const userRole = profile?.role || "buyer";
   const t = useTranslations("dashboard.nav");
@@ -93,17 +99,36 @@ export function DashboardNav({ locale, profile }: DashboardNavProps) {
     item.roles.includes(userRole),
   );
 
+  const handleLinkClick = () => {
+    if (onClose) {
+      onClose();
+    }
+  };
+
   return (
-    <aside className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+    <aside className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 h-full flex flex-col">
       <div className="flex flex-col h-full">
-        {/* Logo */}
-        <div className="flex items-center justify-center h-16 px-4 border-b border-gray-200 dark:border-gray-700">
-          <Link href={`/${locale}/dashboard`} className="flex items-center">
+        {/* Logo and Close Button */}
+        <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
+          <Link
+            href={`/${locale}/dashboard`}
+            className="flex items-center"
+            onClick={handleLinkClick}
+          >
             <Building2 className="h-8 w-8 text-blue-600" />
             <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">
               BizExit
             </span>
           </Link>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="lg:hidden p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              aria-label="Close menu"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          )}
         </div>
 
         {/* Organization */}
@@ -131,6 +156,7 @@ export function DashboardNav({ locale, profile }: DashboardNavProps) {
               <Link
                 key={item.key}
                 href={`/${locale}${item.href}`}
+                onClick={handleLinkClick}
                 className={cn(
                   "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors",
                   isActive

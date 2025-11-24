@@ -82,9 +82,9 @@ export function CompaniesTable({
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700">
       {/* Filters */}
-      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-600 dark:text-gray-400">
+      <div className="px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-sm text-gray-600 dark:text-gray-400 w-full sm:w-auto">
             Status:
           </span>
           {[
@@ -98,7 +98,7 @@ export function CompaniesTable({
             <button
               key={status}
               onClick={() => handleStatusFilter(status)}
-              className={`px-3 py-1 text-sm rounded-lg transition-colors ${
+              className={`px-3 py-1 text-xs sm:text-sm rounded-lg transition-colors whitespace-nowrap ${
                 statusFilter === status
                   ? "bg-blue-600 text-white"
                   : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
@@ -114,28 +114,28 @@ export function CompaniesTable({
 
       {/* Table */}
       <div className="overflow-x-auto">
-        <table className="w-full">
+        <table className="w-full min-w-[640px]">
           <thead className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Company
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden md:table-cell">
                 Location
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden lg:table-cell">
                 Industry
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden lg:table-cell">
                 Revenue
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden md:table-cell">
                 Asking Price
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Status
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -159,43 +159,48 @@ export function CompaniesTable({
                   key={company.id}
                   className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                 >
-                  <td className="px-6 py-4">
+                  <td className="px-4 sm:px-6 py-4">
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-10 w-10 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
                         <Building2 className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                       </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900 dark:text-white">
+                      <div className="ml-2 sm:ml-4 min-w-0">
+                        <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
                           {company.name}
                         </div>
                         {company.business_id && (
-                          <div className="text-sm text-gray-500 dark:text-gray-400">
+                          <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">
                             {company.business_id}
                           </div>
                         )}
+                        {/* Show location on mobile */}
+                        <div className="md:hidden text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          {company.city ? `${company.city}, ` : ""}
+                          {company.country}
+                        </div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 sm:px-6 py-4 hidden md:table-cell">
                     <div className="flex items-center text-sm text-gray-900 dark:text-white">
                       <MapPin className="mr-1 h-4 w-4 text-gray-400" />
                       {company.city ? `${company.city}, ` : ""}
                       {company.country}
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 sm:px-6 py-4 hidden lg:table-cell">
                     <div className="text-sm text-gray-900 dark:text-white">
                       {company.industry || "-"}
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 sm:px-6 py-4 hidden lg:table-cell">
                     <div className="text-sm text-gray-900 dark:text-white">
                       {company.annual_revenue
                         ? `€${(company.annual_revenue / 1000000).toFixed(1)}M`
                         : "-"}
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 sm:px-6 py-4 hidden md:table-cell">
                     <div className="flex items-center text-sm font-medium text-gray-900 dark:text-white">
                       <TrendingUp className="mr-1 h-4 w-4 text-green-500" />
                       {company.asking_price
@@ -203,7 +208,7 @@ export function CompaniesTable({
                         : "-"}
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 sm:px-6 py-4">
                     <span
                       className={`px-2 py-1 text-xs font-medium rounded-full ${
                         statusColors[company.status] || statusColors.draft
@@ -212,8 +217,8 @@ export function CompaniesTable({
                       {company.status.replace("_", " ")}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-right text-sm">
-                    <div className="flex items-center justify-end gap-2">
+                  <td className="px-4 sm:px-6 py-4 text-right text-sm">
+                    <div className="flex items-center justify-end gap-1 sm:gap-2">
                       <Link href={`/dashboard/companies/${company.id}`}>
                         <Button variant="ghost" size="sm">
                           <Eye className="h-4 w-4" />
@@ -235,19 +240,20 @@ export function CompaniesTable({
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-700 dark:text-gray-300">
+        <div className="px-4 sm:px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 text-center sm:text-left">
               Showing {(currentPage - 1) * limit + 1} to{" "}
               {Math.min(currentPage * limit, totalCount)} of {totalCount}{" "}
               companies
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-1 sm:gap-2 flex-wrap justify-center">
               <Button
                 variant="outline"
                 size="sm"
                 disabled={currentPage === 1}
                 onClick={() => handlePageChange(currentPage - 1)}
+                className="text-xs sm:text-sm"
               >
                 Previous
               </Button>
@@ -261,13 +267,14 @@ export function CompaniesTable({
                 .map((page, idx, arr) => (
                   <>
                     {idx > 0 && arr[idx - 1] !== page - 1 && (
-                      <span className="px-3 py-1">...</span>
+                      <span className="px-2 sm:px-3 py-1 text-xs sm:text-sm">...</span>
                     )}
                     <Button
                       key={page}
                       variant={currentPage === page ? "default" : "outline"}
                       size="sm"
                       onClick={() => handlePageChange(page)}
+                      className="text-xs sm:text-sm min-w-[2rem] sm:min-w-0"
                     >
                       {page}
                     </Button>
@@ -278,6 +285,7 @@ export function CompaniesTable({
                 size="sm"
                 disabled={currentPage === totalPages}
                 onClick={() => handlePageChange(currentPage + 1)}
+                className="text-xs sm:text-sm"
               >
                 Next
               </Button>
