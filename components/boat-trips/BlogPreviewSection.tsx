@@ -34,7 +34,7 @@ export function BlogPreviewSection({ posts, locale }: BlogPreviewSectionProps) {
       <div className="container mx-auto px-4 relative z-10">
         <div className="flex flex-col md:flex-row items-center justify-between mb-16" data-aos="fade-up">
           <div className="text-center md:text-left mb-8 md:mb-0">
-            <h2 className="font-geist text-5xl sm:text-6xl font-bold mb-4 text-blue-600">
+            <h2 className="font-geist text-3xl sm:text-4xl font-bold mb-4 text-blue-600">
               {t('title')}
             </h2>
             <p className="text-2xl text-blue-400">

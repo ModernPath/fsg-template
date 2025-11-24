@@ -44,7 +44,7 @@ export function CharterFeaturesSection() {
             </span>
           </div>
           
-          <h2 className="font-geist text-5xl sm:text-6xl lg:text-7xl font-black mb-8 text-white">
+          <h2 className="font-geist text-3xl sm:text-4xl lg:text-5xl font-black mb-8 text-white">
             {t('title')}
           </h2>
           <p className="text-2xl text-gray-300 max-w-3xl mx-auto">

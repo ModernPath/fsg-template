@@ -44,7 +44,7 @@ export function FeaturesSection() {
               <span className="text-blue-600 font-semibold">{t('badge')}</span>
             </div>
           </div>
-          <h2 className="font-geist text-5xl sm:text-6xl lg:text-7xl font-bold mb-8 text-blue-600">
+          <h2 className="font-geist text-3xl sm:text-4xl lg:text-5xl font-bold mb-8 text-blue-600">
             {t('title')}
           </h2>
           <p className="text-2xl text-blue-400 max-w-3xl mx-auto">

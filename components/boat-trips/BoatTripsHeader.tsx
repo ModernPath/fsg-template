@@ -51,6 +51,9 @@ export function BoatTripsHeader() {
       newUrl: `/${newLocale}/fuengirola-veneretket`
     })
     
+    // Update state immediately for instant visual feedback
+    setCurrentLocale(newLocale)
+    
     // Force hard navigation to ensure proper locale loading
     const newUrl = `${window.location.origin}/${newLocale}/fuengirola-veneretket`
     console.log('🔄 [BoatTripsHeader] Navigating to:', newUrl)

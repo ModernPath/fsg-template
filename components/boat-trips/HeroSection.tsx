@@ -85,34 +85,34 @@ export function HeroSection() {
       </div>
 
       {/* Main content with glassmorphism */}
-      <div className="relative container mx-auto px-4 text-center z-20">
+      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center z-20 max-w-7xl">
         {/* Glassmorphism card */}
-        <div className="max-w-5xl mx-auto bg-white/10 backdrop-blur-xl rounded-3xl p-12 shadow-2xl border border-white/20">
-          <div className="space-y-8">
+        <div className="mx-auto bg-white/10 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 shadow-2xl border border-white/20">
+          <div className="space-y-6 sm:space-y-8">
             {/* Premium badge */}
             <div 
-              className="inline-block mb-4 px-8 py-3 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 rounded-full shadow-2xl animate-pulse"
+              className="inline-block mb-4 px-4 sm:px-6 md:px-8 py-2 sm:py-3 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 rounded-full shadow-2xl animate-pulse"
               data-aos="zoom-in"
             >
-              <span className="text-white font-black text-sm tracking-widest uppercase flex items-center gap-2">
+              <span className="text-white font-black text-xs sm:text-sm tracking-widest uppercase flex items-center gap-2">
                 ⭐ Premium Charter Service
               </span>
             </div>
 
             {/* Title with text shadow - PREMIUM */}
             <h1 
-              className="font-geist text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-black leading-[0.95] tracking-tighter text-white drop-shadow-2xl"
+              className="font-geist text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tight text-white drop-shadow-2xl break-words"
               data-aos="fade-up"
               data-aos-duration="1000"
             >
               {t('hero.title')}
-              <div className="mt-4 text-5xl sm:text-6xl lg:text-7xl bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 bg-clip-text text-transparent animate-pulse">
+              <div className="mt-2 sm:mt-3 text-2xl sm:text-3xl md:text-4xl lg:text-5xl bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 bg-clip-text text-transparent animate-pulse break-words">
                 Costa del Sol
               </div>
             </h1>
             
             <p 
-              className="max-w-3xl mx-auto text-2xl sm:text-3xl text-white/95 leading-relaxed font-bold drop-shadow-lg"
+              className="max-w-3xl mx-auto text-base sm:text-lg md:text-xl text-white/95 leading-relaxed font-bold drop-shadow-lg px-4"
               data-aos="fade-up"
               data-aos-delay="200"
             >
@@ -120,7 +120,7 @@ export function HeroSection() {
             </p>
 
             <p 
-              className="max-w-2xl mx-auto text-xl text-white/85 drop-shadow-lg font-medium"
+              className="max-w-2xl mx-auto text-sm sm:text-base md:text-lg text-white/85 drop-shadow-lg font-medium px-4"
               data-aos="fade-up"
               data-aos-delay="400"
             >
@@ -129,16 +129,16 @@ export function HeroSection() {
 
             {/* CTA Buttons - PREMIUM */}
             <div 
-              className="flex flex-col sm:flex-row gap-6 justify-center items-center pt-8"
+              className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center pt-4 sm:pt-8 px-4"
               data-aos="fade-up"
               data-aos-delay="600"
             >
               <Button 
                 size="lg" 
-                className="group relative bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-500 hover:via-amber-600 hover:to-amber-700 text-white font-black text-xl px-16 py-8 rounded-full shadow-2xl transition-all duration-500 hover:scale-110 hover:-translate-y-2 overflow-hidden"
+                className="group relative bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-500 hover:via-amber-600 hover:to-amber-700 text-white font-black text-sm sm:text-base md:text-lg px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 rounded-full shadow-2xl transition-all duration-500 hover:scale-110 hover:-translate-y-2 overflow-hidden w-full sm:w-auto"
               >
-                <span className="relative z-10 flex items-center gap-3">
-                  <Play className="w-6 h-6" />
+                <span className="relative z-10 flex items-center gap-2">
+                  <Play className="w-4 h-4 sm:w-5 sm:h-5" />
                   {t('hero.bookNow')}
                 </span>
                 {/* Animated shine effect */}
@@ -147,14 +147,14 @@ export function HeroSection() {
               <Button 
                 size="lg" 
                 variant="outline"
-                className="border-3 border-white text-white hover:bg-white hover:text-blue-600 font-bold text-xl px-16 py-8 rounded-full transition-all duration-500 hover:scale-110 hover:-translate-y-2 bg-white/10 backdrop-blur-lg shadow-2xl"
+                className="border-2 border-white text-white hover:bg-white hover:text-blue-600 font-bold text-sm sm:text-base md:text-lg px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 rounded-full transition-all duration-500 hover:scale-110 hover:-translate-y-2 bg-white/10 backdrop-blur-lg shadow-2xl w-full sm:w-auto"
               >
                 {t('hero.viewTrips')}
               </Button>
             </div>
 
             {/* Trust indicators - PREMIUM */}
-            <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            <div className="mt-8 sm:mt-12 md:mt-16 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 px-4">
               {[
                 { value: '10+', label: t('hero.stats.years'), icon: '🏆' },
                 { value: '15K+', label: t('hero.stats.customers'), icon: '⭐' },
@@ -165,15 +165,15 @@ export function HeroSection() {
                   key={i}
                   data-aos="zoom-in"
                   data-aos-delay={800 + (i * 100)}
-                  className="group relative text-center bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-xl rounded-3xl p-8 shadow-2xl transition-all duration-500 hover:scale-110 hover:-translate-y-3 border-2 border-white/50 overflow-hidden"
+                  className="group relative text-center bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl transition-all duration-500 hover:scale-105 sm:hover:scale-110 hover:-translate-y-2 sm:hover:-translate-y-3 border-2 border-white/50 overflow-hidden"
                 >
                   {/* Background glow */}
                   <div className="absolute inset-0 bg-gradient-to-br from-amber-400/20 to-amber-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                   
                   <div className="relative z-10">
-                    <div className="text-5xl mb-2">{stat.icon}</div>
-                    <div className="text-5xl font-black bg-gradient-to-r from-amber-500 to-amber-700 bg-clip-text text-transparent mb-2">{stat.value}</div>
-                    <div className="text-sm text-gray-700 font-bold uppercase tracking-wide">{stat.label}</div>
+                    <div className="text-2xl sm:text-3xl mb-1 sm:mb-2">{stat.icon}</div>
+                    <div className="text-2xl sm:text-3xl md:text-4xl font-black bg-gradient-to-r from-amber-500 to-amber-700 bg-clip-text text-transparent mb-1 sm:mb-2">{stat.value}</div>
+                    <div className="text-xs sm:text-sm text-gray-700 font-bold uppercase tracking-wide">{stat.label}</div>
                   </div>
 
                   {/* Shine effect */}

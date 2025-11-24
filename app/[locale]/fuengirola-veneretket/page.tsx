@@ -48,7 +48,7 @@ export default async function FuengirolaBoatTripsPage({ params }: Props) {
     <>
       <AOSInit />
       <BoatTripsHeader />
-      <main className="min-h-screen bg-white overflow-hidden">
+      <main className="min-h-screen bg-white overflow-x-hidden">
         <HeroSection />
         <CaptainSection />
         <TripsSection />

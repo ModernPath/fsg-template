@@ -45,7 +45,7 @@ export function TripsSection() {
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-20" data-aos="fade-up">
-          <h2 className="font-geist text-5xl sm:text-6xl lg:text-7xl font-bold mb-8 text-blue-600">
+          <h2 className="font-geist text-3xl sm:text-4xl lg:text-5xl font-bold mb-8 text-blue-600">
             {t('title')}
           </h2>
           <p className="text-2xl text-blue-400 max-w-3xl mx-auto">
@@ -117,7 +117,7 @@ export function TripsSection() {
                   <div className="flex items-center justify-between mt-auto pt-6 border-t-2 border-gradient-to-r from-amber-400 to-amber-600">
                     <div>
                       <div className="text-sm text-amber-600 font-bold uppercase tracking-wide mb-1">{t('from')}</div>
-                      <div className="text-4xl font-black bg-gradient-to-r from-amber-500 to-amber-700 bg-clip-text text-transparent">
+                      <div className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-amber-500 to-amber-700 bg-clip-text text-transparent">
                         {t(`${key}.price`)}
                       </div>
                     </div>

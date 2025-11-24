@@ -23,7 +23,7 @@ export function TestimonialsSection() {
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-20" data-aos="fade-up">
-          <h2 className="font-geist text-5xl sm:text-6xl lg:text-7xl font-bold mb-8 text-blue-600">
+          <h2 className="font-geist text-3xl sm:text-4xl lg:text-5xl font-bold mb-8 text-blue-600">
             {t('title')}
           </h2>
           <p className="text-2xl text-blue-400 max-w-3xl mx-auto">

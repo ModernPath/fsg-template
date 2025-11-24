@@ -23,7 +23,7 @@ export function CaptainSection() {
           </div>
 
           <h2 
-            className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-6 drop-shadow-lg"
+            className="text-2xl sm:text-3xl lg:text-4xl font-black text-white mb-6 drop-shadow-lg"
             data-aos="fade-up"
           >
             ⭐ {t('captain.title')}
